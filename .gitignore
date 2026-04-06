@@ -1,0 +1,8 @@
+# TweakIdea evaluation run outputs (per-user, not tracked)
+.tweakidea/
+
+# Development planning artifacts
+.planning/
+
+# macOS
+.DS_Store
