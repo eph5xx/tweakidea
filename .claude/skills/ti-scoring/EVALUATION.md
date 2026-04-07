@@ -34,29 +34,29 @@ Categorize problems by intensity vs. breadth:
 
 ---
 
-## Scoring Template
+## Dimension Registry
 
-Rate each dimension 1-5, weight by importance for your context:
+> **Canonical source of truth.** All dimension metadata lives in this table. Agents receive registry values via orchestrator prompt injection at spawn time (D-06). Do not duplicate this data elsewhere.
 
-| Dimension | Score (1-5) | Weight | Weighted Score |
-|-----------|-------------|--------|----------------|
-| Pain Intensity | | 12% | |
-| Urgency | | 8% | |
-| Frequency | | 8% | |
-| Willingness to Pay | | 12% | |
-| Mandatory Nature | | 2% | |
-| Market Size | | 8% | |
-| Market Growth | | 4% | |
-| Solution Gap | | 12% | |
-| Founder-Market Fit | | 12% | |
-| Defensibility | | 8% | |
-| Incumbent Indifference | | 2% | |
-| Scalability | | 4% | |
-| Clarity of Target Customer | | 4% | |
-| Behavior Change Required | | 4% | |
-| **Total** | | **100%** | |
+| # | Name | Weight | File Slug | Output Filename | Research Cluster | Context Variant |
+|---|------|--------|-----------|-----------------|------------------|-----------------|
+| 01 | Pain Intensity | 12% | pain-intensity | 01-pain-intensity.md | USER_CLUSTER | EVALUATION_CONTEXT |
+| 02 | Willingness to Pay | 12% | willingness-to-pay | 02-willingness-to-pay.md | USER_CLUSTER | EVALUATION_CONTEXT |
+| 03 | Solution Gap | 12% | solution-gap | 03-solution-gap.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
+| 04 | Founder-Market Fit | 12% | founder-market-fit | 04-founder-market-fit.md | — | FOUNDER_EVALUATION_CONTEXT |
+| 05 | Urgency | 8% | urgency | 05-urgency.md | USER_CLUSTER | EVALUATION_CONTEXT |
+| 06 | Frequency | 8% | frequency | 06-frequency.md | — | EVALUATION_CONTEXT |
+| 07 | Market Size | 8% | market-size | 07-market-size.md | MARKET_CLUSTER | EVALUATION_CONTEXT |
+| 08 | Defensibility | 8% | defensibility | 08-defensibility.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
+| 09 | Market Growth | 4% | market-growth | 09-market-growth.md | MARKET_CLUSTER | EVALUATION_CONTEXT |
+| 10 | Scalability | 4% | scalability | 10-scalability.md | — | EVALUATION_CONTEXT |
+| 11 | Clarity of Target Customer | 4% | clarity-of-target-customer | 11-clarity-of-target-customer.md | — | EVALUATION_CONTEXT |
+| 12 | Behavior Change Required | 4% | behavior-change-required | 12-behavior-change-required.md | — | EVALUATION_CONTEXT |
+| 13 | Mandatory Nature | 2% | mandatory-nature | 13-mandatory-nature.md | — | EVALUATION_CONTEXT |
+| 14 | Incumbent Indifference | 2% | incumbent-indifference | 14-incumbent-indifference.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
 
-**Interpretation:**
+## Interpretation
+
 - 4.0-5.0: GO -- Strong problem, worth pursuing
 - 3.0-3.99: PIVOT -- Promising, address weak areas
 - 2.0-2.99: STOP -- Significant concerns, reconsider

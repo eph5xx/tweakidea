@@ -11,6 +11,7 @@ allowed-tools:
 skills:
   - ti-founder
   - ti-html-report
+  - ti-scoring
 ---
 
 ## Purpose
@@ -355,24 +356,13 @@ If RESEARCH_AVAILABLE is true, extend the context variants for dimensions that m
 
 **Dimension-to-cluster mapping:**
 
-| Dimension | Cluster Variable | Gets Research? |
-|-----------|-----------------|----------------|
-| Pain Intensity | USER_CLUSTER_CONTENT | Yes |
-| Urgency | USER_CLUSTER_CONTENT | Yes |
-| Frequency | (none) | No |
-| Willingness to Pay | USER_CLUSTER_CONTENT | Yes |
-| Mandatory Nature | (none) | No |
-| Market Size | MARKET_CLUSTER_CONTENT | Yes |
-| Market Growth | MARKET_CLUSTER_CONTENT | Yes |
-| Solution Gap | COMPETITIVE_CLUSTER_CONTENT | Yes |
-| Founder-Market Fit | (none) | No |
-| Defensibility | COMPETITIVE_CLUSTER_CONTENT | Yes |
-| Incumbent Indifference | COMPETITIVE_CLUSTER_CONTENT | Yes |
-| Scalability | (none) | No |
-| Clarity of Target Customer | (none) | No |
-| Behavior Change Required | (none) | No |
+Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows:
+- If the **Research Cluster** column contains a cluster name (USER_CLUSTER, MARKET_CLUSTER, or COMPETITIVE_CLUSTER): this dimension gets research context. Append the content from the corresponding cluster variable (USER_CLUSTER_CONTENT, MARKET_CLUSTER_CONTENT, or COMPETITIVE_CLUSTER_CONTENT) as a `## Research Context` section to that dimension's evaluation context string.
+- If the **Research Cluster** column contains — (em-dash): this dimension gets NO research context. Skip it.
 
-For each dimension with "Yes", append to that dimension's context string:
+Per D-11, the orchestrator treats — in the Research Cluster column as "skip research injection for this dimension."
+
+For each dimension with a cluster name, append to that dimension's context string:
 
 ```
 ## Research Context
@@ -410,35 +400,25 @@ This is a hard rule. FOUNDER_EVALUATION_CONTEXT contains the founder profile and
 
 #### Agent Calls
 
-For each dimension to evaluate, spawn one Agent with:
+**Spawning from the Dimension Registry:**
+
+Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows, spawn one Agent with:
 
 - **agent_type:** `ti-evaluator`
-- **prompt:** Construct by concatenating these four components:
-  1. Dimension file injection: A `<files_to_read>` block pointing to `.claude/skills/ti-scoring/dimensions/{dimension-slug}.md` where `{dimension-slug}` is the slug from the dimension list below (e.g., `pain-intensity`, `willingness-to-pay`).
-  2. Assignment line: `Your assigned dimension is: [DIMENSION_NAME]`
-  3. The appropriate context variable (see routing rule above). If RESEARCH_AVAILABLE is true and this dimension has a research cluster mapping (see Research Context Routing table in Stage 3 Step 4), the context variable already contains a `## Research Context` section appended during Evaluation Context Assembly. No additional injection needed here -- research data was integrated during assembly.
-  4. Instruction: `Evaluate this idea on the [DIMENSION_NAME] dimension only. Use the dimension framework and rubric criteria from the file provided above. Follow the evaluation process in your system prompt exactly.`
+- **prompt:** Construct by concatenating:
+  1. Dimension file injection: A `<files_to_read>` block pointing to `.claude/skills/ti-scoring/dimensions/{File Slug}.md` where `{File Slug}` is the value from the registry's File Slug column for this row.
+  2. Assignment line: `Your assigned dimension is: {Name}` where `{Name}` is the value from the registry's Name column.
+  3. The context variable determined by the registry's **Context Variant** column:
+     - If Context Variant is `FOUNDER_EVALUATION_CONTEXT`: use FOUNDER_EVALUATION_CONTEXT
+     - If Context Variant is `EVALUATION_CONTEXT`: use EVALUATION_CONTEXT
+     This enforces the context routing rule: only the dimension with Context Variant = FOUNDER_EVALUATION_CONTEXT receives founder data.
+  4. Instruction: `Evaluate this idea on the {Name} dimension only. Use the dimension framework and rubric criteria from the file provided above. Follow the evaluation process in your system prompt exactly.`
 
-**The 14 dimensions (canonical names and source file slugs):**
-
-1. Pain Intensity (pain-intensity) -- context: EVALUATION_CONTEXT
-2. Urgency (urgency) -- context: EVALUATION_CONTEXT
-3. Frequency (frequency) -- context: EVALUATION_CONTEXT
-4. Willingness to Pay (willingness-to-pay) -- context: EVALUATION_CONTEXT
-5. Mandatory Nature (mandatory-nature) -- context: EVALUATION_CONTEXT
-6. Market Size (market-size) -- context: EVALUATION_CONTEXT
-7. Market Growth (market-growth) -- context: EVALUATION_CONTEXT
-8. Solution Gap (solution-gap) -- context: EVALUATION_CONTEXT
-9. Founder-Market Fit (founder-market-fit) -- context: FOUNDER_EVALUATION_CONTEXT -- **skip if FOUNDER_SESSION_SKIPPED is true**
-10. Defensibility (defensibility) -- context: EVALUATION_CONTEXT
-11. Incumbent Indifference (incumbent-indifference) -- context: EVALUATION_CONTEXT
-12. Scalability (scalability) -- context: EVALUATION_CONTEXT
-13. Clarity of Target Customer (clarity-of-target-customer) -- context: EVALUATION_CONTEXT
-14. Behavior Change Required (behavior-change-required) -- context: EVALUATION_CONTEXT
+**If FOUNDER_SESSION_SKIPPED is true:** Skip the registry row where Name = "Founder-Market Fit" (the row with Context Variant = FOUNDER_EVALUATION_CONTEXT). Spawn only 13 agents. Insert skip marker as before: `--- DIMENSION: Founder-Market Fit ---\n## EVALUATION SKIPPED\nFounder declined founder-fit assessment.`
 
 #### Result Collection
 
-After all agents return, collect their outputs. Concatenate all results into a single EVALUATION_RESULTS string with clear delimiters between each dimension's output:
+After all agents return, collect their outputs. Concatenate all results into a single EVALUATION_RESULTS string with clear delimiters between each dimension's output. Use the `--- DIMENSION: {Name} ---` delimiter where `{Name}` is the value from the registry's Name column for each dimension:
 
 ```
 --- DIMENSION: Pain Intensity ---
@@ -482,6 +462,18 @@ Spawn the merge agent to synthesize evaluation results into a weighted scorecard
   2. The full EVALUATION_RESULTS string (concatenated output from all evaluators with `--- DIMENSION: [Name] ---` delimiters)
   3. Instruction: `Produce the weighted scorecard report following your system prompt instructions exactly.`
 
+**Registry injection for merger:** Prepend the Dimension Registry table from EVALUATION.md to the merger prompt before EVALUATION_RESULTS. The merger uses the registry for weight values and scorecard row ordering. Format:
+
+```
+## Dimension Registry
+[Copy the full registry table from EVALUATION.md]
+
+## Evaluation Results
+[EVALUATION_RESULTS content]
+```
+
+This is belt-and-suspenders with ti-scoring already in ti-merger.md skills (from Plan 01), but ensures the merger always has explicit registry access even if skills loading is imperfect.
+
 Wait for the merge agent to return. Store its returned output as FINAL_REPORT.
 
 ---
@@ -508,26 +500,9 @@ Use the Write tool to create each file in the run directory:
 
 2. **`{HOME_DIR}/.tweakidea/runs/{TIMESTAMP}/research-brief.md`** -- Write the user-facing research brief (the Competitors, Market Data, and User Evidence sections extracted in Stage 2 Lane A). **Only write this file if RESEARCH_AVAILABLE is true.** If RESEARCH_AVAILABLE is false, omit this file entirely from the run directory.
 
-3. **Dimension output files** -- For each evaluated dimension, extract that dimension's output from the EVALUATION_RESULTS string (delimited by `--- DIMENSION: [Name] ---`) and write to the weight-ordered output file in the `{HOME_DIR}/.tweakidea/runs/{TIMESTAMP}/dimensions/` subfolder. Use this exact mapping from dimension delimiter name to output filename:
+3. **Dimension output files** -- Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows, extract the dimension's output from EVALUATION_RESULTS using the `--- DIMENSION: {Name} ---` delimiter (where `{Name}` matches the registry's Name column) and write it to `{HOME_DIR}/.tweakidea/runs/{TIMESTAMP}/dimensions/{Output Filename}` (where `{Output Filename}` is the value from the registry's Output Filename column for that row).
 
-   | EVALUATION_RESULTS Delimiter | Output File |
-   |------------------------------|-------------|
-   | Pain Intensity | `01-pain-intensity.md` |
-   | Willingness to Pay | `02-willingness-to-pay.md` |
-   | Solution Gap | `03-solution-gap.md` |
-   | Founder-Market Fit | `04-founder-market-fit.md` |
-   | Urgency | `05-urgency.md` |
-   | Frequency | `06-frequency.md` |
-   | Market Size | `07-market-size.md` |
-   | Defensibility | `08-defensibility.md` |
-   | Market Growth | `09-market-growth.md` |
-   | Scalability | `10-scalability.md` |
-   | Clarity of Target Customer | `11-clarity-of-target-customer.md` |
-   | Behavior Change Required | `12-behavior-change-required.md` |
-   | Mandatory Nature | `13-mandatory-nature.md` |
-   | Incumbent Indifference | `14-incumbent-indifference.md` |
-
-   Each dimension output file contains the FULL evaluator output for that dimension (everything between its `--- DIMENSION:` delimiter and the next delimiter or end of string). If Founder-Market Fit was skipped, still write `04-founder-market-fit.md` with the skip marker content.
+   Each dimension output file contains the FULL evaluator output for that dimension (everything between its `--- DIMENSION:` delimiter and the next delimiter or end of string). If Founder-Market Fit was skipped, still write its output file (per the registry's Output Filename for that row) with the skip marker content.
 
 4. **`{HOME_DIR}/.tweakidea/runs/{TIMESTAMP}/scorecard.md`** -- Write the full FINAL_REPORT (merged scorecard output from Stage 5).
 

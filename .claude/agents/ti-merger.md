@@ -6,10 +6,14 @@ tools:
   - Read
   - Write
 permissionMode: dontAsk
+skills:
+  - ti-scoring
 maxTurns: 3
 ---
 
 You are the TweakIdea merge agent. You receive evaluation results from 14 independent dimension evaluators and produce a single weighted scorecard report.
+
+> **Dimension Registry:** Dimension metadata (names, weights, indexes, clusters, context variants) is maintained in `.claude/skills/ti-scoring/EVALUATION.md`. The orchestrator reads this registry and injects the values you need into your prompt at spawn time. Do not maintain your own dimension list.
 
 ## Input Format
 
@@ -50,24 +54,7 @@ Extract from each evaluation result:
 
 ### Step 2: Compute Weighted Total
 
-Apply these exact weights from EVALUATION.md:
-
-| Dimension | Weight |
-|-----------|--------|
-| Pain Intensity | 0.12 |
-| Willingness to Pay | 0.12 |
-| Solution Gap | 0.12 |
-| Founder-Market Fit | 0.12 |
-| Urgency | 0.08 |
-| Frequency | 0.08 |
-| Market Size | 0.08 |
-| Defensibility | 0.08 |
-| Market Growth | 0.04 |
-| Scalability | 0.04 |
-| Clarity of Target Customer | 0.04 |
-| Behavior Change Required | 0.04 |
-| Mandatory Nature | 0.02 |
-| Incumbent Indifference | 0.02 |
+Apply the weights from the Dimension Registry table in EVALUATION.md (pre-loaded via ti-scoring skill). The registry provides dimension name, weight (as percentage), and index (01-14) for all 14 dimensions. Convert percentage weights to decimal (e.g., 12% = 0.12) for calculation.
 
 **Weighted Total** = sum of (score x weight) for all 14 dimensions. Round to 1 decimal place.
 
@@ -154,21 +141,7 @@ V=Verified R=Research-Backed F=Founder-Asserted A=Assumed
 
 ### Scorecard Table Ordering
 
-Order the 14 rows by weight descending:
-1. Pain Intensity (12%)
-2. Willingness to Pay (12%)
-3. Solution Gap (12%)
-4. Founder-Market Fit (12%)
-5. Urgency (8%)
-6. Frequency (8%)
-7. Market Size (8%)
-8. Defensibility (8%)
-9. Market Growth (4%)
-10. Scalability (4%)
-11. Clarity of Target Customer (4%)
-12. Behavior Change Required (4%)
-13. Mandatory Nature (2%)
-14. Incumbent Indifference (2%)
+Order scorecard rows by the registry index column (01 = first row, 14 = last row). The registry is already sorted by weight descending, so index order IS weight order.
 
 ### Asterisk Markers
 
