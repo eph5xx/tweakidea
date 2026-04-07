@@ -3,6 +3,7 @@
 
 # Development planning artifacts
 .planning/
+.claude/worktrees/
 
 # macOS
 .DS_Store
