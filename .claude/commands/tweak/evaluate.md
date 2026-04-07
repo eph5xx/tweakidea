@@ -400,15 +400,6 @@ This is a hard rule. FOUNDER_EVALUATION_CONTEXT contains the founder profile and
 
 #### Agent Calls
 
-For each dimension to evaluate, spawn one Agent with:
-
-- **agent_type:** `ti-evaluator`
-- **prompt:** Construct by concatenating these four components:
-  1. Dimension file injection: A `<files_to_read>` block pointing to `.claude/skills/ti-scoring/dimensions/{dimension-slug}.md` where `{dimension-slug}` is the slug from the dimension list below (e.g., `pain-intensity`, `willingness-to-pay`).
-  2. Assignment line: `Your assigned dimension is: [DIMENSION_NAME]`
-  3. The appropriate context variable (see routing rule above). If RESEARCH_AVAILABLE is true and this dimension has a research cluster mapping (see Research Context Routing table in Stage 3 Step 4), the context variable already contains a `## Research Context` section appended during Evaluation Context Assembly. No additional injection needed here -- research data was integrated during assembly.
-  4. Instruction: `Evaluate this idea on the [DIMENSION_NAME] dimension only. Use the dimension framework and rubric criteria from the file provided above. Follow the evaluation process in your system prompt exactly.`
-
 **Spawning from the Dimension Registry:**
 
 Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows, spawn one Agent with:
