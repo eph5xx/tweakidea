@@ -1,15 +1,15 @@
 # TweakIdea
 
-A Claude Code skillset that evaluates whether a startup problem is worth solving. It runs 14 independent subagents in parallel -- one per problem dimension -- then merges results into a weighted scorecard with assumption tracking and evidence tiers.
+A Claude Code skillset that evaluates whether a startup problem is worth solving. It runs 14 independent subagents in parallel — one per problem dimension — then merges results into a weighted scorecard with assumption tracking and evidence tiers.
 
 ## How It Works
 
-1. **Capture** -- Describe your startup idea (inline, from a file, or interactively)
-2. **Prepare** -- In parallel: extract testable hypotheses, run web research on competitors/market/users, load your founder profile
-3. **Question** -- Confirm which hypotheses you can verify; answer 2-4 founder-idea fit questions
-4. **Evaluate** -- 14 independent evaluators (Sonnet) score your idea on separate dimensions, each with targeted web searches
-5. **Merge** -- A synthesis agent (Opus) produces a weighted scorecard with verdict, strengths, weaknesses, and next steps
-6. **Store** -- Report displayed inline and saved to `~/.tweakidea/runs/`
+1. **Capture** — Describe your startup idea (inline, from a file, or interactively)
+2. **Prepare** — Two parallel tracks: extract hypotheses + web research in background; interactive founder profile + fit questions
+3. **Assemble** — Display research brief, confirm hypotheses, build evaluation context
+4. **Evaluate** — 14 independent evaluators (Sonnet) score your idea on separate dimensions, each with targeted web searches
+5. **Merge** — A synthesis agent (Opus) produces a weighted scorecard with verdict, strengths, weaknesses, and next steps
+6. **Confirm** — Report displayed inline and saved to `~/.tweakidea/runs/`
 
 The pipeline optionally asks if you want an HTML report alongside the markdown scorecard.
 
@@ -51,7 +51,7 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` -- you should see `evaluate` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `evaluate` in the autocomplete.
 
 ## Quickstart
 
@@ -59,7 +59,7 @@ After install, open Claude Code and type `/tweak:` -- you should see `evaluate` 
 /tweak:evaluate "A mobile app that lets restaurants sell unsold food at a discount 30 minutes before closing"
 ```
 
-First run takes 5-10 minutes (includes founder profile creation). Subsequent runs are faster.
+First run takes 30-40 minutes (includes founder profile creation). Subsequent runs are faster.
 
 ## Example Output
 
@@ -98,4 +98,4 @@ Full report includes all 14 dimensions with rubric assessments, assumption track
 
 ## License
 
-MIT -- see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE](LICENSE) for details.
