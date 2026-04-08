@@ -56,6 +56,7 @@ Produce a structured output with TWO layers:
 - Cite sources (URLs) for key claims
 - If a research area yields nothing, state "No data found" for that section
 - Do not fabricate or hallucinate data
+- Structure the Competitor Comparison Table with real data from your research. If a competitor's pricing is not publicly available, use "—" rather than guessing. Each row should have concrete features, not generic descriptions.
 
 ## Output Format
 
@@ -67,6 +68,15 @@ You MUST use this exact structure:
 ### Competitors
 [List competitors: name, what they do, how they position, relevance to the idea]
 [If none found: "No competitor data found for this idea space."]
+
+**Competitor Comparison Table:**
+
+| Competitor | Key Features | Pricing | Positioning Gap |
+|------------|-------------|---------|-----------------|
+| [Name] | [Top 2-3 features relevant to the evaluated idea] | [Pricing if found, otherwise "—"] | [What the evaluated idea offers that this competitor does not] |
+
+[One row per competitor identified above. If no competitors were found, omit the table entirely.]
+[Pricing column: use actual pricing data if found during research. If pricing is not publicly available, use "—" (em dash).]
 
 ### Market Data
 [Market size signals, growth rates, trend data with sources]

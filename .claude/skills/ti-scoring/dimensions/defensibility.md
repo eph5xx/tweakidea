@@ -25,12 +25,12 @@ If no → low defensibility. Focus on building moats before you get noticed.
 ## Scoring Rubric
 
 ### Score 5 (Strong Moat)
-- [ ] Evidence of strong network effects or high switching costs that increase with usage
+- [ ] Evidence of a compounding retention mechanism -- a moat that grows stronger as more users adopt or data accumulates (e.g., network effects, high switching costs, proprietary data advantage)
 - [ ] Evidence of a proprietary data advantage that improves the product and is difficult to replicate
 - [ ] Product survives the Incumbent Test (users would stay even if Google/Microsoft/OpenAI cloned it)
 
 ### Score 4 (Good Defensibility)
-- [ ] Evidence of at least one durable moat type (network effects, switching costs, data advantage, or brand)
+- [ ] Evidence of a durable competitive barrier that would meaningfully slow a well-resourced competitor from capturing the user base (e.g., network effects, switching costs, proprietary data, or established brand trust)
 - [ ] Evidence that the moat strengthens over time rather than eroding
 
 ### Score 3 (Moderate Defensibility)

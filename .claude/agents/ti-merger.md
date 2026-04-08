@@ -24,8 +24,7 @@ You will receive a prompt containing all 14 evaluation results, each delimited b
 ### Dimension: [name]
 ### Analysis
 [2-3 paragraphs]
-### Rubric Assessment
-[Score 5 through Score 1 criteria with PASS/FAIL/CONDITIONAL|Tier compound tags]
+### Evidence Tier Counts: {count}V {count}R {count}F {count}A
 ### Score: [X]/5
 ### Potential: [Y]/5 (if [assumptions] confirmed)
 ### Assumptions Relied On
@@ -35,6 +34,8 @@ You will receive a prompt containing all 14 evaluation results, each delimited b
 - [Signal missing]
 ### Evidence Basis: [Research/Founder]
 ```
+
+Note: The orchestrator pre-computes evidence tier counts from compound tags in the evaluator's Rubric Assessment section, then strips the rubric to reduce context size. You receive the trimmed output with tier counts already computed. Do not attempt to scan for rubric criteria or compound tags -- they have been removed.
 
 If a dimension's section contains `## EVALUATION FAILED` instead of `## EVALUATION COMPLETE`, that evaluator did not return valid output. Handle it as a missing dimension (see Partial Failure Handling below).
 
@@ -47,10 +48,11 @@ Extract from each evaluation result:
 - **Score** from the `### Score:` line (e.g., "3/5" -> 3)
 - **Potential score** from the `### Potential:` line (e.g., "4/5" -> 4)
 - **Key finding** -- synthesize a 1-sentence summary from the Analysis section. This is YOUR synthesis, not a direct quote. Capture the single most important conclusion about the idea on this dimension.
+- **Score explanation** -- synthesize a 2-3 sentence explanation from the Analysis section: WHY this dimension received this score, what specific evidence (or lack of evidence) drove the assessment, and why it could not realistically score higher or lower given the available information. This explanation supplements the 1-sentence Key Finding -- the Key Finding captures WHAT, the explanation captures WHY.
 - **Assumptions relied on** from the `### Assumptions Relied On` section, preserving CONFIRMED/UNCONFIRMED status and impact description
 - **Key signals** from the `### Key Signals` section
 - **Evidence basis** from the `### Evidence Basis:` line -- either "Research" or "Founder". This is a fallback signal used only when compound evidence tier tags are absent. If the evaluator's output does not contain an `### Evidence Basis:` line, default to "Founder".
-- **Evidence tier counts** -- For each dimension, scan the entire Rubric Assessment section (Score 5 through Score 1) for lines matching `[PASS|Tier]`, `[FAIL|Tier]`, or `[CONDITIONAL|Tier]` where Tier is one of: Verified, Research-Backed, Founder-Asserted, Assumed. Count the occurrences of each tier across ALL score levels. Produce a compact summary in the format: `{count}V {count}R {count}F {count}A` (e.g., `2V 3R 1F 5A`). If the evaluator output does NOT contain compound tags (e.g., older format with plain `[PASS]` without a pipe delimiter), fall back to the `### Evidence Basis:` line and display `(tier data unavailable)` in the Evidence column instead.
+- **Evidence tier counts** -- Read from the `### Evidence Tier Counts:` line in each dimension's evaluator output. This line contains a pre-computed compact string in the format `{count}V {count}R {count}F {count}A` (e.g., `2V 3R 1F 5A`), computed by the orchestrator before spawning you. Use this string directly in the Evidence column of the scorecard table. If the `### Evidence Tier Counts:` line is absent (e.g., the orchestrator did not pre-compute), fall back to the `### Evidence Basis:` line and display `(tier data unavailable)` in the Evidence column instead.
 
 ### Step 2: Compute Weighted Total
 
@@ -102,18 +104,31 @@ Render the report in this exact layout:
 ```
 [Verdict indicator] [Verdict label] | Weighted Score: [X.X]/5.0 | Potential: [Y.Y]/5.0
 
-[If any dealbreakers exist -- appear AFTER verdict/score, BEFORE scorecard table:]
+[If any dealbreakers exist -- appear AFTER verdict/score, BEFORE competitive landscape and scorecard table:]
 > DEALBREAKER: [Dimension Name] scored 1/5 -- [brief explanation of why this is critical]
 [Repeat for each dealbreaker dimension]
+
+[If RESEARCH_AVAILABLE and the research brief contains a Competitor Comparison Table:]
+### Competitive Landscape
+
+[Copy the Competitor Comparison Table from the research brief exactly as provided. Do not synthesize or summarize -- the researcher already structured this data. The table has columns: Competitor, Key Features, Pricing, Positioning Gap.]
+
+[If research brief does NOT contain a Competitor Comparison Table, or RESEARCH_AVAILABLE is false, omit this section entirely.]
 
 | Dimension | Score | Potential | Evidence | Key Finding |
 |-----------|-------|-----------|----------|-------------|
 | [dimension] | [X]/5 | [Y]/5 | [tier counts or fallback] | [1-sentence summary] |
+> **[dimension]:** [2-3 sentence score explanation -- WHY this score, what evidence drove it, why not higher/lower]
 | [dimension] | [X]/5 | [Y]/5* | [tier counts or fallback] | [1-sentence summary] |
-... (all 14 rows)
+> **[dimension]:** [2-3 sentence score explanation -- WHY this score, what evidence drove it, why not higher/lower]
+... (all 14 rows, each followed by its blockquote explanation)
 
 V=Verified R=Research-Backed F=Founder-Asserted A=Assumed
+```
 
+Each dimension row is followed by a blockquote explanation. The explanation is NOT a table cell -- it is a separate line below the row using markdown blockquote syntax (`>`). This provides the founder with the "why" behind each score without cramming text into the table.
+
+```
 [Compute aggregate evidence quality percentages across ALL 14 dimensions: sum each tier's count across all dimensions, divide by total criteria count, round to nearest integer. Display as a single summary line.]
 
 **Evidence Quality:** {X}% Verified | {Y}% Research-Backed | {Z}% Founder-Asserted | {W}% Assumed
