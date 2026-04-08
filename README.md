@@ -40,12 +40,18 @@ The pipeline optionally asks if you want an HTML report alongside the markdown s
 ## Installation
 
 ```bash
-git clone https://github.com/eph5xx/tweakidea.git
-cd tweakidea
-claude
+npx tweakidea
 ```
 
-Type `/tweak:` and you should see `evaluate` in the autocomplete.
+The installer prompts for global (`~/.claude`) or local (`./.claude`) placement.
+
+To uninstall:
+
+```bash
+npx tweakidea -u
+```
+
+After install, open Claude Code and type `/tweak:` -- you should see `evaluate` in the autocomplete.
 
 ## Quickstart
 

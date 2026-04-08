@@ -20,3 +20,11 @@ A Claude Code skillset (slash commands + subagent definitions) that helps founde
 - **Merger model:** Opus (synthesis quality for final scorecard)
 - **Researcher model:** Sonnet (web research in Prepare stage)
 - **Context isolation:** FOUNDER.md passed ONLY to founder-market-fit evaluator; other 13 evaluators get EVALUATION_CONTEXT only
+
+## Development
+
+Source content lives in root-level directories (`agents/`, `commands/`, `skills/`), not inside `.claude/`. The installer (`bin/install.js`) copies these into `.claude/` for Claude Code discovery.
+
+- **Local dev setup:** `node bin/install.js --local` populates `.claude/` from source dirs
+- **Test npx flow:** `npx .` from repo root
+- **After editing source files:** Re-run `node bin/install.js --local` to refresh `.claude/`
