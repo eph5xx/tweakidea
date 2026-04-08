@@ -142,6 +142,16 @@ Score 1 requires ALL criteria: [PASSED/FAILED]
 ### Evidence Basis: [Research/Founder]
 ```
 
+## Output Examples
+
+The following shows correct compound tag format for criterion assessments. Use EXACTLY this format — `[PASS|Tier]`, `[FAIL|Tier]`, or `[CONDITIONAL|Tier]` where Tier is one of: Verified, Research-Backed, Founder-Asserted, Assumed.
+
+### Score 4 Criteria:
+- [PASS|Verified] Target users experience the problem at least weekly (per E-02): Founder states "every invoice cycle" and research confirms 68% of SMB accounting firms process invoices weekly
+- [FAIL|Assumed] Problem severity is quantifiably worse than current workarounds (per E-none): No evidence in inventory; no founder assertion, no research data
+- [CONDITIONAL|Founder-Asserted] Problem has worsened in the past 12 months (per E-05): Depends on [UNCONFIRMED] hypothesis about recent regulation change; if confirmed, this criterion would PASS
+Score 4 requires ALL criteria: FAILED (criterion 2 is FAIL)
+
 ## Critical Rules
 
 1. ONLY evaluate your assigned dimension -- do not discuss or score other dimensions.

@@ -25,7 +25,7 @@
 ### Score 5 (Highly Scalable)
 - [ ] Evidence of software-like margins (70-90%+ gross margin) or a clear path to achieving them
 - [ ] Self-serve onboarding and automated delivery are feasible for the core product
-- [ ] Evidence of decreasing customer acquisition cost at scale (viral loops, network effects, or content flywheel)
+- [ ] Evidence of a self-reinforcing acquisition mechanism that reduces marginal CAC as the user base grows (e.g., viral referral loops, network effects, organic content compounding)
 
 ### Score 4 (Good Scalability)
 - [ ] Evidence that revenue can grow significantly faster than headcount (operational leverage)

@@ -61,7 +61,7 @@ Ask these 5 questions one at a time using AskUserQuestion, waiting for each answ
 | 2 | "What domains do you have deep expertise in?" | Expertise & Domain Knowledge |
 | 3 | "What relevant network or resources do you have? (Connections, advisors, potential early customers, capital access)" | Network & Market Access |
 | 4 | "What can you or your team build? (Technical strengths, capabilities)" | Build Capabilities |
-| 5 | "What drives your passion for this problem space? (Personal connection, motivation)" | Drive & Commitment |
+| 5 | "What drives you to work on hard problems? (Personal motivation, what keeps you going)" | Drive & Commitment |
 
 Preamble before asking: "I don't have a founder profile yet. I'll ask a few quick questions to understand your background -- this helps evaluate founder-market fit and only needs to happen once."
 
@@ -71,7 +71,15 @@ If during the questioning flow the user volunteers additional relevant informati
 
 ## Fit Question Guidance
 
-After profile creation/load and hypothesis confirmation, ask 2-4 questions about the founder's connection to THIS specific idea.
+After profile creation/load, ask 2-4 questions about the founder's connection to THIS specific idea. These questions serve a dual purpose: surface persistent founder attributes while assessing idea-specific fit.
+
+### Design Principle
+
+Each question must simultaneously:
+1. Surface a **persistent founder attribute** (expertise, experience, network, capability) that would appear in FOUNDER.md
+2. Assess **idea-specific fit** by anchoring that attribute to the current idea domain
+
+Do NOT write questions that are purely idea-specific ("How big is this market?") or purely background ("What's your experience?"). The profile creation questions already captured generic background. Fit questions contextualize those attributes to this idea.
 
 ### Focus
 
@@ -84,19 +92,19 @@ Questions must be generated based on:
 - What FOUNDER.md already covers -- do NOT re-ask what is already known
 - Gaps in understanding the founder-idea connection that would help evaluate founder-market fit
 
-### Example Question Areas
+### Example Dual-Purpose Patterns
 
 Adapt to the specific idea -- do not use these verbatim if they don't fit:
-- "What personal experience do you have with [the specific problem]?"
-- "Do you have existing relationships with [the target customer segment]?"
-- "What domain-specific knowledge gives you an edge in [the idea's space]?"
-- "How long have you been thinking about this problem, and what triggered your interest?"
+- "What experience or expertise gives you an edge in [the idea's specific domain]?" -- surfaces expertise (persistent) + idea relevance
+- "Have you personally experienced [the specific problem], and what was your situation?" -- surfaces personal connection (persistent) + idea validation
+- "Do you have existing relationships with [target segment], and how strong is that access?" -- surfaces network (persistent) + idea-specific channel
+- "What have you already built or shipped that's relevant to [this problem area]?" -- surfaces build capability (persistent) + idea relevance
 
 ### Presentation
 
-1. Preview all questions upfront: "I have {N} questions about your connection to this idea:" followed by a numbered list
-2. Ask each question one at a time using AskUserQuestion, waiting for each response
-3. Use single-select options where appropriate (e.g., "Direct experience" / "Observed it" / "Researched it" / "Other") or allow free-text
+Present all 2-4 fit questions in a **single AskUserQuestion call** so the founder sees and answers all questions together in one interaction. Do NOT preview questions first, do NOT ask them one at a time. One call, all questions.
+
+For each question, provide 2-4 answer options relevant to the question type (e.g., depth-of-experience options, yes/no with elaboration, etc.). AskUserQuestion auto-adds "Other" -- do NOT include "Other" as an explicit option.
 
 ### Storage
 

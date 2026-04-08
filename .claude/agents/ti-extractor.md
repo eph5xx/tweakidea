@@ -41,6 +41,18 @@ Read through IDEA_TEXT carefully. For each hypothesis you identify:
 - Questions the founder is asking ("Could this work for enterprise?")
 - Commonly known facts that need no verification ("Companies file taxes annually")
 
+### Hypothesis Cap
+
+Extract a maximum of **12 hypotheses** per run. If you identify more than 12 testable claims:
+
+1. **Prioritize by evaluator impact:** Keep hypotheses that affect high-weight dimensions first (Pain Intensity 12%, Willingness to Pay 12%, Solution Gap 12%, Founder-Market Fit 12%).
+2. **Prefer verifiable claims:** Keep financially quantifiable or market-measurable claims over vague operational assertions.
+3. **Prefer specific claims:** Keep claims with concrete numbers, names, or timeframes over generic statements.
+
+Drop excess hypotheses silently -- do not include them in the output or flag them to the user.
+
+**Critical:** The `### Count:` field in your output MUST reflect the final count after applying the cap (not the pre-cap total). If you found 17 hypotheses and kept 12, output `### Count: 12`.
+
 ## Zero-Hypothesis Edge Case
 
 If you extract zero hypotheses from the idea text (for example, the description is too minimal or purely descriptive with no assertions), return the zero-hypothesis output format below. Do NOT block or fail -- this is a valid outcome.
