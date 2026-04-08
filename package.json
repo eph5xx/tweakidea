@@ -1,0 +1,31 @@
+{
+  "name": "tweakidea",
+  "version": "0.1.0",
+  "description": "14-dimension startup idea evaluator for Claude Code",
+  "bin": {
+    "tweakidea": "bin/install.js"
+  },
+  "files": [
+    "bin",
+    "agents",
+    "commands",
+    "skills"
+  ],
+  "keywords": [
+    "claude",
+    "claude-code",
+    "ai",
+    "startup",
+    "evaluation",
+    "agent"
+  ],
+  "author": "Aleksandr Sarantsev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eph5xx/tweakidea.git"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
