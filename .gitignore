@@ -1,15 +1,7 @@
-# TweakIdea evaluation run outputs (per-user, not tracked)
+# Hidden folders
 .tweakidea/
-
-# Installer-generated (local dev uses: node bin/install.js --local)
-.claude/agents/
-.claude/commands/
-.claude/skills/
-.claude/tweakidea/
-
-# Development planning artifacts
+.claude/
 .planning/
-.claude/worktrees/
 
 # Node
 node_modules/

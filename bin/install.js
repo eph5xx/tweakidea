@@ -32,9 +32,17 @@ const SKILL_DIRS = [
   'ti-scoring',
   'ti-founder',
   'ti-html-report',
+  'ti-hnparse',
 ];
 
-const COMMAND_SRC = 'commands/tweak/evaluate.md';
+const COMMAND_FILES = [
+  'commands/tweak/evaluate.md',
+  'commands/tweak/suggest-from-hn.md',
+];
+
+function cmdSrcToSkillName(cmdSrc) {
+  return cmdSrc.replace('commands/', '').replace('.md', '').split('/').join('-');
+}
 
 // ── CLI argument parsing ────────────────────────────────────────────────────────
 
@@ -121,23 +129,28 @@ function cleanupPreviousInstall(targetDir) {
     }
   }
 
-  // Remove command (local install format)
-  const cmdPath = path.join(targetDir, 'commands', 'tweak', 'evaluate.md');
-  if (fs.existsSync(cmdPath)) {
-    fs.unlinkSync(cmdPath);
-    // Clean empty parent dirs
-    const tweakDir = path.join(targetDir, 'commands', 'tweak');
-    if (fs.existsSync(tweakDir) && fs.readdirSync(tweakDir).length === 0) {
-      fs.rmSync(tweakDir, { recursive: true, force: true });
+  // Remove commands (local install format)
+  for (const cmdSrc of COMMAND_FILES) {
+    const cmdPath = path.join(targetDir, cmdSrc);
+    if (fs.existsSync(cmdPath)) {
+      fs.unlinkSync(cmdPath);
+      removed++;
     }
-    removed++;
+  }
+  // Clean empty parent dirs
+  const tweakDir = path.join(targetDir, 'commands', 'tweak');
+  if (fs.existsSync(tweakDir) && fs.readdirSync(tweakDir).length === 0) {
+    fs.rmSync(tweakDir, { recursive: true, force: true });
   }
 
-  // Remove skill (global install format)
-  const skillPath = path.join(targetDir, 'skills', 'tweak-evaluate');
-  if (fs.existsSync(skillPath)) {
-    rmrf(skillPath);
-    removed++;
+  // Remove command skills (global install format)
+  for (const cmdSrc of COMMAND_FILES) {
+    const skillName = cmdSrcToSkillName(cmdSrc);
+    const skillPath = path.join(targetDir, 'skills', skillName);
+    if (fs.existsSync(skillPath)) {
+      rmrf(skillPath);
+      removed++;
+    }
   }
 
   // Remove version tracking
@@ -257,21 +270,26 @@ function install(isGlobal) {
     );
   }
 
-  // Copy command/skill
+  // Copy commands
   if (isGlobal) {
-    // Global: install as skill (Claude Code discovers skills/*/SKILL.md)
-    const skillDir = path.join(targetDir, 'skills', 'tweak-evaluate');
-    mkdirp(skillDir);
-    copyFileSync(
-      path.join(sourceDir, COMMAND_SRC),
-      path.join(skillDir, 'SKILL.md')
-    );
+    // Global: install as skills (Claude Code discovers skills/*/SKILL.md)
+    for (const cmdSrc of COMMAND_FILES) {
+      const skillName = cmdSrcToSkillName(cmdSrc);
+      const skillDir = path.join(targetDir, 'skills', skillName);
+      mkdirp(skillDir);
+      copyFileSync(
+        path.join(sourceDir, cmdSrc),
+        path.join(skillDir, 'SKILL.md')
+      );
+    }
   } else {
-    // Local: install as command (Claude Code discovers commands/**/*.md)
-    copyFileSync(
-      path.join(sourceDir, COMMAND_SRC),
-      path.join(targetDir, 'commands', 'tweak', 'evaluate.md')
-    );
+    // Local: install as commands (Claude Code discovers commands/**/*.md)
+    for (const cmdSrc of COMMAND_FILES) {
+      copyFileSync(
+        path.join(sourceDir, cmdSrc),
+        path.join(targetDir, cmdSrc)
+      );
+    }
   }
 
   // Merge settings
@@ -287,9 +305,14 @@ function install(isGlobal) {
   const skillCount = SKILL_DIRS.filter((d) =>
     fs.existsSync(path.join(targetDir, 'skills', d))
   ).length;
-  const hasCommand = isGlobal
-    ? fs.existsSync(path.join(targetDir, 'skills', 'tweak-evaluate', 'SKILL.md'))
-    : fs.existsSync(path.join(targetDir, 'commands', 'tweak', 'evaluate.md'));
+  const commandCount = COMMAND_FILES.filter((cmdSrc) => {
+    if (isGlobal) {
+      const skillName = cmdSrcToSkillName(cmdSrc);
+      return fs.existsSync(path.join(targetDir, 'skills', skillName, 'SKILL.md'));
+    } else {
+      return fs.existsSync(path.join(targetDir, cmdSrc));
+    }
+  }).length;
 
   console.log('');
   console.log(`${green}${bold}TweakIdea v${pkg.version} installed successfully!${reset}`);
@@ -297,10 +320,21 @@ function install(isGlobal) {
   console.log(`  ${dim}Location:${reset}  ${displayPath} (${location})`);
   console.log(`  ${dim}Agents:${reset}    ${agentCount} installed`);
   console.log(`  ${dim}Skills:${reset}    ${skillCount} installed`);
-  console.log(`  ${dim}Command:${reset}   ${hasCommand ? 'yes' : 'MISSING'}`);
+  console.log(`  ${dim}Commands:${reset}  ${commandCount} installed`);
   console.log('');
+  // Check for uv (needed by suggest-from-hn)
+  try {
+    require('child_process').execSync('command -v uv', { stdio: 'ignore' });
+  } catch {
+    console.log(`  ${yellow}Note:${reset} /tweak:suggest-from-hn requires 'uv' (Python package runner)`);
+    console.log(`  ${dim}Install: curl -LsSf https://astral.sh/uv/install.sh | sh${reset}`);
+    console.log(`  ${dim}Or: brew install uv${reset}`);
+    console.log('');
+  }
+
   console.log(`${cyan}Get started:${reset}`);
   console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);
+  console.log(`  ${bold}/tweak:suggest-from-hn${reset} ${dim}<hn-url-or-id>${reset}`);
   console.log('');
 }
 

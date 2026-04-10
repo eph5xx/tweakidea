@@ -9,7 +9,8 @@ tweakidea/
   bin/
     install.js            # Installer: copies source into .claude/ for Claude Code
   commands/tweak/
-    evaluate.md           # Main evaluation pipeline (6 stages)
+    evaluate.md           # Evaluation pipeline (6 stages)
+    suggest-from-hn.md    # HN opportunity discovery (7 phases)
   agents/
     ti-extractor.md       # Hypothesis extractor (Sonnet)
     ti-evaluator.md       # Dimension evaluator (spawned 14x with Sonnet)
@@ -24,16 +25,19 @@ tweakidea/
       SKILL.md            # Founder profile template and fit question guidance
     ti-html-report/
       SKILL.md            # HTML report template and generation rules
+    ti-hnparse/
+      SKILL.md            # Skill metadata (not user-invocable)
+      hnparse.py          # HN fetcher script (Python, runs via uv)
   package.json            # npm package metadata (name, version, bin entry)
 ```
 
 Source files live in the root-level directories above. The installer (`bin/install.js`) copies them into `.claude/` where Claude Code discovers them. **Edit the root-level files, not the `.claude/` copies.**
 
-- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the main orchestrator containing the full 6-stage pipeline.
+- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline).
 
-- **Agents** (`agents/`): Subagent definitions spawned by the orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-merger.md` synthesizes the final scorecard on Opus. `ti-researcher.md` gathers web research on Sonnet.
+- **Agents** (`agents/`): Subagent definitions spawned by the evaluate orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-merger.md` synthesizes the final scorecard on Opus. `ti-researcher.md` gathers web research on Sonnet.
 
-- **Skills** (`skills/`): Reference knowledge auto-loaded into agent context. `ti-scoring/` contains the evaluation framework (14 dimensions + weights), scoring rubrics, and individual dimension definitions. `ti-founder/` contains the founder profile template and fit question guidance. `ti-html-report/` contains the HTML report template and generation rules.
+- **Skills** (`skills/`): Reference knowledge auto-loaded into agent context. `ti-scoring/` contains the evaluation framework (14 dimensions + weights), scoring rubrics, and individual dimension definitions. `ti-founder/` contains the founder profile template and fit question guidance. `ti-html-report/` contains the HTML report template and generation rules. `ti-hnparse/` contains the Python script that fetches HN posts via the Algolia API.
 
 ## Evaluation Pipeline
 
@@ -47,6 +51,18 @@ The `/tweak:evaluate` command runs a 6-stage pipeline:
 6. **Confirm** — Display inline report and save artifacts to `~/.tweakidea/runs/{timestamp}/`
 
 Each evaluator agent gets its own context window and never sees other dimensions' results. This prevents anchoring bias.
+
+## Suggest-from-HN Pipeline
+
+The `/tweak:suggest-from-hn` command runs a 7-phase pipeline (no subagents — analysis runs inline):
+
+1. **Capture** — Parse HN URL or item ID from arguments (or prompt interactively)
+2. **Fetch** — Run `hnparse.py` via `uv` to download the post, article, and comment tree
+3. **Read** — Load the full `content.md` (all chunks — late comments often have the strongest signals)
+4. **Analyze** — Identify 3-6 technology shifts with evidence-grounded product opportunities
+5. **Write Shifts** — Save analysis to `~/.tweakidea/hn/hn-{id}/shifts.md`
+6. **Confirm** — Present opportunities for user selection via multi-select prompts
+7. **Write Ideas** — Save confirmed opportunities as detailed problem/solution writeups to `ideas.md`
 
 ## Dimension Files
 
@@ -66,13 +82,15 @@ To modify a dimension's scoring behavior, edit its dimension file. To add a new 
 | Scoring criteria for a dimension | `skills/ti-scoring/dimensions/{name}.md` |
 | Dimension weights | `skills/ti-scoring/EVALUATION.md` |
 | Scoring algorithm | `skills/ti-scoring/EVALUATION.md` |
-| Pipeline behavior | `commands/tweak/evaluate.md` |
+| Evaluate pipeline behavior | `commands/tweak/evaluate.md` |
 | Merge/scorecard logic | `agents/ti-merger.md` |
 | Research strategy | `agents/ti-researcher.md` |
 | Evaluator behavior | `agents/ti-evaluator.md` |
 | Founder profile template | `skills/ti-founder/SKILL.md` |
 | HTML report template | `skills/ti-html-report/SKILL.md` |
 | Hypothesis extraction | `agents/ti-extractor.md` |
+| Suggest pipeline behavior | `commands/tweak/suggest-from-hn.md` |
+| HN fetch/parse logic | `skills/ti-hnparse/hnparse.py` |
 
 ### PR conventions
 
@@ -87,6 +105,7 @@ TweakIdea stores user data outside the repository:
 
 - `~/.tweakidea/FOUNDER.md` — Persistent founder profile
 - `~/.tweakidea/runs/{timestamp}/` — Evaluation run outputs
+- `~/.tweakidea/hn/hn-{id}/` — HN suggest outputs (content.md, shifts.md, ideas.md)
 
 These paths are never committed to the repository. If you're testing, your personal data stays in your home directory.
 

@@ -1,8 +1,10 @@
 # TweakIdea
 
-A Claude Code skillset that evaluates whether a startup problem is worth solving. It runs 14 independent subagents in parallel — one per problem dimension — then merges results into a weighted scorecard with assumption tracking and evidence tiers.
+A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Two commands: **evaluate** an idea across 14 weighted dimensions, or **suggest** new ideas from Hacker News discussions.
 
-## How It Works
+## Evaluate: `/tweak:evaluate`
+
+Runs 14 independent subagents in parallel — one per problem dimension — then merges results into a weighted scorecard with assumption tracking and evidence tiers.
 
 1. **Capture** — Describe your startup idea (inline, from a file, or interactively)
 2. **Prepare** — Two parallel tracks: extract hypotheses + web research in background; interactive founder profile + fit questions
@@ -12,6 +14,18 @@ A Claude Code skillset that evaluates whether a startup problem is worth solving
 6. **Confirm** — Report displayed inline and saved to `~/.tweakidea/runs/`
 
 The pipeline optionally asks if you want an HTML report alongside the markdown scorecard.
+
+## Suggest: `/tweak:suggest-from-hn`
+
+Fetches a Hacker News post (article + full comment tree), identifies technology shifts, and surfaces product opportunities grounded in evidence from the discussion.
+
+1. **Fetch** — Download the HN post, linked article, and all comments
+2. **Analyze** — Identify 3-6 technology shifts (specific changes in capability, cost, or access)
+3. **Suggest** — Surface 1-3 product opportunities per shift, each with a named product, target customer, and timing rationale
+4. **Confirm** — Select which opportunities to develop into full ideas
+5. **Write** — Detailed problem/solution writeups saved to `~/.tweakidea/hn/hn-{id}/`
+
+Confirmed ideas can be fed directly into `/tweak:evaluate` for a full 14-dimension assessment.
 
 ## The 14 Dimensions
 
@@ -36,6 +50,7 @@ The pipeline optionally asks if you want an HTML report alongside the markdown s
 
 - [Claude Code](https://claude.ai/download) installed
 - Model access: **Claude Sonnet** (evaluators + researcher) and **Claude Opus** (merge agent)
+- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:suggest-from-hn` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
 
 ## Installation
 
@@ -51,15 +66,25 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` — you should see `evaluate` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `evaluate` and `suggest-from-hn` in the autocomplete.
+
+For better article extraction from JS-heavy sites, optionally run `uv run playwright install chromium` once. Without it, the script falls back to plain HTTP which works fine for most sites.
 
 ## Quickstart
+
+**Evaluate an idea:**
 
 ```
 /tweak:evaluate "A mobile app that lets restaurants sell unsold food at a discount 30 minutes before closing"
 ```
 
 First run takes 30-40 minutes (includes founder profile creation). Subsequent runs are faster.
+
+**Discover opportunities from HN:**
+
+```
+/tweak:suggest-from-hn https://news.ycombinator.com/item?id=43374458
+```
 
 ## Example Output
 
