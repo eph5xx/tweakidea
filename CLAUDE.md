@@ -2,13 +2,13 @@
 
 **TweakIdea**
 
-A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate whether a startup problem is worth solving. The system runs 14 independent subagents -- one per problem dimension -- in parallel, then merges results into a weighted scorecard. It emphasizes honest evaluation by detecting unverified assumptions, debating hypotheses with the founder, and incorporating founder-market fit analysis.
+A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Two commands: `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking. `/tweak:suggest-from-hn` analyzes Hacker News discussions to identify technology shifts and surface product ideas.
 
-**Core Value:** Deliver an honest, assumption-aware evaluation of a startup problem across 14 dimensions so founders can decide whether to pursue, pivot, or abandon -- before wasting months building.
+**Core Value:** Help founders make better decisions -- evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
 ### Constraints
 
-- **Platform**: Claude Code CLI -- slash commands + agent definitions only, no external runtime
+- **Platform**: Claude Code CLI -- slash commands + agent definitions only. One exception: `suggest-from-hn` uses `uv` + Python for HN fetching
 - **Evaluation model**: All 14 dimensions from EVALUATION.md must be covered, no skipping
 - **Independence**: Each subagent evaluates its dimension without seeing other dimensions' results
 - **Clean context**: Each evaluation run should be independent -- no cross-contamination between runs
@@ -20,6 +20,8 @@ A Claude Code skillset (slash commands + subagent definitions) that helps founde
 - **Merger model:** Opus (synthesis quality for final scorecard)
 - **Researcher model:** Sonnet (web research in Prepare stage)
 - **Context isolation:** FOUNDER.md passed ONLY to founder-market-fit evaluator; other 13 evaluators get EVALUATION_CONTEXT only
+- **HN data location:** `~/.tweakidea/hn/hn-{id}/`
+- **HN analysis model:** Inline (no subagent -- runs in command context)
 
 ## Development
 
