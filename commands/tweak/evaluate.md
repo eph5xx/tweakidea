@@ -317,6 +317,29 @@ If the user selects "Other" and provides free text in any group, treat that text
 
 After confirmation is complete, store the final tagged HYPOTHESES_LIST (each hypothesis now carrying `[CONFIRMED]` or `[UNCONFIRMED]` along with its dimension tag) for use by downstream pipeline stages.
 
+**Progressive write:** If HYPOTHESES_LIST is non-empty, use the Write tool to create `{RUN_DIR}/assumptions.md` with the tagged hypotheses:
+
+```
+# Assumptions
+
+## Confirmed
+- [Hypothesis text] (Primary dimension: [dimension name])
+- ...
+
+## Unconfirmed
+- [Hypothesis text] (Primary dimension: [dimension name])
+- ...
+```
+
+List only the sections that have entries (omit `## Confirmed` if none are confirmed, omit `## Unconfirmed` if none are unconfirmed). If ADDITIONAL_FOUNDER_NOTES is non-empty, append:
+
+```
+## Additional Notes
+[ADDITIONAL_FOUNDER_NOTES]
+```
+
+If HYPOTHESES_LIST is empty (zero-hypothesis edge case), skip writing `assumptions.md` entirely.
+
 ### Step 3: Evaluation Context Assembly
 
 Build evaluation context variants in memory. Do NOT write these to files -- they are held in memory for Stage 4 subagent injection.
@@ -594,23 +617,19 @@ All output artifacts were written progressively during Stages 1-5. This stage di
 
 ### Step 1: Display confirmation
 
-Count the files in the run directory and display:
+Count the files in the run directory and display. Build the file list dynamically by including each conditional file only when it was written:
 
-If HTML_REQUESTED is true and RESEARCH_AVAILABLE is true:
-> idea.md + research-brief.md + [13 or 14] dimension files + scorecard.md + report.html saved to `~/.tweakidea/runs/{RUN_TIMESTAMP}/`
+- `idea.md` — always included
+- `assumptions.md` — included only when HYPOTHESES_LIST was non-empty
+- `research-brief.md` — included only when RESEARCH_AVAILABLE is true
+- `[13 or 14] dimension files` — use "13" when FOUNDER_SESSION_SKIPPED is true, "14" otherwise
+- `scorecard.md` — always included
+- `report.html` — included only when HTML_REQUESTED is true
+
+Join the applicable items with ` + ` and append ` saved to ~/.tweakidea/runs/{RUN_TIMESTAMP}/`.
+
+If HTML_REQUESTED is true, add a second line:
 > HTML report: `~/.tweakidea/runs/{RUN_TIMESTAMP}/report.html`
-
-If HTML_REQUESTED is true and RESEARCH_AVAILABLE is false:
-> idea.md + [13 or 14] dimension files + scorecard.md + report.html saved to `~/.tweakidea/runs/{RUN_TIMESTAMP}/`
-> HTML report: `~/.tweakidea/runs/{RUN_TIMESTAMP}/report.html`
-
-If HTML_REQUESTED is false and RESEARCH_AVAILABLE is true:
-> idea.md + research-brief.md + [13 or 14] dimension files + scorecard.md saved to `~/.tweakidea/runs/{RUN_TIMESTAMP}/`
-
-If HTML_REQUESTED is false and RESEARCH_AVAILABLE is false:
-> idea.md + [13 or 14] dimension files + scorecard.md saved to `~/.tweakidea/runs/{RUN_TIMESTAMP}/`
-
-Use "13 dimension files" when FOUNDER_SESSION_SKIPPED is true, "14 dimension files" otherwise.
 
 If any progressive write failed earlier in the pipeline, add:
 > Note: Some files could not be saved. The evaluation report above is your complete result.
