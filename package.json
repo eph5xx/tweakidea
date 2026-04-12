@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test": "node scripts/run-tests.cjs",
-    "prepublishOnly": "node scripts/prepublish-check.js"
+    "prepublishOnly": "npm test"
   },
   "files": [
     "bin",
