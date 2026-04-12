@@ -1,11 +1,11 @@
 name: release
 
 on:
-  push:
-    tags: ['v*']
+  release:
+    types: [published]
 
 permissions:
-  contents: write
+  contents: read
   id-token: write
 
 concurrency:
@@ -23,16 +23,14 @@ jobs:
         with:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org'
-      - name: Assert tag matches package.json version
+      - name: Set package.json version from release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
         run: |
-          PKG_VERSION="v$(node -p "require('./package.json').version")"
-          if [ "$PKG_VERSION" != "${GITHUB_REF_NAME}" ]; then
-            echo "::error::Tag ${GITHUB_REF_NAME} does not match package.json version ${PKG_VERSION}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9.-]+)?$ ]]; then
+            echo "::error::Release tag '$TAG' is not a valid vX.Y.Z[-prerelease] form"
             exit 1
           fi
-      - run: npm test
+          VERSION="${TAG#v}"
+          npm version "$VERSION" --no-git-tag-version --allow-same-version
       - run: npm publish --provenance --access public
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh release create "${GITHUB_REF_NAME}" --generate-notes
