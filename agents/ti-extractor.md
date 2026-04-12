@@ -2,6 +2,8 @@
 name: ti-extractor
 description: Extracts testable claims and hypotheses from startup idea text, tagging each with the most relevant evaluation dimension.
 model: sonnet
+tools: []
+permissionMode: dontAsk
 skills:
   - ti-scoring
 maxTurns: 3

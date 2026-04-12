@@ -5,6 +5,10 @@
   "bin": {
     "tweakidea": "bin/install.js"
   },
+  "scripts": {
+    "test": "node scripts/run-tests.cjs",
+    "prepublishOnly": "node scripts/prepublish-check.js"
+  },
   "files": [
     "bin",
     "agents",
