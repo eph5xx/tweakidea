@@ -1,6 +1,6 @@
 {
   "name": "tweakidea",
-  "version": "1.1.0",
+  "version": "0.0.0",
   "description": "14-dimension startup idea evaluator for Claude Code",
   "bin": {
     "tweakidea": "bin/install.js"
@@ -30,6 +30,6 @@
     "url": "git+https://github.com/eph5xx/tweakidea.git"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0"
   }
 }
