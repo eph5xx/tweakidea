@@ -1,0 +1,41 @@
+{
+  "dimension": "Market Growth",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of explosive category creation or winner-takes-all dynamics in SMB fintech automation"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "18% CAGR is strong but not hypergrowth; no technology shift (e.g., AI adoption wave) specifically accelerating this niche"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Research-Backed",
+      "evidence": "IDC: SMB fintech automation market $4.2B in 2025, growing at 18% CAGR — market expanding faster than most SaaS categories"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Ongoing SaaS proliferation (more teams adopting multiple payment processors) structurally grows the addressable problem space"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "18% CAGR in SMB fintech automation (IDC 2025)",
+    "SaaS proliferation structurally grows the target segment",
+    "No hypergrowth catalyst identified"
+  ],
+  "evidence_basis": "Research",
+  "analysis_narrative": "The market growth trajectory is positive and above average for SaaS infrastructure tools. An 18% CAGR in SMB fintech automation means the addressable market doubles roughly every four years — creating room for new entrants without requiring share from incumbents in the near term.\n\nThe structural tailwind is real: more SaaS companies means more teams adopting multiple payment processors, which means more teams hitting the multi-processor reconciliation problem. This is a natural demand multiplier that requires no marketing to create.\n\nScore 4 would require a specific growth catalyst — such as new regulations requiring more frequent reconciliation reporting, or an AI breakthrough that makes automated matching dramatically better — neither of which is evident from current research.",
+  "key_finding": "Market growth is healthy at 18% CAGR with a structural SaaS-proliferation tailwind, but not hypergrowth requiring a first-mover rush.",
+  "score_explanation": "Score 3 reflects above-average growth (18% CAGR) with a structural tailwind, without the hypergrowth or category-creation dynamics that would warrant Score 4 or 5."
+}
