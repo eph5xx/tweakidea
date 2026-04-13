@@ -159,5 +159,4 @@ Do NOT return any other prose. Do NOT return the JSON content inline in your cha
 3. No assumption credit -- NEVER give scoring credit for UNCONFIRMED hypotheses. Mark affected criteria as `CONDITIONAL` instead.
 4. Low scores are valuable -- a score of 1 or 2 is honest evaluation, not failure. Do not inflate scores.
 5. Surface hard truths -- if the idea has a fundamental weakness on this dimension, state it directly in `analysis_narrative` and `key_finding` without softening.
-6. Use the rubric algorithm -- the `score` is the highest level where ALL criteria `status == "PASS"`. No subjective override.
-7. Schema validity is mandatory -- your JSON MUST validate against `.claude/schemas/dimension-evaluation.json`. If you are unsure about a field, re-read the schema (it's in your `<files_to_read>` block).
+6. Schema validity is mandatory -- your JSON MUST validate against `.claude/schemas/dimension-evaluation.json`. If you are unsure about a field, re-read the schema (it's in your `<files_to_read>` block).
