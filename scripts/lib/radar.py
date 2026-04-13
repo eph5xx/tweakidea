@@ -1,6 +1,6 @@
 """SVG radar chart math for TweakIdea dimension scorecard.
 
-Ported verbatim from skills/ti-html-report/SKILL.md lines 166-217 + line 351.
+Ported verbatim from skills/ti-report/SKILL.md lines 166-217 + line 351.
 Uniform 360/14 angular wedges; score vertex at radius (score/5)*150 from center.
 
 This module is called by scripts/compute.py; output stored in numbers.json.radar_svg.
