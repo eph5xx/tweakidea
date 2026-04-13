@@ -181,19 +181,9 @@ Spawn ti-researcher:
 - **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
 - **run_in_background:** true
 
-After the agent returns, check:
+The orchestrator does NOT await this spawn. It proceeds immediately to Lane B (hypothesis extraction + founder confirmation). `ti-researcher` writes `{RUN_DIR}/research.json` on its own schedule — successful output uses `{"available": true, ...}` and intentional failure uses `{"available": false, "reason": "..."}` per the agent's contract in `agents/ti-researcher.md`. The orchestrator synchronizes on this file at Stage 2 Step 4a (Research sync gate), NOT here.
 
-1. If `{RUN_DIR}/research.json` exists, attempt to read it with the Read tool.
-2. If readable and valid JSON, set RESEARCH_AVAILABLE to the value of its `available` field.
-3. If file is missing or unreadable, the orchestrator writes a fallback:
-
-   ```json
-   {"available": false, "reason": "ti-researcher failed or returned no file"}
-   ```
-
-   using the Write tool at `{RUN_DIR}/research.json`.
-
-The orchestrator does NOT parse markdown, does NOT extract clusters by regex, does NOT trim sections. The research.json file IS the interface -- ti-evaluator spawns read research.json themselves (via their Read tool).
+The orchestrator does NOT parse markdown, does NOT extract clusters by regex, does NOT trim sections. The `research.json` file IS the interface — ti-evaluator spawns read it themselves (via their Read tool).
 
 ### Lane B: Hypothesis extraction + founder confirmation
 
@@ -216,7 +206,7 @@ For each hypothesis entry, use AskUserQuestion (or a single list prompt) to ask 
 
 Collect the founder's status for each hypothesis.
 
-**Note for Phase 2:** The concurrency fix (parallel research + confirmation) is explicitly NOT in Phase 1 scope. For Phase 1, Lane B waits for Lane A to complete before proceeding -- same as v1.0 behavior. The file-based interface change is the Phase 1 deliverable; the concurrency fix ships in Phase 2.
+**Concurrency note:** `ti-researcher` was spawned with `run_in_background: true` at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
 #### Lane B Step 3: Write assumptions.json
 
@@ -275,6 +265,81 @@ Follow the **Fit Question Guidance** in the ti-founder skill. Generate 2-4 dual-
 Follow the **Profile Update Rules** in the ti-founder skill. Review the fit Q&A answers for new persistent attributes. If found, present update options via AskUserQuestion and append selected items to FOUNDER.md.
 
 ### Step 4: Spawn 14 evaluators in parallel
+
+#### Step 4a: Research sync gate
+
+Before constructing evaluator prompts, verify that `{RUN_DIR}/research.json` exists and is well-formed JSON. `ti-researcher` was spawned at Stage 1 Lane A as a background task with `run_in_background: true`; this is the single point in the pipeline where the orchestrator awaits its output.
+
+Run the Bash tool to probe the file:
+
+```bash
+if [ -f "{RUN_DIR}/research.json" ]; then
+  python3 -c "import json,sys; json.load(open('{RUN_DIR}/research.json')); print('ready')" 2>/dev/null || echo "invalid"
+else
+  echo "waiting"
+fi
+```
+
+(Substitute the actual `{RUN_DIR}` path captured at Stage 0 Step 3 before running the command.)
+
+Three possible results:
+
+- **`ready`** — The file exists and is valid JSON. Read `{RUN_DIR}/research.json` with the Read tool and inspect the top-level `available` field.
+  - If `available` is `true`: Proceed to the Pre-Spawn Context Isolation Check below.
+  - If `available` is `false`: Jump to **Step 4a-fail: Research failure handler** below.
+
+- **`waiting`** — The file does not exist yet. Research is still in flight.
+  - **If this is the first `waiting` result** (i.e., you have not yet shown a wait message during this Step 4a invocation), display to the founder:
+
+    > Research still running — waiting before spawning evaluators…
+
+  - Re-run the same Bash probe. Continue looping until the result is `ready` or `invalid`. **Do NOT re-display the status message** on subsequent loop iterations — show it once, not per probe.
+  - **There is no timeout on this loop.** `ti-researcher`'s `maxTurns: 15` (from `agents/ti-researcher.md`) already caps its internal budget; the orchestrator trusts that ceiling rather than layering a second timeout. If research genuinely never returns, the founder can abort with Ctrl+C and re-run `/tweak:evaluate`.
+
+- **`invalid`** — The file exists but failed JSON parsing (corruption, partial write, or crashed spawn). Use the Write tool to overwrite `{RUN_DIR}/research.json` with the fallback:
+
+  ```json
+  {"available": false, "reason": "research.json failed JSON validation or was missing after background spawn returned"}
+  ```
+
+  Then jump to **Step 4a-fail: Research failure handler** below.
+
+The orchestrator does NOT parse markdown from research.json, does NOT extract clusters by regex, does NOT trim sections. The file IS the interface — each `ti-evaluator` spawn reads it itself via the Read tool once research is confirmed available.
+
+#### Step 4a-fail: Research failure handler
+
+Triggered from **Step 4a** when either (a) `research.json` contains `{"available": false, ...}`, or (b) the `invalid` branch wrote the fallback after a JSON parse failure. This is the **only** point in the pipeline where research failure is surfaced to the founder — do not display research errors during Lane B (hypothesis confirmation) or Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). Failure detection is buffered to this gate per D-07/D-08.
+
+Use the Read tool to read `{RUN_DIR}/research.json` and capture the `reason` string. Display to the founder:
+
+> **Research did not complete:** `{reason from research.json}`
+>
+> The 14 dimension evaluators can still run — they will fall back to founder-asserted and assumed evidence only. What would you like to do?
+
+Use AskUserQuestion with these three options:
+
+- **"Retry research"** — Re-spawn `ti-researcher` once with the same prompt shape used at Stage 1 Lane A:
+  - **agent_type:** `ti-researcher`
+  - **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
+  - **run_in_background:** false (this retry is synchronous — wait in-line for the result)
+
+  After the retry agent returns, re-run the Step 4a Bash probe. If the result is `ready` AND `available` is `true`, proceed to the Pre-Spawn Context Isolation Check. If the result is `ready` AND `available` is `false`, OR the result is `invalid`, return to Step 4a-fail with the new reason — BUT on this SECOND failure, present only the "Continue without research" and "Abort run" options. Do NOT offer "Retry research" a second time. Single retry only per D-06.
+
+  If the original background `ti-researcher` from Stage 1 is still in flight when the retry spawn completes, its eventual write may overwrite the retry's output; this race is acceptable and produces either the correct successful result or the `invalid` branch, which recurses through this handler. The orchestrator does not attempt to kill the original spawn.
+
+- **"Continue without research"** — Use the Write tool to overwrite `{RUN_DIR}/research.json` with:
+
+  ```json
+  {"available": false, "reason": "founder chose to continue without research"}
+  ```
+
+  Then proceed to the Pre-Spawn Context Isolation Check below. The 14 evaluators will see `available: false` in `research.json` and rely on founder-asserted + assumed evidence only. The normal "research unavailable" banner in `report.md` / `report.html` (rendered by `scripts/render_report.py` from Phase 1) handles the downstream UX — no new banner is needed here.
+
+- **"Abort run"** — Display to the founder:
+
+  > Run directory preserved at `{RUN_DIR}`. Re-run `/tweak:evaluate` when ready.
+
+  Exit the slash command by returning without further instructions. Do NOT clean up `{RUN_DIR}` — preserve it for forensics per D-06. Do NOT write a sentinel file; the absence of `numbers.json` and `report.md` in the run directory is its own diagnostic signal.
 
 #### Pre-Spawn Context Isolation Check
 
