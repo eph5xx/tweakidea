@@ -1,0 +1,47 @@
+{
+  "dimensions": [
+    {
+      "dim": "Willingness to Pay",
+      "score": 3,
+      "potential": 4,
+      "uplift": 0.12,
+      "pending_assumptions": [
+        {"text": "Teams would pay $50-100/month for reconciliation automation", "impact": "Score 4 requires confirmed pricing signal"}
+      ]
+    },
+    {
+      "dim": "Urgency",
+      "score": 2,
+      "potential": 3,
+      "uplift": 0.08,
+      "pending_assumptions": [
+        {"text": "Month-end close pressure creates periodic urgency spikes that drive tool switching", "impact": "Score 3 requires confirmed buying trigger"}
+      ]
+    },
+    {
+      "dim": "Defensibility",
+      "score": 2,
+      "potential": 3,
+      "uplift": 0.08,
+      "pending_assumptions": [
+        {"text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time", "impact": "Score 3 requires architectural decision to build learning layer"}
+      ]
+    },
+    {
+      "dim": "Behavior Change Required",
+      "score": 3,
+      "potential": 4,
+      "uplift": 0.04,
+      "pending_assumptions": [
+        {"text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior", "impact": "Score 4 requires confirmed that CSV export is already habitual"}
+      ]
+    }
+  ],
+  "assumptions": [
+    {"text": "Teams would pay $50-100/month for reconciliation automation", "dim": "Willingness to Pay", "uplift": 0.12},
+    {"text": "Month-end close pressure creates periodic urgency spikes that drive tool switching", "dim": "Urgency", "uplift": 0.08},
+    {"text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time", "dim": "Defensibility", "uplift": 0.08},
+    {"text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior", "dim": "Behavior Change Required", "uplift": 0.04}
+  ],
+  "narrative": "Three assumptions gate the jump from PIVOT (3.2) to GO (3.5): pricing acceptance, urgency, and defensibility. Each is testable with 5-10 customer conversations."
+}

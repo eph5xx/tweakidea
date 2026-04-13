@@ -1,0 +1,47 @@
+{
+  "dimension": "Urgency",
+  "score": 2,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of regulatory deadlines or critical business events forcing immediate adoption"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Pain is chronic but not acute — teams have coping mechanisms (spreadsheets, interns, part-time bookkeepers)"
+    },
+    {
+      "level": 3,
+      "status": "CONDITIONAL",
+      "tier": "Founder-Asserted",
+      "evidence": "Depends on UNCONFIRMED hypothesis that month-end close pressure creates periodic urgency spikes; founder believes this drives willingness to switch but no confirmation"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Teams do the work every month — the problem recurs, creating a persistent but low-urgency demand"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "Month-end close pressure creates periodic urgency spikes that drive tool switching",
+      "status": "UNCONFIRMED",
+      "impact": "If confirmed, Score 3 criterion would PASS, raising score from 2 to 3"
+    }
+  ],
+  "key_signals": [
+    "Pain is chronic and recurrent, not acute",
+    "Existing workarounds reduce felt urgency",
+    "No external deadline or event forcing adoption"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Urgency is the weakest dimension in this evaluation. The problem is real and recurring but not urgent — teams have learned to absorb the 6-hour weekly cost through workarounds: spreadsheets, part-time bookkeepers, or simply accepting occasional reconciliation errors. None of these workarounds are good, but they reduce the urgency to switch to something new.\n\nThe founder hypothesizes that month-end close creates urgency spikes — a plausible theory, but unconfirmed. Even if true, urgency spikes at month-end are a buying trigger, not a continuous adoption driver. B2B tools purchased to solve month-end problems often get abandoned in the intervening weeks.\n\nThis dimension scores 2 because the problem is chronic and the team will not go without a solution, but the pace of buying decisions is slow and the trigger for switching is unclear.",
+  "key_finding": "Urgency is low — the problem is a chronic, managed pain rather than an acute crisis, with no external events forcing immediate resolution.",
+  "score_explanation": "Score 2 reflects a recurring problem with existing workarounds that reduce the felt urgency to switch. Score 3 would require evidence that at least some teams are actively searching for solutions now, which the month-end close hypothesis might provide if confirmed."
+}

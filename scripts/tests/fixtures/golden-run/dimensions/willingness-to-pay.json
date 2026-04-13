@@ -1,0 +1,47 @@
+{
+  "dimension": "Willingness to Pay",
+  "score": 3,
+  "potential": 4,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of teams willing to pay enterprise pricing ($500+/month) for this category"
+    },
+    {
+      "level": 4,
+      "status": "CONDITIONAL",
+      "tier": "Founder-Asserted",
+      "evidence": "Depends on UNCONFIRMED hypothesis that teams would pay $50-100/month — founder believes so but has no pricing conversations"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Verified",
+      "evidence": "Comparable automation tools (Ramp, Brex integrations) command $30-80/month for similar time-saving features; founder's target price is in range"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Teams spending 6+ hours/week at $50/hour engineer time implies $15,000+/year cost — any tool under $2,000/year is ROI-positive"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "Teams would pay $50-100/month for reconciliation automation",
+      "status": "UNCONFIRMED",
+      "impact": "If confirmed, Score 4 criterion would PASS, raising score from 3 to 4"
+    }
+  ],
+  "key_signals": [
+    "Comparable tools in $30-80/month range confirm price tolerance",
+    "ROI math strongly favors any sub-$200/month tool",
+    "No direct pricing conversations yet — founder-asserted only"
+  ],
+  "evidence_basis": "Research",
+  "analysis_narrative": "Willingness to pay is inferred rather than directly validated. The founder has not conducted pricing conversations, so the $50-100/month target is an assumption. However, the market context is supportive: Ramp and Brex integrations that save comparable time trade at $30-80/month, and the ROI math (6 hours/week × $50/hour = $15,600/year saved) makes any sub-$200/month solution a clear win on paper.\n\nThe Score 3 reflects that the pricing range is plausible and market-validated by analogues, but the UNCONFIRMED status of direct willingness-to-pay conversations leaves meaningful risk. Budget holders in finance departments often have separate approval cycles, and SaaS spend under $100/month may require a different buyer than the ops lead who feels the pain.\n\nOne confirmed pricing conversation moving the hypothesis to CONFIRMED would unlock Score 4 and add 0.12 to the weighted total.",
+  "key_finding": "Willingness to pay is market-plausible but unconfirmed — comparable tools and ROI math support $50-100/month, but no direct pricing validation has occurred.",
+  "score_explanation": "Score 3 reflects validated pricing analogues and strong ROI math without direct customer confirmation. Score 4 requires at least one pricing conversation confirming the $50-100/month range, which would convert the CONDITIONAL criterion to PASS."
+}

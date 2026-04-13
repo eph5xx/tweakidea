@@ -1,0 +1,154 @@
+{
+  "weighted_total": 3.2,
+  "potential_total": 3.5,
+  "verdict_bucket": "PIVOT",
+  "verdict_label": "PIVOT \u2014 Promising, address weak areas",
+  "rankings": [
+    {
+      "dim": "Pain Intensity",
+      "slug": "pain-intensity",
+      "score": 4,
+      "potential": 4,
+      "weighted_score": 0.48,
+      "tier_counts": {"verified": 2, "research": 1, "founder": 0, "assumed": 1}
+    },
+    {
+      "dim": "Willingness to Pay",
+      "slug": "willingness-to-pay",
+      "score": 3,
+      "potential": 4,
+      "weighted_score": 0.36,
+      "tier_counts": {"verified": 1, "research": 0, "founder": 1, "assumed": 2}
+    },
+    {
+      "dim": "Solution Gap",
+      "slug": "solution-gap",
+      "score": 4,
+      "potential": 4,
+      "weighted_score": 0.48,
+      "tier_counts": {"verified": 0, "research": 2, "founder": 0, "assumed": 2}
+    },
+    {
+      "dim": "Founder-Market Fit",
+      "slug": "founder-market-fit",
+      "score": 3,
+      "potential": 3,
+      "weighted_score": 0.36,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 3}
+    },
+    {
+      "dim": "Urgency",
+      "slug": "urgency",
+      "score": 2,
+      "potential": 3,
+      "weighted_score": 0.16,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 3}
+    },
+    {
+      "dim": "Frequency",
+      "slug": "frequency",
+      "score": 4,
+      "potential": 4,
+      "weighted_score": 0.32,
+      "tier_counts": {"verified": 1, "research": 1, "founder": 0, "assumed": 2}
+    },
+    {
+      "dim": "Market Size",
+      "slug": "market-size",
+      "score": 3,
+      "potential": 3,
+      "weighted_score": 0.24,
+      "tier_counts": {"verified": 0, "research": 1, "founder": 1, "assumed": 2}
+    },
+    {
+      "dim": "Defensibility",
+      "slug": "defensibility",
+      "score": 2,
+      "potential": 3,
+      "weighted_score": 0.16,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 4}
+    },
+    {
+      "dim": "Market Growth",
+      "slug": "market-growth",
+      "score": 3,
+      "potential": 3,
+      "weighted_score": 0.12,
+      "tier_counts": {"verified": 0, "research": 1, "founder": 0, "assumed": 3}
+    },
+    {
+      "dim": "Scalability",
+      "slug": "scalability",
+      "score": 4,
+      "potential": 4,
+      "weighted_score": 0.16,
+      "tier_counts": {"verified": 1, "research": 0, "founder": 0, "assumed": 3}
+    },
+    {
+      "dim": "Clarity of Target Customer",
+      "slug": "clarity-of-target-customer",
+      "score": 3,
+      "potential": 3,
+      "weighted_score": 0.12,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 3}
+    },
+    {
+      "dim": "Behavior Change Required",
+      "slug": "behavior-change-required",
+      "score": 3,
+      "potential": 4,
+      "weighted_score": 0.12,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 2, "assumed": 2}
+    },
+    {
+      "dim": "Mandatory Nature",
+      "slug": "mandatory-nature",
+      "score": 2,
+      "potential": 2,
+      "weighted_score": 0.04,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 4}
+    },
+    {
+      "dim": "Incumbent Indifference",
+      "slug": "incumbent-indifference",
+      "score": 3,
+      "potential": 3,
+      "weighted_score": 0.06,
+      "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 4}
+    }
+  ],
+  "dealbreaker_dims": [],
+  "evidence_quality": {
+    "verified_pct": 9,
+    "research_pct": 11,
+    "founder_pct": 12,
+    "assumed_pct": 68
+  },
+  "assumption_impact_math": [
+    {
+      "assumption_text": "Teams would pay $50-100/month for reconciliation automation",
+      "dim": "Willingness to Pay",
+      "score_delta": 1,
+      "weighted_uplift": 0.12
+    },
+    {
+      "assumption_text": "Month-end close pressure creates periodic urgency spikes that drive tool switching",
+      "dim": "Urgency",
+      "score_delta": 1,
+      "weighted_uplift": 0.08
+    },
+    {
+      "assumption_text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time",
+      "dim": "Defensibility",
+      "score_delta": 1,
+      "weighted_uplift": 0.08
+    },
+    {
+      "assumption_text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior",
+      "dim": "Behavior Change Required",
+      "score_delta": 1,
+      "weighted_uplift": 0.04
+    }
+  ],
+  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\"><!-- PLACEHOLDER \u2014 replaced by compute.py in Wave 1 test --><polygon points=\"250,50 400,150 400,300 250,390 100,300 100,150\" fill=\"none\" stroke=\"#4f46e5\" stroke-width=\"2\"/></svg>"
+}
