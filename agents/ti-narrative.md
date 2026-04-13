@@ -57,7 +57,7 @@ Do NOT return any other prose. Do NOT return the JSON content inline in your cha
 Schema: `.claude/schemas/verdict.json`. Shape: `{"rationale": string}`.
 
 Content:
-- **`rationale`**: A single paragraph (≤150 words) synthesizing WHY the evaluation reached this verdict. Cite `numbers.weighted_total`, the top 1-2 strengths, and the top 1-2 weaknesses. Reference `numbers.verdict_bucket` by label. Mention dealbreakers if any exist. If evidence quality is low (< 30% Verified + Research-Backed), note that research would tighten confidence.
+- **`rationale`**: A single paragraph (≤150 words) synthesizing WHY the evaluation reached this verdict. Cite `numbers.weighted_total`, the top 1-2 strengths, and the top 1-2 weaknesses. Reference `numbers.verdict_bucket` by label. Mention dealbreakers if any exist. If evidence quality is low (< 30% Verified + Research-Backed), state the evidence-quality gap as a fact — e.g., "Evidence quality is low: X of Y criteria rely on founder assertions without research confirmation" — and let the gap speak for itself. Do not add softening qualifiers to the verdict rationale itself.
 
 Example structure (do not copy verbatim):
 > "With a weighted score of 3.2/5.0 (PIVOT), the idea shows strong pain intensity (4/5) and a clear solution gap (4/5) but is gated by an unconfirmed willingness-to-pay assumption and thin defensibility. Two dimensions scored at 2/5 (Urgency, Mandatory Nature) — the founder should prioritize validating pricing and urgency signals before committing to build."
