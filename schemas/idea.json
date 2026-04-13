@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/idea.json",
+  "title": "Idea",
+  "description": "The founder's startup idea text split into problem and solution components.",
+  "type": "object",
+  "required": ["text", "problem", "solution"],
+  "properties": {
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Full raw idea text as submitted by the founder."
+    },
+    "problem": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Extracted problem statement."
+    },
+    "solution": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Extracted solution statement."
+    }
+  },
+  "additionalProperties": false
+}

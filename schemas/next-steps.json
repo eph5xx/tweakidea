@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/next-steps.json",
+  "title": "Next Steps",
+  "description": "Prioritized validation actions authored by ti-narrative. 3-5 entries.",
+  "type": "array",
+  "minItems": 3,
+  "maxItems": 5,
+  "items": {
+    "type": "object",
+    "required": ["task", "dim", "from", "to", "weighted_uplift", "rationale"],
+    "properties": {
+      "task": {
+        "type": "string",
+        "minLength": 1,
+        "description": "Concrete validation action to take."
+      },
+      "dim": {
+        "type": "string",
+        "description": "Dimension this action primarily addresses."
+      },
+      "from": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 5,
+        "description": "Current score for this dimension."
+      },
+      "to": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 5,
+        "description": "Target score if action confirms the key assumption."
+      },
+      "weighted_uplift": {
+        "type": "number",
+        "description": "Weighted score improvement if score moves from 'from' to 'to'."
+      },
+      "rationale": {
+        "type": "string",
+        "minLength": 10,
+        "description": "Why this action is prioritized."
+      }
+    },
+    "additionalProperties": false
+  }
+}
