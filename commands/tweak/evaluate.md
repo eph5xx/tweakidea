@@ -216,7 +216,7 @@ For each hypothesis entry, use AskUserQuestion (or a single list prompt) to ask 
 
 Collect the founder's status for each hypothesis.
 
-**Note for Phase 2:** The concurrency fix (parallel research + confirmation) is explicitly NOT in Phase 1 scope. For Phase 1, Lane B waits for Lane A to complete before proceeding -- same as v1.0 behavior. The file-based interface change is the Phase 1 deliverable; the concurrency fix ships in Phase 2.
+**Concurrency note:** `ti-researcher` was spawned with `run_in_background: true` at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
 #### Lane B Step 3: Write assumptions.json
 
