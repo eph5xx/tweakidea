@@ -266,6 +266,46 @@ Follow the **Profile Update Rules** in the ti-founder skill. Review the fit Q&A 
 
 ### Step 4: Spawn 14 evaluators in parallel
 
+#### Step 4a: Research sync gate
+
+Before constructing evaluator prompts, verify that `{RUN_DIR}/research.json` exists and is well-formed JSON. `ti-researcher` was spawned at Stage 1 Lane A as a background task with `run_in_background: true`; this is the single point in the pipeline where the orchestrator awaits its output.
+
+Run the Bash tool to probe the file:
+
+```bash
+if [ -f "{RUN_DIR}/research.json" ]; then
+  python3 -c "import json,sys; json.load(open('{RUN_DIR}/research.json')); print('ready')" 2>/dev/null || echo "invalid"
+else
+  echo "waiting"
+fi
+```
+
+(Substitute the actual `{RUN_DIR}` path captured at Stage 0 Step 3 before running the command.)
+
+Three possible results:
+
+- **`ready`** — The file exists and is valid JSON. Read `{RUN_DIR}/research.json` with the Read tool and inspect the top-level `available` field.
+  - If `available` is `true`: Proceed to the Pre-Spawn Context Isolation Check below.
+  - If `available` is `false`: Jump to **Step 4a-fail: Research failure handler** below.
+
+- **`waiting`** — The file does not exist yet. Research is still in flight.
+  - **If this is the first `waiting` result** (i.e., you have not yet shown a wait message during this Step 4a invocation), display to the founder:
+
+    > Research still running — waiting before spawning evaluators…
+
+  - Re-run the same Bash probe. Continue looping until the result is `ready` or `invalid`. **Do NOT re-display the status message** on subsequent loop iterations — show it once, not per probe.
+  - **There is no timeout on this loop.** `ti-researcher`'s `maxTurns: 15` (from `agents/ti-researcher.md`) already caps its internal budget; the orchestrator trusts that ceiling rather than layering a second timeout. If research genuinely never returns, the founder can abort with Ctrl+C and re-run `/tweak:evaluate`.
+
+- **`invalid`** — The file exists but failed JSON parsing (corruption, partial write, or crashed spawn). Use the Write tool to overwrite `{RUN_DIR}/research.json` with the fallback:
+
+  ```json
+  {"available": false, "reason": "research.json failed JSON validation or was missing after background spawn returned"}
+  ```
+
+  Then jump to **Step 4a-fail: Research failure handler** below.
+
+The orchestrator does NOT parse markdown from research.json, does NOT extract clusters by regex, does NOT trim sections. The file IS the interface — each `ti-evaluator` spawn reads it itself via the Read tool once research is confirmed available.
+
 #### Pre-Spawn Context Isolation Check
 
 Before launching evaluators, validate the Dimension Registry's context routing:
