@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TweakIdea Evaluation Report</title>
+  <style>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: &#39;Inter&#39;, system-ui, -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, &#39;Helvetica Neue&#39;, Arial, sans-serif;
+  line-height: 1.65; color: #1a1a2e; background-color: #f8f9fc; padding: 2.5rem 1.5rem;
+  letter-spacing: -0.01em;
+}
+.container { max-width: 940px; margin: 0 auto; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #111827; }
+h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.85rem; color: #1f2937; letter-spacing: -0.01em; }
+
+/* Verdict banner */
+.verdict { padding: 1.5rem 1.75rem; border-radius: 10px; margin-bottom: 1.75rem; }
+.verdict-go { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+.verdict-pivot { background-color: #fef9c3; border-left: 4px solid #eab308; }
+.verdict-stop { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+.verdict-label { font-size: 1.25rem; font-weight: 700; }
+.verdict-score { font-size: 1rem; color: #4b5563; margin-top: 0.25rem; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); margin-bottom: 1.25rem; }
+
+/* Dealbreaker */
+.dealbreaker { background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+.dealbreaker-title { color: #dc2626; font-weight: 700; }
+
+/* Scorecard table */
+.scorecard-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.scorecard-table th { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 2px solid #d1d5db; color: #6b7280; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.scorecard-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.scorecard-table tr:last-child td { border-bottom: none; }
+
+/* Score explanation (below each scorecard row) */
+.score-explanation td {
+  padding: 0.25rem 0.75rem 0.75rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* Radar chart */
+.radar-chart { text-align: center; padding: 1rem 0; }
+.radar-chart svg { max-width: 100%; height: auto; }
+
+/* Score badges */
+.score-badge { display: inline-block; width: 2.25rem; height: 2.25rem; line-height: 2.25rem; text-align: center; border-radius: 6px; font-weight: 700; font-size: 0.85rem; color: #1a1a1a; }
+.score-5 { background-color: #22c55e; }
+.score-4 { background-color: #14b8a6; }
+.score-3 { background-color: #eab308; }
+.score-2 { background-color: #f97316; }
+.score-1 { background-color: #ef4444; }
+
+/* Progress bars */
+.progress-container { background-color: #e5e7eb; border-radius: 9999px; height: 10px; width: 100%; overflow: hidden; display: inline-block; vertical-align: middle; }
+.progress-bar { height: 100%; border-radius: 9999px; }
+
+/* Evidence tier badges */
+.tier-badge { display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
+.tier-verified { background-color: #22c55e; color: #1a1a1a; }
+.tier-research { background-color: #3b82f6; color: #ffffff; }
+.tier-founder { background-color: #eab308; color: #1a1a1a; }
+.tier-assumed { background-color: #9ca3af; color: #1a1a1a; }
+
+/* Evidence quality bar */
+.evidence-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; font-size: 0.75rem; font-weight: 600; }
+.evidence-bar &gt; div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 2rem; }
+.evidence-bar .ev-verified { background-color: #22c55e; }
+.evidence-bar .ev-research { background-color: #3b82f6; color: #fff; }
+.evidence-bar .ev-founder { background-color: #eab308; }
+.evidence-bar .ev-assumed { background-color: #9ca3af; }
+
+/* Two-column layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Lists */
+.item-list { list-style: none; padding: 0; }
+.item-list li { padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+.item-list li:last-child { border-bottom: none; }
+.dim-tag { display: inline-block; background: #e5e7eb; color: #374151; padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; }
+
+/* Header and footer */
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 2px solid #e5e7eb; }
+footer { text-align: center; color: #9ca3af; font-size: 0.78rem; margin-top: 2.5rem; padding-top: 1.25rem; border-top: 2px solid #e5e7eb; }
+
+/* Print */
+@media print {
+  body { background: #fff; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #e5e7eb; }
+  .verdict, .score-badge, .tier-badge, .evidence-bar &gt; div, .dealbreaker {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .card, .scorecard-table tr { break-inside: avoid; }
+}
+@media (max-width: 640px) {
+  .two-col { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TweakIdea Evaluation</h1>
+      <span style="color:#6b7280;font-size:0.85rem;">2026-04-13</span>
+    </header>
+
+    <div class="verdict verdict-pivot">
+      <div class="verdict-label">PIVOT — Promising, address weak areas</div>
+      <div class="verdict-score">Weighted Score: 3.2/5.0 | Potential: 3.5/5.0</div>
+    </div>
+
+
+    <div class="card">
+      <h2>Idea</h2>
+      <p>Problem: Small SaaS teams waste 6+ hours/week manually reconciling invoices from multiple payment processors.
+
+Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions by amount, date window, and customer ID.</p>
+    </div>
+
+    <div class="card">
+      <h2>Dimension Overview</h2>
+      <div class="radar-chart">
+        <svg viewBox="0 0 500 440" xmlns="http://www.w3.org/2000/svg"><text x="250" y="220" text-anchor="middle">PLACEHOLDER — replaced by compute.py in Wave 1 test</text></svg>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Research Highlights</h2>
+      <h3 style="font-size:0.95rem;margin-bottom:0.5rem;color:#374151;">User Evidence</h3>
+      <ul class="item-list">
+        <li>68% of SMBs with multiple payment processors cite reconciliation as a top admin burden (Gartner 2025)</li>
+      </ul>
+      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Competitive Landscape</h3>
+      <ul class="item-list">
+        <li>Ramp, Brex offer partial reconciliation but no multi-processor CSV ingest</li>
+      </ul>
+      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Market Data</h3>
+      <ul class="item-list">
+        <li>SMB fintech automation market: $4.2B in 2025, 18% CAGR (IDC)</li>
+      </ul>
+    </div>
+
+    <div class="card" style="overflow-x:auto;">
+      <h2>Scorecard</h2>
+      <table class="scorecard-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Score</th>
+            <th style="width:120px;"></th>
+            <th>Potential</th>
+            <th>Evidence</th>
+            <th>Key Finding</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Pain Intensity</td>
+            <td><span class="score-badge score-4">4</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">2V</span>
+              <span class="tier-badge tier-research">1R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">1A</span>
+            </td>
+            <td>Invoice reconciliation across multiple processors is a well-documented, quantified weekly pain for small SaaS teams — research and founder data agree.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 4 is awarded because both Verified and Research-Backed evidence confirm significant weekly time loss (4-8 hours), and the pain is consistently reported across independent sources. Score 5 is not reached because the problem lacks crisis-level urgency or hard downstream consequences that would make teams pay any price to fix it immediately.</td>
+          </tr>
+          <tr>
+            <td>Willingness to Pay</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">1V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">2A</span>
+            </td>
+            <td>Willingness to pay is assumed via category analogy — no direct pricing validation has been conducted and the $50-100/month hypothesis is unconfirmed.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 is given because category precedent and labor cost math support some WTP, but no direct customer interview data validates the target price point. The UNCONFIRMED pricing hypothesis prevents advancement to Score 4.</td>
+          </tr>
+          <tr>
+            <td>Solution Gap</td>
+            <td><span class="score-badge score-4">4</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">2R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">1A</span>
+            </td>
+            <td>No existing tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams — the specific triangulation use case is an unaddressed gap.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 4 reflects a clearly validated competitive gap confirmed through research. Score 5 would require the gap to be structural or protected by network effects; here the gap is real but could be closed by an incumbent feature update.</td>
+          </tr>
+          <tr>
+            <td>Founder-Market Fit</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">3A</span>
+            </td>
+            <td>Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects genuine personal experience with the problem and engineering capability, without the specialized fintech knowledge or existing relationships in the finance buyer community that would warrant Score 4 or 5.</td>
+          </tr>
+          <tr>
+            <td>Urgency</td>
+            <td><span class="score-badge score-2">2</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">3A</span>
+            </td>
+            <td>Urgency is low — the problem is chronic rather than acute, with no forcing event or external deadline identified to accelerate solution-seeking behavior.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 2 reflects chronic, persistent pain without urgency catalyst. Teams tolerate the problem via manual workarounds. Score 3 would require confirmed evidence of a forcing event (month-end close spike or compliance pressure) that is currently unconfirmed.</td>
+          </tr>
+          <tr>
+            <td>Frequency</td>
+            <td><span class="score-badge score-4">4</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">2V</span>
+              <span class="tier-badge tier-research">1R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">1A</span>
+            </td>
+            <td>Weekly reconciliation cadence is confirmed by founder and research — frequency is a strong positive signal for product engagement and retention.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 4 is awarded for confirmed weekly frequency with research backing. Score 5 would require daily cadence, which is not the identified use case for small SaaS teams.</td>
+          </tr>
+          <tr>
+            <td>Market Size</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">2R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">1A</span>
+            </td>
+            <td>Market size is real but bounded — the specific multi-processor SMB reconciliation niche is a $30M-120M SAM, viable for an indie SaaS but not venture-scale without use case expansion.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects a validated but niche market. Research confirms the user population exists at scale, but the specific addressable segment at viable price points is too small for Score 4 without expanding the product scope.</td>
+          </tr>
+          <tr>
+            <td>Defensibility</td>
+            <td><span class="score-badge score-2">2</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">4A</span>
+            </td>
+            <td>Defensibility is weak — no structural moat, network effect, or data flywheel has been identified; the product is replicable by incumbents with a feature update.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 2 reflects the absence of defensibility mechanisms. The problem is real but the solution is technically accessible to incumbents. Score 3 would require a confirmed data flywheel or integration depth that creates meaningful switching costs.</td>
+          </tr>
+          <tr>
+            <td>Market Growth</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">1R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">2A</span>
+            </td>
+            <td>Market growth is steady at 18% CAGR, supported by payment infrastructure fragmentation, but not in hyper-growth territory.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects solid but not exceptional market growth. Research confirms 18% CAGR in the relevant category. Score 4 would require 40%+ growth or an emerging regulatory tailwind that is not currently evidenced.</td>
+          </tr>
+          <tr>
+            <td>Scalability</td>
+            <td><span class="score-badge score-4">4</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">1V</span>
+              <span class="tier-badge tier-research">1R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">1A</span>
+            </td>
+            <td>Technical scalability is strong — the CSV matching architecture scales linearly and category precedent confirms the SMB-to-midmarket path without re-architecting.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 4 reflects verified technical scalability with category-backed precedent. Score 5 would require a viral or PLG distribution mechanism that doesn&#39;t exist in this B2B finance workflow context.</td>
+          </tr>
+          <tr>
+            <td>Clarity of Target Customer</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">2A</span>
+            </td>
+            <td>Target customer is broadly defined as &#39;small SaaS teams with 2+ processors&#39; — workable for discovery but too broad for efficient acquisition without sharper firmographic filters.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects a functional customer definition that enables early conversations. Score 4 would require sharp firmographic filters (ARR range, processor stack, team size) that make the ICP instantly identifiable and targetable.</td>
+          </tr>
+          <tr>
+            <td>Behavior Change Required</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>4/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">1F</span>
+              <span class="tier-badge tier-assumed">2A</span>
+            </td>
+            <td>Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects an incremental behavior change that builds on existing user habits (CSV exports already happen). Score 4 would require API integrations that automate data ingest, which is currently unconfirmed.</td>
+          </tr>
+          <tr>
+            <td>Mandatory Nature</td>
+            <td><span class="score-badge score-2">2</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
+            <td>2/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">4A</span>
+            </td>
+            <td>Reconciliation automation is optional — no regulatory mandate, compliance requirement, or audit obligation forces SMBs to automate multi-processor matching.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 2 reflects that basic bookkeeping closure is functionally required, but automated multi-processor reconciliation specifically is discretionary. The problem is real but buyers can defer the purchase without legal or financial consequence.</td>
+          </tr>
+          <tr>
+            <td>Incumbent Indifference</td>
+            <td><span class="score-badge score-3">3</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
+            <td>3/5</td>
+            <td>
+              <span class="tier-badge tier-verified">0V</span>
+              <span class="tier-badge tier-research">0R</span>
+              <span class="tier-badge tier-founder">0F</span>
+              <span class="tier-badge tier-assumed">3A</span>
+            </td>
+            <td>Incumbents have de facto ignored this niche for 3+ years, creating a window of opportunity — but none are structurally prevented from entering.</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">Score 3 reflects de facto incumbent indifference rather than structural impossibility. The opportunity window is real but fragile — incumbents could address this with a feature sprint if motivated.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Evidence Quality</h2>
+      <div class="evidence-bar">
+        <div class="ev-verified" style="width:12%">12% V</div>
+        <div class="ev-research" style="width:16%">16% R</div>
+        <div class="ev-founder" style="width:12%">12% F</div>
+        <div class="ev-assumed" style="width:60%">60% A</div>
+      </div>
+      <div style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;">V=Verified R=Research-Backed F=Founder-Asserted A=Assumed</div>
+    </div>
+
+    <div class="card">
+      <h2>Assumption Impact</h2>
+      <ul class="item-list">
+        <li><span class="dim-tag">Willingness to Pay</span> If &ldquo;Teams would pay $50-100/month for reconciliation automation&rdquo; is confirmed, score rises by 1 (+0.12 on total)</li>
+        <li><span class="dim-tag">Urgency</span> If &ldquo;Month-end close creates a forcing event that raises urgency above the chronic baseline&rdquo; is confirmed, score rises by 1 (+0.08 on total)</li>
+        <li><span class="dim-tag">Defensibility</span> If &ldquo;Accumulated reconciliation pattern data creates a matching-accuracy flywheel&rdquo; is confirmed, score rises by 1 (+0.08 on total)</li>
+        <li><span class="dim-tag">Behavior Change Required</span> If &ldquo;API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users&rdquo; is confirmed, score rises by 1 (+0.04 on total)</li>
+      </ul>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Top 3 Strengths</h2>
+        <ol>
+          <li><strong>Pain Intensity</strong> (4/5): Confirmed 6+ hours/week pain with both founder verification and Gartner 2025 research corroboration across the SMB segment.</li>
+          <li><strong>Solution Gap</strong> (4/5): Clear competitive gap — no incumbent tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams.</li>
+          <li><strong>Frequency</strong> (4/5): Weekly reconciliation cadence confirmed by founder and research — strong engagement signal and natural retention driver.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Top 3 Weaknesses</h2>
+        <ol>
+          <li><strong>Urgency</strong> (2/5): Chronic but not acute pain — no forcing event, deadline, or compliance driver accelerates purchasing urgency.</li>
+          <li><strong>Defensibility</strong> (2/5): No structural moat — incumbents could close the gap with a feature sprint; no network effects or data flywheel confirmed.</li>
+          <li><strong>Mandatory Nature</strong> (2/5): Automated reconciliation is discretionary — no regulatory or audit mandate forces teams to solve this with a paid tool.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Next Steps</h2>
+      <ol class="item-list">
+        <li>Run 10 pricing interviews with SaaS teams to validate $50-100/month willingness to pay &mdash; <span class="dim-tag">Willingness to Pay</span> 3/5 &rarr; 4/5 (+0.12 on total)</li>
+        <li>Interview 5 finance ops leads to identify month-end urgency patterns and evaluate forcing events &mdash; <span class="dim-tag">Urgency</span> 2/5 &rarr; 3/5 (+0.08 on total)</li>
+        <li>Prototype Stripe API integration (replace CSV upload) to test behavior change friction reduction &mdash; <span class="dim-tag">Behavior Change Required</span> 3/5 &rarr; 4/5 (+0.04 on total)</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h2>Verdict Rationale</h2>
+      <p>The idea shows clear pain (3.2 weighted score, PIVOT verdict) with strong solution gap and pain-intensity scores, but willingness-to-pay is unconfirmed and urgency is marginal. Validation work on pricing and adoption friction would move this to a GO.</p>
+    </div>
+
+    <footer>
+      Generated by TweakIdea v0.0.0 &middot; Schema v1 &middot; 2026-04-13
+    </footer>
+  </div>
+</body>
+</html>
