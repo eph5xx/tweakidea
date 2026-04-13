@@ -36,7 +36,9 @@
 
     <div class="card">
       <h2>Idea</h2>
-      <p>{{ idea.text }}</p>
+      {% for para in idea.text.split('\n\n') %}
+      {% if para.strip() %}<p>{{ para | linkify }}</p>{% endif %}
+      {% endfor %}
     </div>
 
     <div class="card">
@@ -54,7 +56,7 @@
       <h3 style="font-size:0.95rem;margin-bottom:0.5rem;color:#374151;">User Evidence</h3>
       <ul class="item-list">
         {% for item in research.clusters.user %}
-        <li>{{ item }}</li>
+        <li>{{ item | linkify }}</li>
         {% endfor %}
       </ul>
       {% endif %}
@@ -62,7 +64,7 @@
       <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Competitive Landscape</h3>
       <ul class="item-list">
         {% for item in research.clusters.competitive %}
-        <li>{{ item }}</li>
+        <li>{{ item | linkify }}</li>
         {% endfor %}
       </ul>
       {% endif %}
@@ -70,7 +72,7 @@
       <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Market Data</h3>
       <ul class="item-list">
         {% for item in research.clusters.market %}
-        <li>{{ item }}</li>
+        <li>{{ item | linkify }}</li>
         {% endfor %}
       </ul>
       {% endif %}
@@ -109,10 +111,10 @@
               (tier data unavailable)
               {% endif %}
             </td>
-            <td>{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding }}{% endif %}</td>
+            <td>{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding | linkify }}{% endif %}</td>
           </tr>
           <tr class="score-explanation">
-            <td colspan="6">{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].score_explanation }}{% endif %}</td>
+            <td colspan="6">{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].score_explanation | linkify }}{% endif %}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -122,12 +124,20 @@
     <div class="card">
       <h2>Evidence Quality</h2>
       <div class="evidence-bar">
-        <div class="ev-verified" style="width:{{ numbers.evidence_quality.verified_pct }}%">{{ numbers.evidence_quality.verified_pct }}% V</div>
-        <div class="ev-research" style="width:{{ numbers.evidence_quality.research_pct }}%">{{ numbers.evidence_quality.research_pct }}% R</div>
-        <div class="ev-founder" style="width:{{ numbers.evidence_quality.founder_pct }}%">{{ numbers.evidence_quality.founder_pct }}% F</div>
-        <div class="ev-assumed" style="width:{{ numbers.evidence_quality.assumed_pct }}%">{{ numbers.evidence_quality.assumed_pct }}% A</div>
+        <div class="ev-verified" style="flex:0 0 {{ numbers.evidence_quality.verified_pct }}%">{% if numbers.evidence_quality.verified_pct >= 8 %}{{ numbers.evidence_quality.verified_pct }}% V{% endif %}</div>
+        <div class="ev-research" style="flex:0 0 {{ numbers.evidence_quality.research_pct }}%">{% if numbers.evidence_quality.research_pct >= 8 %}{{ numbers.evidence_quality.research_pct }}% R{% endif %}</div>
+        <div class="ev-founder" style="flex:0 0 {{ numbers.evidence_quality.founder_pct }}%">{% if numbers.evidence_quality.founder_pct >= 8 %}{{ numbers.evidence_quality.founder_pct }}% F{% endif %}</div>
+        <div class="ev-assumed" style="flex:0 0 {{ numbers.evidence_quality.assumed_pct }}%">{% if numbers.evidence_quality.assumed_pct >= 8 %}{{ numbers.evidence_quality.assumed_pct }}% A{% endif %}</div>
       </div>
-      <div style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;">V=Verified R=Research-Backed F=Founder-Asserted A=Assumed</div>
+      <div style="font-size:0.78rem;color:#6b7280;margin-top:0.5rem;">
+        <span style="display:inline-block;width:10px;height:10px;background:#22c55e;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.verified_pct }}% Verified
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.research_pct }}% Research-Backed
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#eab308;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.founder_pct }}% Founder-Asserted
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#9ca3af;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.assumed_pct }}% Assumed
+      </div>
     </div>
 
     {% if numbers.assumption_impact_math %}
@@ -147,7 +157,7 @@
         <ol>
           {% for s in strengths_weaknesses %}
           {% if s.kind == "strength" %}
-          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why }}</li>
+          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
           {% endif %}
           {% endfor %}
         </ol>
@@ -157,7 +167,7 @@
         <ol>
           {% for s in strengths_weaknesses %}
           {% if s.kind == "weakness" %}
-          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why }}</li>
+          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
           {% endif %}
           {% endfor %}
         </ol>
@@ -168,7 +178,7 @@
       <h2>Next Steps</h2>
       <ol class="item-list">
         {% for n in next_steps %}
-        <li>{{ n.task }} &mdash; <span class="dim-tag">{{ n.dim }}</span> {{ n.from }}/5 &rarr; {{ n.to }}/5 (+{{ n.weighted_uplift }} on total)</li>
+        <li>{{ n.task | linkify }} &mdash; <span class="dim-tag">{{ n.dim }}</span> {{ n.from }}/5 &rarr; {{ n.to }}/5 (+{{ n.weighted_uplift }} on total)</li>
         {% endfor %}
       </ol>
     </div>
@@ -176,7 +186,7 @@
     {% if verdict and verdict.rationale %}
     <div class="card">
       <h2>Verdict Rationale</h2>
-      <p>{{ verdict.rationale }}</p>
+      <p>{{ verdict.rationale | linkify }}</p>
     </div>
     {% endif %}
 

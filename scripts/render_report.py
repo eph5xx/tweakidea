@@ -12,14 +12,36 @@ No other markdown or HTML files are produced (per RPRT-01).
 import argparse
 import json
 import pathlib
+import re
 import sys
 from datetime import datetime, timezone
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from jinja2.exceptions import TemplateError
 from jsonschema import ValidationError
+from markupsafe import Markup, escape
 
 from lib import errors, schema
+
+_URL_RE = re.compile(r'(https?://[^\s<>"\')]+)')
+
+
+def linkify_html(text):
+    """Wrap http(s) URLs with <a> tags. Escape-safe: input is escaped first
+    so non-URL characters can never inject HTML."""
+    if text is None:
+        return ""
+    escaped = str(escape(text))
+    linked = _URL_RE.sub(r'<a href="\1">\1</a>', escaped)
+    return Markup(linked)
+
+
+def linkify_md(text):
+    """Wrap http(s) URLs with markdown link syntax. No escaping — markdown
+    env is autoescape=False."""
+    if text is None:
+        return ""
+    return _URL_RE.sub(r'[\1](\1)', str(text))
 
 # Locate skills/ti-report relative to this script
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -138,12 +160,14 @@ def main() -> int:
         trim_blocks=True,
         lstrip_blocks=True,
     )
+    html_env.filters["linkify"] = linkify_html
     md_env = Environment(
         loader=loader,
         autoescape=False,
         trim_blocks=True,
         lstrip_blocks=True,
     )
+    md_env.filters["linkify"] = linkify_md
 
     try:
         html_tmpl = html_env.get_template("template.html.j2")

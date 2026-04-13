@@ -1,8 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.65; color: #1a1a2e; background-color: #f8f9fc; padding: 2.5rem 1.5rem;
-  letter-spacing: -0.01em;
 }
 .container { max-width: 940px; margin: 0 auto; }
 h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #111827; }
@@ -64,7 +63,7 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.85rem; color: #1f2937
 
 /* Evidence quality bar */
 .evidence-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; font-size: 0.75rem; font-weight: 600; }
-.evidence-bar > div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 2rem; }
+.evidence-bar > div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 0; overflow: hidden; white-space: nowrap; }
 .evidence-bar .ev-verified { background-color: #22c55e; }
 .evidence-bar .ev-research { background-color: #3b82f6; color: #fff; }
 .evidence-bar .ev-founder { background-color: #eab308; }
