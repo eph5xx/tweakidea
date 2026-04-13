@@ -6,7 +6,7 @@
       "potential": 4,
       "uplift": 0.12,
       "pending_assumptions": [
-        {"text": "Teams would pay $50-100/month for reconciliation automation", "impact": "Score 4 requires confirmed pricing signal"}
+        {"text": "Teams would pay $50-100/month for reconciliation automation", "impact": "Score 4 requires confirmed pricing signal from customer interviews"}
       ]
     },
     {
@@ -15,7 +15,7 @@
       "potential": 3,
       "uplift": 0.08,
       "pending_assumptions": [
-        {"text": "Month-end close pressure creates periodic urgency spikes that drive tool switching", "impact": "Score 3 requires confirmed buying trigger"}
+        {"text": "Month-end close creates a forcing event that raises urgency above the chronic baseline", "impact": "Score 3 requires confirming month-end urgency pattern via customer interviews"}
       ]
     },
     {
@@ -24,7 +24,7 @@
       "potential": 3,
       "uplift": 0.08,
       "pending_assumptions": [
-        {"text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time", "impact": "Score 3 requires architectural decision to build learning layer"}
+        {"text": "Accumulated reconciliation pattern data creates a matching-accuracy flywheel", "impact": "Score 3 requires early data showing pattern learning improves match accuracy"}
       ]
     },
     {
@@ -33,15 +33,15 @@
       "potential": 4,
       "uplift": 0.04,
       "pending_assumptions": [
-        {"text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior", "impact": "Score 4 requires confirmed that CSV export is already habitual"}
+        {"text": "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users", "impact": "Score 4 requires shipping and validating API integrations with 5+ users"}
       ]
     }
   ],
   "assumptions": [
     {"text": "Teams would pay $50-100/month for reconciliation automation", "dim": "Willingness to Pay", "uplift": 0.12},
-    {"text": "Month-end close pressure creates periodic urgency spikes that drive tool switching", "dim": "Urgency", "uplift": 0.08},
-    {"text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time", "dim": "Defensibility", "uplift": 0.08},
-    {"text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior", "dim": "Behavior Change Required", "uplift": 0.04}
+    {"text": "Month-end close creates a forcing event that raises urgency above the chronic baseline", "dim": "Urgency", "uplift": 0.08},
+    {"text": "Accumulated reconciliation pattern data creates a matching-accuracy flywheel", "dim": "Defensibility", "uplift": 0.08},
+    {"text": "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users", "dim": "Behavior Change Required", "uplift": 0.04}
   ],
-  "narrative": "Three assumptions gate the jump from PIVOT (3.2) to GO (3.5): pricing acceptance, urgency, and defensibility. Each is testable with 5-10 customer conversations."
+  "narrative": "Four assumptions gate the jump from PIVOT (3.2) to GO (3.5+): pricing acceptance (0.12 uplift), urgency confirmation (0.08), defensibility via data flywheel (0.08), and API integration reducing behavior change (0.04). The highest-leverage next step is pricing validation — 10 customer interviews would confirm or reject the $50-100/month hypothesis with high confidence."
 }

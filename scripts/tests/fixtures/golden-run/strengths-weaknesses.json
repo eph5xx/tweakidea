@@ -1,8 +1,8 @@
 [
-  {"kind": "strength", "dim": "Pain Intensity", "score": 4, "why": "Quantified weekly time loss (6+ hours) confirmed by both founder experience and independent research"},
-  {"kind": "strength", "dim": "Solution Gap", "score": 4, "why": "No incumbent tool handles triple-source matching (Stripe + PayPal + bank CSV) — confirmed gap in competitive landscape"},
-  {"kind": "strength", "dim": "Frequency", "score": 4, "why": "Weekly reconciliation cadence confirmed by research (74% of SMBs) — drives strong retention economics"},
-  {"kind": "weakness", "dim": "Urgency", "score": 2, "why": "Problem is chronic but not acute — existing workarounds reduce the felt urgency to switch tools"},
-  {"kind": "weakness", "dim": "Defensibility", "score": 2, "why": "No network effects or proprietary data moat — incumbents could close the feature gap if they prioritize the segment"},
-  {"kind": "weakness", "dim": "Mandatory Nature", "score": 2, "why": "Reconciliation task is mandatory but automated tooling is not — competes against manual alternatives, not mandates"}
+  {"kind": "strength", "dim": "Pain Intensity", "score": 4, "why": "Confirmed 6+ hours/week pain with both founder verification and Gartner 2025 research corroboration across the SMB segment."},
+  {"kind": "strength", "dim": "Solution Gap", "score": 4, "why": "Clear competitive gap — no incumbent tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams."},
+  {"kind": "strength", "dim": "Frequency", "score": 4, "why": "Weekly reconciliation cadence confirmed by founder and research — strong engagement signal and natural retention driver."},
+  {"kind": "weakness", "dim": "Urgency", "score": 2, "why": "Chronic but not acute pain — no forcing event, deadline, or compliance driver accelerates purchasing urgency."},
+  {"kind": "weakness", "dim": "Defensibility", "score": 2, "why": "No structural moat — incumbents could close the gap with a feature sprint; no network effects or data flywheel confirmed."},
+  {"kind": "weakness", "dim": "Mandatory Nature", "score": 2, "why": "Automated reconciliation is discretionary — no regulatory or audit mandate forces teams to solve this with a paid tool."}
 ]

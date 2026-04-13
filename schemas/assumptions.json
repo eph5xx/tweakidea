@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/assumptions.json",
+  "title": "Assumptions",
+  "description": "Confirmed or rejected assumptions after founder review of hypotheses.",
+  "type": "array",
+  "maxItems": 20,
+  "items": {
+    "type": "object",
+    "required": ["text", "primary_dimension", "status"],
+    "properties": {
+      "text": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The assumption text."
+      },
+      "primary_dimension": {
+        "type": "string",
+        "description": "The evaluation dimension this assumption primarily relates to."
+      },
+      "status": {
+        "type": "string",
+        "enum": ["CONFIRMED", "UNCONFIRMED", "MODIFIED", "REJECTED"],
+        "description": "Post-confirmation status — PENDING is not valid here."
+      },
+      "note": {
+        "type": "string",
+        "description": "Optional clarification from the founder when status is MODIFIED."
+      }
+    },
+    "additionalProperties": false
+  }
+}

@@ -7,41 +7,41 @@
       "level": 5,
       "status": "FAIL",
       "tier": "Assumed",
-      "evidence": "No evidence of regulatory deadlines or critical business events forcing immediate adoption"
+      "evidence": "No evidence of a deadline, compliance event, or business crisis that forces immediate action"
     },
     {
       "level": 4,
       "status": "FAIL",
       "tier": "Assumed",
-      "evidence": "Pain is chronic but not acute — teams have coping mechanisms (spreadsheets, interns, part-time bookkeepers)"
+      "evidence": "No evidence teams are actively searching for solutions or have recently escalated the problem"
     },
     {
       "level": 3,
       "status": "CONDITIONAL",
       "tier": "Founder-Asserted",
-      "evidence": "Depends on UNCONFIRMED hypothesis that month-end close pressure creates periodic urgency spikes; founder believes this drives willingness to switch but no confirmation"
+      "evidence": "Founder believes urgency increases at month-end close; depends on unconfirmed hypothesis about month-end behavior patterns"
     },
     {
       "level": 2,
       "status": "PASS",
       "tier": "Assumed",
-      "evidence": "Teams do the work every month — the problem recurs, creating a persistent but low-urgency demand"
+      "evidence": "Problem is chronic and recurring weekly, implying persistent low-grade urgency even without a forcing event"
     }
   ],
   "assumptions_relied_on": [
     {
-      "text": "Month-end close pressure creates periodic urgency spikes that drive tool switching",
+      "text": "Month-end close creates a forcing event that raises urgency above the chronic baseline",
       "status": "UNCONFIRMED",
-      "impact": "If confirmed, Score 3 criterion would PASS, raising score from 2 to 3"
+      "impact": "If confirmed, Score 3 criterion (CONDITIONAL) would PASS, raising score from 2 to 3"
     }
   ],
   "key_signals": [
-    "Pain is chronic and recurrent, not acute",
-    "Existing workarounds reduce felt urgency",
-    "No external deadline or event forcing adoption"
+    "No deadline or compliance forcing event identified",
+    "Pain is chronic but not acute",
+    "Month-end close hypothesis unconfirmed"
   ],
   "evidence_basis": "Founder",
-  "analysis_narrative": "Urgency is the weakest dimension in this evaluation. The problem is real and recurring but not urgent — teams have learned to absorb the 6-hour weekly cost through workarounds: spreadsheets, part-time bookkeepers, or simply accepting occasional reconciliation errors. None of these workarounds are good, but they reduce the urgency to switch to something new.\n\nThe founder hypothesizes that month-end close creates urgency spikes — a plausible theory, but unconfirmed. Even if true, urgency spikes at month-end are a buying trigger, not a continuous adoption driver. B2B tools purchased to solve month-end problems often get abandoned in the intervening weeks.\n\nThis dimension scores 2 because the problem is chronic and the team will not go without a solution, but the pace of buying decisions is slow and the trigger for switching is unclear.",
-  "key_finding": "Urgency is low — the problem is a chronic, managed pain rather than an acute crisis, with no external events forcing immediate resolution.",
-  "score_explanation": "Score 2 reflects a recurring problem with existing workarounds that reduce the felt urgency to switch. Score 3 would require evidence that at least some teams are actively searching for solutions now, which the month-end close hypothesis might provide if confirmed."
+  "analysis_narrative": "Urgency is a weak dimension here. The reconciliation pain is real and recurring, but it is a chronic annoyance rather than an acute crisis. Teams are not in a hair-on-fire mode where they would drop everything to find a solution today — they have been living with the problem for years, adapting with spreadsheets and manual workarounds.\n\nThe founder suggests that month-end close creates a forcing event where urgency spikes, but this hypothesis is unconfirmed. Even if true, a monthly urgency window is not the same as continuous high urgency that drives immediate purchasing decisions.\n\nScore 2 reflects that the problem is persistent and felt, but there is no evidence of the external pressure (regulatory deadline, audit risk, customer escalation) or internal prioritization (active budget discussion, recent escalation to CFO) that would characterize Score 3 or higher urgency.",
+  "key_finding": "Urgency is low — the problem is chronic rather than acute, with no forcing event or external deadline identified to accelerate solution-seeking behavior.",
+  "score_explanation": "Score 2 reflects chronic, persistent pain without urgency catalyst. Teams tolerate the problem via manual workarounds. Score 3 would require confirmed evidence of a forcing event (month-end close spike or compliance pressure) that is currently unconfirmed."
 }

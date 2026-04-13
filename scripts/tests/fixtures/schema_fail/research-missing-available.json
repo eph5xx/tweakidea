@@ -1,1 +1,7 @@
-{"clusters":{"user":["test"],"competitive":["test"],"market":["test"]},"competitive_landscape":[]}
+{
+  "clusters": {
+    "user": ["Some user research"],
+    "competitive": ["Some competitive intel"],
+    "market": ["Some market data"]
+  }
+}

@@ -10,7 +10,7 @@ node_modules/
 __pycache__/
 *.pyc
 *.pyo
+scripts/tests/__pycache__/
 
 # macOS
 .DS_Store
-scripts/tests/__pycache__/

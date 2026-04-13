@@ -1,1 +1,3 @@
-[{"dim":"X"}]
+[
+  {"dimension_name": "Pain Intensity", "message": "Wrong field names — should be dim and explanation"}
+]

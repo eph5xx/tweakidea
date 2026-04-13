@@ -1,24 +1,21 @@
-"""Test runner for scripts/tests package.
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["jsonschema==4.26.0"]
+# ///
+"""Entry point for TweakIdea Phase 1 tests via uv run.
 
-Usage:
-    uv run scripts/tests/run_tests.py          # run all tests
-    uv run scripts/tests/run_tests.py -v       # verbose output
-
-Discovers all test_*.py files in scripts/tests/ and runs them via unittest.
+Usage: uv run scripts/tests/run_tests.py [-v]
 """
-import pathlib
 import sys
 import unittest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ROOT / "scripts"))
-
 if __name__ == "__main__":
-    test_dir = pathlib.Path(__file__).resolve().parent
     loader = unittest.TestLoader()
-    suite = loader.discover(str(test_dir), pattern="test_*.py")
-    verbosity = 2 if "-v" in sys.argv else 1
-    runner = unittest.TextTestRunner(verbosity=verbosity)
+    suite = loader.discover(
+        start_dir="scripts/tests",
+        pattern="test_*.py",
+        top_level_dir=".",
+    )
+    runner = unittest.TextTestRunner(verbosity=2 if "-v" in sys.argv else 1)
     result = runner.run(suite)
     sys.exit(0 if result.wasSuccessful() else 1)

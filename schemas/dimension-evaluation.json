@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/dimension-evaluation.json",
+  "title": "Dimension Evaluation",
+  "description": "Hybrid evaluation artifact written by ti-evaluator — structured scoring fields plus prose narrative fields.",
+  "type": "object",
+  "required": [
+    "dimension",
+    "score",
+    "potential",
+    "criteria",
+    "assumptions_relied_on",
+    "key_signals",
+    "evidence_basis",
+    "analysis_narrative",
+    "key_finding",
+    "score_explanation"
+  ],
+  "properties": {
+    "dimension": {
+      "type": "string",
+      "description": "Full dimension name as in the registry (e.g., 'Pain Intensity')."
+    },
+    "score": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Current score on the 1-5 rubric scale."
+    },
+    "potential": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Potential score if UNCONFIRMED assumptions are confirmed."
+    },
+    "criteria": {
+      "type": "array",
+      "maxItems": 25,
+      "description": "Rubric criteria assessments for each level evaluated.",
+      "items": {
+        "type": "object",
+        "required": ["level", "status", "tier", "evidence"],
+        "properties": {
+          "level": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "status": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "CONDITIONAL"]
+          },
+          "tier": {
+            "type": "string",
+            "enum": ["Verified", "Research-Backed", "Founder-Asserted", "Assumed"]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions_relied_on": {
+      "type": "array",
+      "description": "Assumptions that affect scoring, with confirmation status and impact.",
+      "items": {
+        "type": "object",
+        "required": ["text", "status", "impact"],
+        "properties": {
+          "text": {"type": "string"},
+          "status": {
+            "type": "string",
+            "enum": ["CONFIRMED", "UNCONFIRMED"]
+          },
+          "impact": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "key_signals": {
+      "type": "array",
+      "description": "Key evidence signals observed for this dimension.",
+      "items": {"type": "string"}
+    },
+    "evidence_basis": {
+      "type": "string",
+      "enum": ["Research", "Founder"],
+      "description": "Primary evidence basis for this evaluation."
+    },
+    "analysis_narrative": {
+      "type": "string",
+      "minLength": 50,
+      "description": "Full 2-3 paragraph analysis prose."
+    },
+    "key_finding": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 400,
+      "description": "One-sentence synthesis of the core finding."
+    },
+    "score_explanation": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 800,
+      "description": "2-3 sentence explanation of why this score and not higher or lower."
+    }
+  },
+  "additionalProperties": false
+}

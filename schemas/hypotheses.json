@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/hypotheses.json",
+  "title": "Hypotheses",
+  "description": "Testable claims extracted from the founder's idea text by ti-extractor.",
+  "type": "array",
+  "maxItems": 20,
+  "items": {
+    "type": "object",
+    "required": ["text", "primary_dimension", "status"],
+    "properties": {
+      "text": {
+        "type": "string",
+        "minLength": 1,
+        "description": "The hypothesis text as a testable claim."
+      },
+      "primary_dimension": {
+        "type": "string",
+        "description": "The evaluation dimension this hypothesis primarily relates to."
+      },
+      "status": {
+        "type": "string",
+        "enum": ["PENDING", "CONFIRMED", "UNCONFIRMED", "MODIFIED", "REJECTED"],
+        "description": "Current confirmation status of the hypothesis."
+      }
+    },
+    "additionalProperties": false
+  }
+}

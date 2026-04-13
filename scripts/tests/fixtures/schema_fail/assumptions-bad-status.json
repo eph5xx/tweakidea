@@ -1,1 +1,3 @@
-[{"text":"Teams spend time on reconciliation","primary_dimension":"Pain Intensity","status":"LATER"}]
+[
+  {"text": "Teams spend 6+ hours on reconciliation", "primary_dimension": "Pain Intensity", "status": "PENDING"}
+]

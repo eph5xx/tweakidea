@@ -1,1 +1,19 @@
-{"dimension":"Pain Intensity","score":7,"potential":4,"criteria":[{"level":4,"status":"PASS","tier":"Verified","evidence":"Test evidence"}],"assumptions_relied_on":[],"key_signals":["test"],"evidence_basis":"Research","analysis_narrative":"Test narrative.","key_finding":"Test finding.","score_explanation":"Test explanation."}
+{
+  "dimension": "Pain Intensity",
+  "score": 6,
+  "potential": 4,
+  "criteria": [
+    {
+      "level": 4,
+      "status": "PASS",
+      "tier": "Verified",
+      "evidence": "Score out of range — 6 is invalid (must be 1-5)"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": ["Bad score test fixture"],
+  "evidence_basis": "Research",
+  "analysis_narrative": "This fixture has an invalid score of 6 which should fail the schema validation check for integer range 1-5.",
+  "key_finding": "Invalid score fixture for schema testing.",
+  "score_explanation": "Score 6 is out of the valid range of 1-5 and should be rejected by the schema validator."
+}

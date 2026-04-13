@@ -1,1 +1,10 @@
-[{"task":"","dim":"Pain Intensity","from":3,"to":4,"weighted_uplift":0.12,"rationale":"test"}]
+[
+  {
+    "task": "",
+    "dim": "Willingness to Pay",
+    "from": 3,
+    "to": 4,
+    "weighted_uplift": 0.12,
+    "rationale": "Empty task string should fail minLength: 1 validation"
+  }
+]

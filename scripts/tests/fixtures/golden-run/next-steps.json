@@ -1,26 +1,26 @@
 [
   {
-    "task": "Run 5 pricing conversations with SaaS finance leads to confirm $50-100/month willingness to pay",
+    "task": "Run 10 pricing interviews with SaaS teams to validate $50-100/month willingness to pay",
     "dim": "Willingness to Pay",
     "from": 3,
     "to": 4,
     "weighted_uplift": 0.12,
-    "rationale": "The single highest-leverage validation action — confirming pricing moves the UNCONFIRMED assumption to CONFIRMED, adding 0.12 to the weighted total and potentially shifting the verdict from PIVOT to GO"
+    "rationale": "Confirming the pricing hypothesis is the single highest-impact validation — it unlocks 0.12 weighted uplift and directly gates the GO verdict."
   },
   {
-    "task": "Interview 10 target customers about month-end close workflows to validate urgency trigger hypothesis",
+    "task": "Interview 5 finance ops leads to identify month-end urgency patterns and evaluate forcing events",
     "dim": "Urgency",
     "from": 2,
     "to": 3,
     "weighted_uplift": 0.08,
-    "rationale": "Urgency is the most surprising weakness given the confirmed pain level — if month-end close creates buying urgency, it changes the GTM strategy and improves the score by 0.08"
+    "rationale": "Urgency is the second-largest gap. Confirming month-end urgency creates a natural acquisition timing signal and validates the product's primary use window."
   },
   {
-    "task": "Prototype a data aggregation layer to test whether reconciliation patterns create a defensibility advantage",
-    "dim": "Defensibility",
-    "from": 2,
-    "to": 3,
-    "weighted_uplift": 0.08,
-    "rationale": "Building the learning layer early while the customer base is small costs little but could create a durable moat if the pattern-matching improves with data volume"
+    "task": "Prototype Stripe API integration (replace CSV upload) to test behavior change friction reduction",
+    "dim": "Behavior Change Required",
+    "from": 3,
+    "to": 4,
+    "weighted_uplift": 0.04,
+    "rationale": "API integration removes the largest friction point in the onboarding flow and validates whether zero-behavior-change adoption is achievable."
   }
 ]

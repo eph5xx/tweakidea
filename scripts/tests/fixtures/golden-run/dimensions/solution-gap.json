@@ -6,36 +6,30 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
-      "evidence": "Existing incumbents have engineering resources to close the gap if the market proves large enough"
+      "tier": "Research-Backed",
+      "evidence": "Research found no tool that fully automates multi-processor CSV reconciliation end-to-end including bank statement matching"
     },
     {
       "level": 4,
       "status": "PASS",
       "tier": "Research-Backed",
-      "evidence": "Competitive research shows Ramp and Brex offer partial reconciliation but neither ingests arbitrary bank CSVs or supports triple-source matching (Stripe + PayPal + bank)"
+      "evidence": "Ramp and Brex handle card spend but lack custom CSV ingest; QuickBooks requires manual mapping; no multi-processor automated matching tool found"
     },
     {
       "level": 3,
       "status": "PASS",
       "tier": "Research-Backed",
-      "evidence": "QuickBooks and Xero handle single-source bank imports but do not automate multi-processor transaction matching by amount + date window + customer ID"
-    },
-    {
-      "level": 2,
-      "status": "PASS",
-      "tier": "Assumed",
-      "evidence": "Manual spreadsheet workflows remain the fallback — confirmed by the 6-hour/week pain data"
+      "evidence": "Category sweep confirmed no product directly addresses the Stripe + PayPal + bank CSV triangulation use case for small SaaS teams"
     }
   ],
   "assumptions_relied_on": [],
   "key_signals": [
-    "No incumbent handles triple-source matching (Stripe + PayPal + bank CSV)",
-    "Ramp/Brex cover card spend only, not payment processor reconciliation",
-    "QuickBooks/Xero single-source only"
+    "No incumbent handles multi-processor CSV reconciliation end-to-end",
+    "Ramp/Brex: card-centric, no CSV ingest",
+    "QuickBooks: manual mapping, not automated matching"
   ],
   "evidence_basis": "Research",
-  "analysis_narrative": "The competitive research surfaces a genuine gap: every major tool in the space handles one side of the equation. Ramp and Brex are card-spend tools — they do not ingest external payment processor exports. QuickBooks and Xero support bank imports but treat reconciliation as a single-source operation; their matching logic was not built for the multi-processor scenario where the same customer appears in Stripe, PayPal, and a bank statement with different formatting conventions.\n\nThe gap is real and current as of Q1 2025. It persists because the incumbent market leaders serve either the enterprise (Coupa, Tipalti) or the freelancer/micro-business segment (Wave, FreshBooks), with small SaaS teams (10-50 employees, 2-4 payment processors) underserved by both tiers.\n\nScore 5 is withheld because the gap is closable by incumbents — it is not a structural moat but a feature gap. Ramp's recent funding ($620M Series D) means they have the resources to ship multi-processor support if they prioritize it.",
-  "key_finding": "No current tool handles triple-source transaction matching (Stripe + PayPal + bank CSV) — the gap is real, current, and well-evidenced by competitive research.",
-  "score_explanation": "Score 4 reflects a confirmed, specific feature gap in the current competitive landscape with Research-Backed evidence from two independent competitive sources. Score 5 is not awarded because the gap is a product decision by incumbents rather than a structural or technical barrier."
+  "analysis_narrative": "The competitive landscape research reveals a genuine gap. The incumbents in finance tooling (Ramp, Brex, QuickBooks, Xero) are each optimized for a narrower problem than multi-processor automated reconciliation. Ramp and Brex are card-spend management tools that happen to have reconciliation features; they don't ingest external processor CSVs. QuickBooks handles bookkeeping but requires manual bank rule creation rather than automated cross-source matching.\n\nDedicated reconciliation tools like Docyt and Veryfi focus on receipt capture and expense management — a different workflow. The specific triangulation problem (Stripe exports + PayPal reports + bank statement = one coherent ledger) appears to be unaddressed by existing SaaS at the SMB price point.\n\nThe gap is real but not impenetrable. Score 4 rather than 5 reflects that a determined incumbent (e.g., QuickBooks) could close this gap with a feature release, and the barrier to entry for a new entrant is technical but not structural.",
+  "key_finding": "No existing tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams — the specific triangulation use case is an unaddressed gap.",
+  "score_explanation": "Score 4 reflects a clearly validated competitive gap confirmed through research. Score 5 would require the gap to be structural or protected by network effects; here the gap is real but could be closed by an incumbent feature update."
 }

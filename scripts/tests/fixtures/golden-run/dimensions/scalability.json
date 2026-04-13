@@ -7,35 +7,29 @@
       "level": 5,
       "status": "FAIL",
       "tier": "Assumed",
-      "evidence": "No evidence of network effects or exponential value growth with scale"
+      "evidence": "No evidence of viral distribution, API-led growth, or PLG flywheel that would enable exponential user acquisition"
     },
     {
       "level": 4,
       "status": "PASS",
       "tier": "Verified",
-      "evidence": "CSV processing and matching logic is stateless and horizontally scalable; adding more customers does not degrade performance for existing customers"
+      "evidence": "CSV parsing and matching logic scales linearly with transaction volume; no fundamental architectural barriers to handling enterprise-scale ledgers identified"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Assumed",
-      "evidence": "SaaS delivery model is inherently more scalable than professional services alternatives"
-    },
-    {
-      "level": 2,
-      "status": "PASS",
-      "tier": "Assumed",
-      "evidence": "Digital delivery with no physical component means no fulfillment bottleneck"
+      "tier": "Research-Backed",
+      "evidence": "Category precedent: similar fintech tools (Ramp, Brex) scale from SMB to mid-market without re-architecting core matching logic"
     }
   ],
   "assumptions_relied_on": [],
   "key_signals": [
-    "Stateless CSV processing scales horizontally",
-    "No manual fulfillment or professional services component",
-    "SaaS model enables serving many customers simultaneously"
+    "Technical architecture scales linearly",
+    "Category precedent supports SMB-to-midmarket path",
+    "No PLG mechanism identified"
   ],
-  "evidence_basis": "Founder",
-  "analysis_narrative": "Scalability is a technical strength of this solution. The core matching algorithm — comparing transaction records by amount, date window, and customer ID — is a deterministic, stateless computation that is trivially parallelizable. A customer processing 10,000 transactions/month gets the same performance as one processing 100 transactions/month, with only cloud compute costs scaling proportionally.\n\nThe business model reinforces this: SaaS subscriptions create predictable revenue without proportional growth in support costs, assuming the product handles the common edge cases automatically. The founder's technical background is relevant here — they understand the matching problem deeply enough to build a robust solution.\n\nScore 5 would require some form of value amplification with scale — network effects, data-driven matching improvements that compound with usage, or a platform that grows in value as more integrations are added. The current single-use-case positioning does not exhibit these properties.",
-  "key_finding": "Scalability is technically sound — stateless CSV matching logic scales horizontally with no service degradation at volume.",
-  "score_explanation": "Score 4 reflects a clean stateless architecture that scales with cloud infrastructure and a SaaS business model with high gross margins. Score 5 requires network effects or exponential value growth that are not present in the current solution design."
+  "evidence_basis": "Research",
+  "analysis_narrative": "Scalability is a technical strength. CSV parsing and transaction matching are computationally straightforward — they scale linearly with transaction volume, not exponentially. Moving from a 100-transaction-per-week team to a 10,000-transaction-per-week team requires more compute but not architectural reinvention.\n\nThe category precedent from Ramp and Brex confirms that similar tooling moves from SMB to mid-market without fundamental restructuring. The matching logic that works for a 5-person SaaS team can be extended with confidence to a 500-person company's finance operations.\n\nScore 4 reflects strong technical scalability. Score 5 would require a viral or PLG growth mechanism — which is not apparent for a B2B finance workflow tool — or multi-sided network effects, which don't exist here.",
+  "key_finding": "Technical scalability is strong — the CSV matching architecture scales linearly and category precedent confirms the SMB-to-midmarket path without re-architecting.",
+  "score_explanation": "Score 4 reflects verified technical scalability with category-backed precedent. Score 5 would require a viral or PLG distribution mechanism that doesn't exist in this B2B finance workflow context."
 }

@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/potential.json",
+  "title": "Potential",
+  "description": "Upside analysis authored by ti-narrative — what assumptions gate score improvements.",
+  "type": "object",
+  "required": ["dimensions", "assumptions", "narrative"],
+  "properties": {
+    "dimensions": {
+      "type": "array",
+      "description": "Per-dimension potential analysis where potential > score.",
+      "items": {
+        "type": "object",
+        "required": ["dim", "score", "potential", "uplift", "pending_assumptions"],
+        "properties": {
+          "dim": {"type": "string"},
+          "score": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "potential": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "uplift": {
+            "type": "number",
+            "description": "Weighted score improvement if potential is realized."
+          },
+          "pending_assumptions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["text", "impact"],
+              "properties": {
+                "text": {"type": "string"},
+                "impact": {"type": "string"}
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "description": "All unconfirmed assumptions with their weighted uplift.",
+      "items": {
+        "type": "object",
+        "required": ["text", "dim", "uplift"],
+        "properties": {
+          "text": {"type": "string"},
+          "dim": {"type": "string"},
+          "uplift": {"type": "number"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "narrative": {
+      "type": "string",
+      "minLength": 20,
+      "description": "Prose summary of what assumptions gate the path from current to potential score."
+    }
+  },
+  "additionalProperties": false
+}

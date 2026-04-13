@@ -2,7 +2,7 @@
   "weighted_total": 3.2,
   "potential_total": 3.5,
   "verdict_bucket": "PIVOT",
-  "verdict_label": "PIVOT \u2014 Promising, address weak areas",
+  "verdict_label": "PIVOT — Promising, address weak areas",
   "rankings": [
     {
       "dim": "Pain Intensity",
@@ -26,7 +26,7 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
-      "tier_counts": {"verified": 0, "research": 2, "founder": 0, "assumed": 2}
+      "tier_counts": {"verified": 0, "research": 2, "founder": 0, "assumed": 1}
     },
     {
       "dim": "Founder-Market Fit",
@@ -50,7 +50,7 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.32,
-      "tier_counts": {"verified": 1, "research": 1, "founder": 0, "assumed": 2}
+      "tier_counts": {"verified": 2, "research": 1, "founder": 0, "assumed": 1}
     },
     {
       "dim": "Market Size",
@@ -58,7 +58,7 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.24,
-      "tier_counts": {"verified": 0, "research": 1, "founder": 1, "assumed": 2}
+      "tier_counts": {"verified": 0, "research": 2, "founder": 1, "assumed": 1}
     },
     {
       "dim": "Defensibility",
@@ -74,7 +74,7 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
-      "tier_counts": {"verified": 0, "research": 1, "founder": 0, "assumed": 3}
+      "tier_counts": {"verified": 0, "research": 1, "founder": 0, "assumed": 2}
     },
     {
       "dim": "Scalability",
@@ -82,7 +82,7 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.16,
-      "tier_counts": {"verified": 1, "research": 0, "founder": 0, "assumed": 3}
+      "tier_counts": {"verified": 1, "research": 1, "founder": 0, "assumed": 1}
     },
     {
       "dim": "Clarity of Target Customer",
@@ -90,7 +90,7 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
-      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 3}
+      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 2}
     },
     {
       "dim": "Behavior Change Required",
@@ -98,7 +98,7 @@
       "score": 3,
       "potential": 4,
       "weighted_score": 0.12,
-      "tier_counts": {"verified": 0, "research": 0, "founder": 2, "assumed": 2}
+      "tier_counts": {"verified": 0, "research": 0, "founder": 1, "assumed": 2}
     },
     {
       "dim": "Mandatory Nature",
@@ -114,15 +114,15 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.06,
-      "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 4}
+      "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 3}
     }
   ],
   "dealbreaker_dims": [],
   "evidence_quality": {
-    "verified_pct": 9,
-    "research_pct": 11,
+    "verified_pct": 12,
+    "research_pct": 16,
     "founder_pct": 12,
-    "assumed_pct": 68
+    "assumed_pct": 60
   },
   "assumption_impact_math": [
     {
@@ -132,23 +132,23 @@
       "weighted_uplift": 0.12
     },
     {
-      "assumption_text": "Month-end close pressure creates periodic urgency spikes that drive tool switching",
+      "assumption_text": "Month-end close creates a forcing event that raises urgency above the chronic baseline",
       "dim": "Urgency",
       "score_delta": 1,
       "weighted_uplift": 0.08
     },
     {
-      "assumption_text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time",
+      "assumption_text": "Accumulated reconciliation pattern data creates a matching-accuracy flywheel",
       "dim": "Defensibility",
       "score_delta": 1,
       "weighted_uplift": 0.08
     },
     {
-      "assumption_text": "Finance teams already export CSVs from processors habitually \u2014 upload workflow requires no new behavior",
+      "assumption_text": "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users",
       "dim": "Behavior Change Required",
       "score_delta": 1,
       "weighted_uplift": 0.04
     }
   ],
-  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\"><!-- PLACEHOLDER \u2014 replaced by compute.py in Wave 1 test --><polygon points=\"250,50 400,150 400,300 250,390 100,300 100,150\" fill=\"none\" stroke=\"#4f46e5\" stroke-width=\"2\"/></svg>"
+  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\"><text x=\"250\" y=\"220\" text-anchor=\"middle\">PLACEHOLDER — replaced by compute.py in Wave 1 test</text></svg>"
 }

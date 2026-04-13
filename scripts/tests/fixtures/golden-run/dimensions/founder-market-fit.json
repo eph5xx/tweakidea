@@ -7,35 +7,35 @@
       "level": 5,
       "status": "FAIL",
       "tier": "Assumed",
-      "evidence": "No indication of deep domain authority (publications, advisory roles, industry recognition) in fintech or SaaS finance automation"
+      "evidence": "No evidence of deep domain expertise in fintech, payment processing APIs, or prior reconciliation product experience"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
-      "evidence": "Founder profile does not indicate prior exit or institutional investor backing in the fintech space"
+      "tier": "Founder-Asserted",
+      "evidence": "Founder has SaaS background but not specifically in financial tooling or payment operations"
     },
     {
       "level": 3,
       "status": "PASS",
       "tier": "Founder-Asserted",
-      "evidence": "Founder has 4 years operating a SaaS business using multiple payment processors — lived the pain directly"
+      "evidence": "Founder personally experienced the reconciliation problem for 2+ years at previous SaaS company; built internal spreadsheet solutions"
     },
     {
       "level": 2,
       "status": "PASS",
       "tier": "Assumed",
-      "evidence": "Technical background sufficient to build the reconciliation dashboard based on stated skills"
+      "evidence": "Founder has engineering background sufficient to build the CSV parsing and matching logic"
     }
   ],
   "assumptions_relied_on": [],
   "key_signals": [
-    "4 years of firsthand pain in the target domain",
-    "Technical capability to build the MVP",
-    "No fintech domain authority or prior network"
+    "Personal problem experience: 2+ years",
+    "Engineering capability confirmed",
+    "No fintech domain expertise or network advantage"
   ],
   "evidence_basis": "Founder",
-  "analysis_narrative": "The founder has the most important credential for this problem: they lived it. Four years running a SaaS business with Stripe, PayPal, and bank reconciliation gives them genuine user empathy and domain knowledge that cannot be faked. They understand the edge cases — timezone mismatches, partial refunds, split transactions — because they encountered them.\n\nWhat the founder lacks is formal fintech network access: no CFO-level connections to expedite enterprise sales, no prior fintech startup experience to lean on for hiring, and no track record that would open doors to large SaaS customers quickly. The market fit is authentic but the network leverage is limited.\n\nScore 3 is the honest ceiling given the available information. Score 4 would require evidence of a warm network into target customer finance departments or a co-founder with fintech operator credentials.",
-  "key_finding": "Founder has genuine lived experience with the target problem but lacks the fintech network and domain authority that would accelerate go-to-market.",
-  "score_explanation": "Score 3 reflects authentic problem ownership through direct operator experience. Score 4 requires either demonstrated network access to the target buyer persona (SaaS finance leads) or domain authority signaling beyond personal use."
+  "analysis_narrative": "The founder's fit here is primarily user-centric rather than domain-expert. They experienced the problem firsthand and built internal tooling to cope — which is a meaningful signal of motivation and understanding. However, there is no evidence of specialized fintech expertise, payment processing API knowledge, or existing relationships with finance decision-makers at SMBs.\n\nThe asymmetry matters: a founder who has lived the problem can build a product that solves it, but without domain expertise or network, customer acquisition and trust-building in a finance workflow category will require extra effort. CFOs and finance managers tend to trust tools built by people who understand compliance and accounting conventions — not just the engineering problem.\n\nScore 3 is appropriate: real personal experience + engineering competence, but lacking the domain credibility and network that would support a Score 4 or 5. The potential ceiling is 3 because the gap is knowledge and relationship-based, not easily closed by validation work alone.",
+  "key_finding": "Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building.",
+  "score_explanation": "Score 3 reflects genuine personal experience with the problem and engineering capability, without the specialized fintech knowledge or existing relationships in the finance buyer community that would warrant Score 4 or 5."
 }

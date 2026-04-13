@@ -1,1 +1,4 @@
-[{"kind":"strength","dim":"Pain Intensity","score":4,"why":"Test"},{"kind":"strength","dim":"Solution Gap","score":4,"why":"Test"},{"kind":"weakness","dim":"Urgency","score":2,"why":"Test"},{"kind":"weakness","dim":"Defensibility","score":2,"why":"Test"}]
+[
+  {"kind": "strength", "dim": "Pain Intensity", "score": 4, "why": "Strong pain signal"},
+  {"kind": "weakness", "dim": "Urgency", "score": 2, "why": "Low urgency"}
+]

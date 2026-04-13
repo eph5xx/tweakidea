@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/research.json",
+  "title": "Research",
+  "description": "Market research clusters produced by ti-researcher, or a stub when research is unavailable.",
+  "type": "object",
+  "required": ["available"],
+  "properties": {
+    "available": {
+      "type": "boolean",
+      "description": "Whether research data was successfully gathered."
+    },
+    "clusters": {
+      "type": "object",
+      "description": "Research grouped by USER, COMPETITIVE, and MARKET clusters.",
+      "properties": {
+        "user": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "competitive": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "market": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "competitive_landscape": {
+      "type": "array",
+      "description": "Structured competitive analysis entries.",
+      "items": {
+        "type": "object",
+        "required": ["competitor", "features", "pricing", "positioning_gap"],
+        "properties": {
+          "competitor": {"type": "string"},
+          "features": {"type": "string"},
+          "pricing": {"type": "string"},
+          "positioning_gap": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "reason": {
+      "type": "string",
+      "description": "Explanation when available is false."
+    }
+  },
+  "additionalProperties": false
+}

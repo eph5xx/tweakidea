@@ -7,41 +7,35 @@
       "level": 5,
       "status": "FAIL",
       "tier": "Assumed",
-      "evidence": "Switching from spreadsheets to a new tool requires workflow change for the finance/ops team"
+      "evidence": "No evidence this is a zero-behavior-change drop-in; some workflow integration is always required"
     },
     {
       "level": 4,
       "status": "CONDITIONAL",
       "tier": "Founder-Asserted",
-      "evidence": "Depends on UNCONFIRMED hypothesis that teams will adopt CSV-export workflow without needing API integrations — founder believes export workflow is already habitual but no confirmation"
+      "evidence": "If API integrations with Stripe/PayPal are offered (vs CSV upload), behavior change drops significantly; currently unconfirmed whether API mode will ship"
     },
     {
       "level": 3,
       "status": "PASS",
       "tier": "Founder-Asserted",
-      "evidence": "Core workflow maps onto existing behavior: download CSV from each processor, upload to dashboard — less disruptive than tools requiring new integrations or new credentials"
-    },
-    {
-      "level": 2,
-      "status": "PASS",
-      "tier": "Assumed",
-      "evidence": "Teams already export CSVs manually — the tool replaces the spreadsheet step, not the export step"
+      "evidence": "The behavior change — export CSVs from each processor and upload to dashboard — is a minimal incremental step that replaces a more tedious manual process"
     }
   ],
   "assumptions_relied_on": [
     {
-      "text": "Finance teams already export CSVs from processors habitually — upload workflow requires no new behavior",
+      "text": "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users",
       "status": "UNCONFIRMED",
-      "impact": "If confirmed, Score 4 criterion would PASS, raising score from 3 to 4"
+      "impact": "If API integrations ship, Score 4 criterion (CONDITIONAL) would PASS, raising score from 3 to 4"
     }
   ],
   "key_signals": [
-    "Upload-based workflow maps onto existing CSV export habits",
-    "No new integrations or credentials required for core flow",
-    "Replacing spreadsheet step (not export step) reduces behavior delta"
+    "CSV upload replaces existing manual export habit",
+    "Behavior change is incremental, not disruptive",
+    "API integrations would further reduce friction"
   ],
   "evidence_basis": "Founder",
-  "analysis_narrative": "Behavior change is moderate — better than most new-category tools but not frictionless. The CSV-upload workflow is a strength here: it does not require OAuth integrations, API keys, or installing browser extensions. Teams that already export CSVs from Stripe and PayPal (which most do for expense reporting) simply redirect those exports to a new destination.\n\nThe behavior change is focused on the matching and reporting step, replacing an existing spreadsheet workflow. Replacing an existing workflow is generally easier than creating a new one — teams already have the habit, the tool just needs to be better than the current solution at the specific task.\n\nScore 5 would require a completely invisible workflow change (automatic sync with zero user action), which would require API-level integration. The CSV-upload model sits at Score 3-4 depending on whether the existing CSV export habit is confirmed.",
-  "key_finding": "Behavior change required is moderate — the CSV-upload workflow maps onto existing processor export habits, but replacing a spreadsheet workflow still requires a conscious switch.",
-  "score_explanation": "Score 3 reflects that the core workflow builds on existing behavior (CSV exports) but still requires users to change their reconciliation step from spreadsheets to a new tool. Score 4 is achievable if confirmed that the CSV export habit is already established and habitual."
+  "analysis_narrative": "The behavior change required is moderate and manageable. Users already export CSVs from their payment processors manually — the product asks them to redirect that export to a dashboard instead of a spreadsheet. This is an incremental habit change rather than a disruptive workflow transformation.\n\nThe key friction point is adoption: getting teams to establish the new habit of uploading to the dashboard instead of the familiar spreadsheet. Once the habit is formed, the product becomes sticky. The behavior change concern is further mitigated if API integrations are eventually offered — automated data ingest would reduce the required behavior change to near-zero.\n\nScore 3 reflects that behavior change is real but manageable. The current MVP (CSV upload) asks for a small step change from an existing habit. Score 4 would be appropriate if API integrations were confirmed to ship in the near-term, reducing the required behavior change substantially.",
+  "key_finding": "Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift.",
+  "score_explanation": "Score 3 reflects an incremental behavior change that builds on existing user habits (CSV exports already happen). Score 4 would require API integrations that automate data ingest, which is currently unconfirmed."
 }
