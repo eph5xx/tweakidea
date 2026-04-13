@@ -1,0 +1,11 @@
+{
+  "available": true,
+  "clusters": {
+    "user": ["68% of SMBs with multiple payment processors cite reconciliation as a top admin burden (Gartner 2025)"],
+    "competitive": ["Ramp, Brex offer partial reconciliation but no multi-processor CSV ingest"],
+    "market": ["SMB fintech automation market: $4.2B in 2025, 18% CAGR (IDC)"]
+  },
+  "competitive_landscape": [
+    {"competitor": "Ramp", "features": "card spend, bill pay", "pricing": "free tier + enterprise", "positioning_gap": "no custom CSV ingest"}
+  ]
+}

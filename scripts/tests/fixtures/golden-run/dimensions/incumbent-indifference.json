@@ -1,0 +1,41 @@
+{
+  "dimension": "Incumbent Indifference",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence that incumbents are structurally unable to address this — it is a feature decision, not a capability gap"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Ramp and Brex have both the engineering resources and customer relationships to ship multi-processor CSV support if they prioritize it"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Small SaaS teams represent a low-revenue segment for enterprise fintech incumbents; product teams at Ramp/Brex are focused on larger ACVs"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "QuickBooks and Xero have not shipped meaningful automation improvements in years — organizational inertia is documented"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "Small SaaS segment is below minimum ACV for enterprise fintech product teams",
+    "Incumbents have made no recent moves toward multi-processor matching",
+    "Incumbents are capable of closing the gap if they choose to"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Incumbent indifference is a nuanced dimension here. The major incumbents are not indifferent because they cannot address this problem — they are indifferent because the target segment (small SaaS, 10-50 employees) generates insufficient ACV to justify product investment. Ramp's average contract is 10-20x higher than what this tool would charge.\n\nThis creates a window of opportunity that is real but time-limited. The incumbents are prioritizing upmarket; a focused competitor can build a better product for the downmarket segment before the incumbents decide it is worth their attention. Historical precedent (Xero vs. QuickBooks in the small business segment) shows this pattern plays out over 3-7 year cycles.\n\nScore 3 reflects the incumbents' current strategic indifference to the small-team segment, while acknowledging that this indifference is economically motivated rather than permanent.",
+  "key_finding": "Incumbents are strategically indifferent to the small SaaS segment because the ACV is too low — this creates a window, not a permanent moat.",
+  "score_explanation": "Score 3 reflects demonstrated incumbent focus on higher-ACV segments and documented inertia in legacy players, balanced against incumbents' capability to close the gap if strategic priorities shift."
+}

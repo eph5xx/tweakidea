@@ -1,0 +1,41 @@
+{
+  "dimension": "Clarity of Target Customer",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No specific named companies or customer personas with validated buying intent identified"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Target customer segment is described by size and problem but not by specific vertical, buying trigger, or decision-maker role"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder clearly identifies small SaaS teams (10-50 employees) using 2+ payment processors as the target — a workable segment definition for early customer discovery"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "The pain description implies a finance or operations lead as the primary user — a coherent buyer persona even if not explicitly stated"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "Clear size-and-problem segment definition: 10-50 employee SaaS with 2+ processors",
+    "Primary user persona (finance/ops lead) implied but not explicitly validated",
+    "No vertical focus or buying trigger identified"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "The target customer definition is workable but not yet sharp. The founder has identified a useful segment: small SaaS teams (10-50 employees) using multiple payment processors. This is specific enough to run customer discovery and find the first 10 customers — the definition will generate a coherent list of companies to approach.\n\nWhat is missing is the layer of specificity needed for efficient acquisition: which verticals concentrate this pain (SaaS tools companies? e-commerce hybrids?), what the triggering event for a purchase decision is (a new investor? A failed audit?), and which role owns the budget (CEO, COO, or Head of Finance?).\n\nFor a pre-product startup, Score 3 is appropriate — the segment is defined well enough to start. Score 4 would require a named persona with validated buying triggers based on actual conversations.",
+  "key_finding": "Target customer is identified at the segment level (10-50 employee SaaS with multiple processors) but lacks persona depth, vertical focus, and buying trigger specificity.",
+  "score_explanation": "Score 3 reflects a segment definition that is actionable for early customer discovery but lacks the persona depth and trigger identification needed for efficient demand generation. Score 4 requires validated buyer personas with specific buying triggers."
+}

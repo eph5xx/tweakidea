@@ -8,3 +8,4 @@ node_modules/
 
 # macOS
 .DS_Store
+scripts/tests/__pycache__/

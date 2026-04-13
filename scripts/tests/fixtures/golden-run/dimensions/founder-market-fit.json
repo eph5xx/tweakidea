@@ -1,0 +1,41 @@
+{
+  "dimension": "Founder-Market Fit",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No indication of deep domain authority (publications, advisory roles, industry recognition) in fintech or SaaS finance automation"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Founder profile does not indicate prior exit or institutional investor backing in the fintech space"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder has 4 years operating a SaaS business using multiple payment processors — lived the pain directly"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Technical background sufficient to build the reconciliation dashboard based on stated skills"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "4 years of firsthand pain in the target domain",
+    "Technical capability to build the MVP",
+    "No fintech domain authority or prior network"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "The founder has the most important credential for this problem: they lived it. Four years running a SaaS business with Stripe, PayPal, and bank reconciliation gives them genuine user empathy and domain knowledge that cannot be faked. They understand the edge cases — timezone mismatches, partial refunds, split transactions — because they encountered them.\n\nWhat the founder lacks is formal fintech network access: no CFO-level connections to expedite enterprise sales, no prior fintech startup experience to lean on for hiring, and no track record that would open doors to large SaaS customers quickly. The market fit is authentic but the network leverage is limited.\n\nScore 3 is the honest ceiling given the available information. Score 4 would require evidence of a warm network into target customer finance departments or a co-founder with fintech operator credentials.",
+  "key_finding": "Founder has genuine lived experience with the target problem but lacks the fintech network and domain authority that would accelerate go-to-market.",
+  "score_explanation": "Score 3 reflects authentic problem ownership through direct operator experience. Score 4 requires either demonstrated network access to the target buyer persona (SaaS finance leads) or domain authority signaling beyond personal use."
+}

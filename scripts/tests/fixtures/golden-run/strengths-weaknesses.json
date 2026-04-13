@@ -1,0 +1,8 @@
+[
+  {"kind": "strength", "dim": "Pain Intensity", "score": 4, "why": "Quantified weekly time loss (6+ hours) confirmed by both founder experience and independent research"},
+  {"kind": "strength", "dim": "Solution Gap", "score": 4, "why": "No incumbent tool handles triple-source matching (Stripe + PayPal + bank CSV) — confirmed gap in competitive landscape"},
+  {"kind": "strength", "dim": "Frequency", "score": 4, "why": "Weekly reconciliation cadence confirmed by research (74% of SMBs) — drives strong retention economics"},
+  {"kind": "weakness", "dim": "Urgency", "score": 2, "why": "Problem is chronic but not acute — existing workarounds reduce the felt urgency to switch tools"},
+  {"kind": "weakness", "dim": "Defensibility", "score": 2, "why": "No network effects or proprietary data moat — incumbents could close the feature gap if they prioritize the segment"},
+  {"kind": "weakness", "dim": "Mandatory Nature", "score": 2, "why": "Reconciliation task is mandatory but automated tooling is not — competes against manual alternatives, not mandates"}
+]
