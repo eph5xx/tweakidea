@@ -1,0 +1,35 @@
+{
+  "dimension": "Market Growth",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of explosive growth or emerging regulatory tailwind that would dramatically expand the market in 2-3 years"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Research-Backed",
+      "evidence": "SMB fintech automation grows at 18% CAGR — meaningful but not 40%+ hyper-growth required for Score 4"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Research-Backed",
+      "evidence": "IDC projects SMB fintech automation at 18% CAGR 2025-2028; multi-processor SaaS adoption growing with payment infrastructure fragmentation"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "18% CAGR for SMB fintech automation (IDC 2025)",
+    "Payment infrastructure fragmentation trend supports market expansion",
+    "Not hyper-growth territory"
+  ],
+  "evidence_basis": "Research",
+  "analysis_narrative": "Market growth is moderate. The SMB fintech automation market is growing at a healthy but not exceptional 18% CAGR, driven by digital transformation initiatives and the proliferation of payment infrastructure. As more SaaS tools add payment capabilities (buy now pay later, embedded finance), the number of teams dealing with multi-processor complexity increases organically.\n\nThe tailwind is real but not explosive. This is not a category being created by a new technology paradigm — it is an existing operational pain point that automation is making more feasible to address at SMB price points.\n\nScore 3 reflects steady growth with research backing but without the 40%+ CAGR or category-creating momentum that would warrant Score 4 or 5.",
+  "key_finding": "Market growth is steady at 18% CAGR, supported by payment infrastructure fragmentation, but not in hyper-growth territory.",
+  "score_explanation": "Score 3 reflects solid but not exceptional market growth. Research confirms 18% CAGR in the relevant category. Score 4 would require 40%+ growth or an emerging regulatory tailwind that is not currently evidenced."
+}

@@ -1,0 +1,96 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.65; color: #1a1a2e; background-color: #f8f9fc; padding: 2.5rem 1.5rem;
+}
+.container { max-width: 940px; margin: 0 auto; }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #111827; }
+h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.85rem; color: #1f2937; letter-spacing: -0.01em; }
+
+/* Verdict banner */
+.verdict { padding: 1.5rem 1.75rem; border-radius: 10px; margin-bottom: 1.75rem; }
+.verdict-go { background-color: #dcfce7; border-left: 4px solid #22c55e; }
+.verdict-pivot { background-color: #fef9c3; border-left: 4px solid #eab308; }
+.verdict-stop { background-color: #fee2e2; border-left: 4px solid #ef4444; }
+.verdict-label { font-size: 1.25rem; font-weight: 700; }
+.verdict-score { font-size: 1rem; color: #4b5563; margin-top: 0.25rem; }
+
+/* Cards */
+.card { background: #fff; border-radius: 10px; padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06); margin-bottom: 1.25rem; }
+
+/* Dealbreaker */
+.dealbreaker { background-color: #fef2f2; border-left: 4px solid #ef4444; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 1rem; }
+.dealbreaker-title { color: #dc2626; font-weight: 700; }
+
+/* Scorecard table */
+.scorecard-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.scorecard-table th { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 2px solid #d1d5db; color: #6b7280; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.scorecard-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid #f3f4f6; vertical-align: middle; }
+.scorecard-table tr:last-child td { border-bottom: none; }
+
+/* Score explanation (below each scorecard row) */
+.score-explanation td {
+  padding: 0.25rem 0.75rem 0.75rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+  color: #4b5563;
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* Radar chart */
+.radar-chart { text-align: center; padding: 1rem 0; }
+.radar-chart svg { max-width: 100%; height: auto; }
+
+/* Score badges */
+.score-badge { display: inline-block; width: 2.25rem; height: 2.25rem; line-height: 2.25rem; text-align: center; border-radius: 6px; font-weight: 700; font-size: 0.85rem; color: #1a1a1a; }
+.score-5 { background-color: #22c55e; }
+.score-4 { background-color: #14b8a6; }
+.score-3 { background-color: #eab308; }
+.score-2 { background-color: #f97316; }
+.score-1 { background-color: #ef4444; }
+
+/* Progress bars */
+.progress-container { background-color: #e5e7eb; border-radius: 9999px; height: 10px; width: 100%; overflow: hidden; display: inline-block; vertical-align: middle; }
+.progress-bar { height: 100%; border-radius: 9999px; }
+
+/* Evidence tier badges */
+.tier-badge { display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
+.tier-verified { background-color: #22c55e; color: #1a1a1a; }
+.tier-research { background-color: #3b82f6; color: #ffffff; }
+.tier-founder { background-color: #eab308; color: #1a1a1a; }
+.tier-assumed { background-color: #9ca3af; color: #1a1a1a; }
+
+/* Evidence quality bar */
+.evidence-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; font-size: 0.75rem; font-weight: 600; }
+.evidence-bar > div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 0; overflow: hidden; white-space: nowrap; }
+.evidence-bar .ev-verified { background-color: #22c55e; }
+.evidence-bar .ev-research { background-color: #3b82f6; color: #fff; }
+.evidence-bar .ev-founder { background-color: #eab308; }
+.evidence-bar .ev-assumed { background-color: #9ca3af; }
+
+/* Two-column layout */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Lists */
+.item-list { list-style: none; padding: 0; }
+.item-list li { padding: 0.5rem 0; border-bottom: 1px solid #f3f4f6; }
+.item-list li:last-child { border-bottom: none; }
+.dim-tag { display: inline-block; background: #e5e7eb; color: #374151; padding: 1px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 500; }
+
+/* Header and footer */
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; padding-bottom: 1.25rem; border-bottom: 2px solid #e5e7eb; }
+footer { text-align: center; color: #9ca3af; font-size: 0.78rem; margin-top: 2.5rem; padding-top: 1.25rem; border-top: 2px solid #e5e7eb; }
+
+/* Print */
+@media print {
+  body { background: #fff; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #e5e7eb; }
+  .verdict, .score-badge, .tier-badge, .evidence-bar > div, .dealbreaker {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .card, .scorecard-table tr { break-inside: avoid; }
+}
+@media (max-width: 640px) {
+  .two-col { grid-template-columns: 1fr; }
+}

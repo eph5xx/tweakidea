@@ -1,0 +1,41 @@
+{
+  "dimension": "Market Size",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of a $1B+ addressable market at the specific multi-processor SMB reconciliation niche"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Research-Backed",
+      "evidence": "SMB fintech automation market is $4.2B (IDC 2025) but the reconciliation-specific niche is a fraction of this; no $100M+ TAM estimate found for the exact use case"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Research-Backed",
+      "evidence": "IDC estimates 2.8M SMBs in the US use 2+ payment processors; at $50/month average ACV that's a theoretical ~$1.7B TAM, but realistic SAM is much smaller"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder's network alone has 20+ teams with the problem; implies non-trivial addressable base in the SaaS segment"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "2.8M US SMBs use 2+ processors (IDC)",
+    "Theoretical TAM large but realistic SAM is niche",
+    "No $100M+ reconciliation-specific market estimate"
+  ],
+  "evidence_basis": "Research",
+  "analysis_narrative": "Market size is a moderate dimension. The total fintech automation market is large ($4.2B), but the specific reconciliation niche for small SaaS teams using multiple processors is a small slice. The theoretical TAM calculation (2.8M SMBs × $50/month) overstates the realistic opportunity because most of those businesses are brick-and-mortar, not SaaS-native.\n\nThe realistic SAM is the intersection of: tech-forward SMBs, using 2+ processors, with a recurring reconciliation problem they're willing to pay to solve. This is likely in the 50K-200K company range in the US — a $30M-$120M SAM at $50/month ACV, which is a viable seed-stage opportunity but not a venture-scale outlier.\n\nScore 3 reflects a real but bounded market: sufficient for a profitable SaaS business but not the kind of market size that drives outsized VC returns without significant expansion of the use case.",
+  "key_finding": "Market size is real but bounded — the specific multi-processor SMB reconciliation niche is a $30M-120M SAM, viable for an indie SaaS but not venture-scale without use case expansion.",
+  "score_explanation": "Score 3 reflects a validated but niche market. Research confirms the user population exists at scale, but the specific addressable segment at viable price points is too small for Score 4 without expanding the product scope."
+}

@@ -1,0 +1,47 @@
+{
+  "dimension": "Defensibility",
+  "score": 2,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of proprietary data advantages, network effects, or structural moat in CSV reconciliation tooling"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No defensible IP, switching cost mechanisms, or data flywheel identified at this stage"
+    },
+    {
+      "level": 3,
+      "status": "CONDITIONAL",
+      "tier": "Assumed",
+      "evidence": "If historical reconciliation data accumulates, a matching-accuracy flywheel could emerge over time; highly speculative at this stage"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "First-mover advantage in niche + integration depth with specific processor APIs creates temporary lead"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "Accumulated reconciliation pattern data creates a matching-accuracy flywheel",
+      "status": "UNCONFIRMED",
+      "impact": "If confirmed through early customer data, Score 3 criterion (CONDITIONAL) would PASS, raising score from 2 to 3"
+    }
+  ],
+  "key_signals": [
+    "No structural moat identified",
+    "Data flywheel hypothesis speculative",
+    "First-mover advantage only temporary"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Defensibility is the most concerning dimension in this evaluation. CSV reconciliation is fundamentally a data transformation and matching problem — the algorithmic complexity is real but not insurmountable for a well-resourced competitor. There is no network effect (reconciliation is a single-player tool), no proprietary data advantage, and no significant switching cost once a team has set up mapping rules.\n\nThe first-mover advantage in the niche exists but is temporary. If the product gains traction, incumbents (QuickBooks, Xero) or well-funded new entrants (Ramp, Brex expanding scope) could build comparable functionality within a product cycle.\n\nThe only plausible moat — a matching-accuracy flywheel from accumulated reconciliation pattern data — is highly speculative at this stage. No evidence exists that reconciliation patterns are complex enough to require machine learning rather than rule-based matching.\n\nScore 2 reflects that the product can be built and sold, but lacks structural protection against well-resourced imitation.",
+  "key_finding": "Defensibility is weak — no structural moat, network effect, or data flywheel has been identified; the product is replicable by incumbents with a feature update.",
+  "score_explanation": "Score 2 reflects the absence of defensibility mechanisms. The problem is real but the solution is technically accessible to incumbents. Score 3 would require a confirmed data flywheel or integration depth that creates meaningful switching costs."
+}

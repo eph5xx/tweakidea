@@ -1,0 +1,41 @@
+{
+  "dimension": "Mandatory Nature",
+  "score": 2,
+  "potential": 2,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No regulatory mandate or compliance requirement forces automated reconciliation — businesses can legally remain on manual processes"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No industry standard, audit requirement, or investor expectation mandates automated reconciliation for SMBs at this scale"
+    },
+    {
+      "level": 3,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Reconciliation is a best practice but not required — many SMBs operate without it and survive"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Some degree of bookkeeping reconciliation is functionally mandatory for tax compliance and month-end accounting close"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "No regulatory or audit mandate for automated reconciliation",
+    "Manual workarounds are legally viable",
+    "Only basic bookkeeping reconciliation is functionally required"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Mandatory nature is a weak dimension. Reconciliation automation is not mandated by regulation, compliance requirement, or investor covenant at the SMB scale. Companies can — and many do — operate with manual spreadsheet-based reconciliation processes without legal or contractual consequence.\n\nThe problem sits in the 'nice to have' or 'efficiency gain' category rather than the 'must have or face consequences' category. This affects both urgency and pricing power: without a mandatory driver, purchasing decisions are discretionary and easily deferred.\n\nScore 2 reflects that basic bookkeeping reconciliation (not automated multi-processor reconciliation) is functionally mandatory for accounting close, giving the problem some obligatory character — but the specific automated solution is entirely optional.",
+  "key_finding": "Reconciliation automation is optional — no regulatory mandate, compliance requirement, or audit obligation forces SMBs to automate multi-processor matching.",
+  "score_explanation": "Score 2 reflects that basic bookkeeping closure is functionally required, but automated multi-processor reconciliation specifically is discretionary. The problem is real but buyers can defer the purchase without legal or financial consequence."
+}

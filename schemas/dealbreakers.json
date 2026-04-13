@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/dealbreakers.json",
+  "title": "Dealbreakers",
+  "description": "Dimensions with a score of 1 that represent fundamental blockers. May be empty.",
+  "type": "array",
+  "minItems": 0,
+  "items": {
+    "type": "object",
+    "required": ["dim", "explanation"],
+    "properties": {
+      "dim": {
+        "type": "string",
+        "description": "Dimension name."
+      },
+      "explanation": {
+        "type": "string",
+        "minLength": 10,
+        "description": "Why this dimension is a dealbreaker and what would need to change."
+      }
+    },
+    "additionalProperties": false
+  }
+}

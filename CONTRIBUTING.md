@@ -14,7 +14,7 @@ tweakidea/
   agents/
     ti-extractor.md       # Hypothesis extractor (Sonnet)
     ti-evaluator.md       # Dimension evaluator (spawned 14x with Sonnet)
-    ti-merger.md          # Scorecard synthesizer (Opus)
+    ti-narrative.md       # Cross-dimensional narrative author (Opus)
     ti-researcher.md      # Web research agent (Sonnet)
   skills/
     ti-scoring/
@@ -23,8 +23,11 @@ tweakidea/
       dimensions/         # 14 dimension definition files
     ti-founder/
       SKILL.md            # Founder profile template and fit question guidance
-    ti-html-report/
-      SKILL.md            # HTML report template and generation rules
+    ti-report/
+      SKILL.md            # Report skill metadata
+      template.md.j2      # Markdown report template (Jinja2)
+      template.html.j2    # HTML report template (Jinja2)
+      styles.css          # Embedded CSS for HTML report
     ti-hnparse/
       SKILL.md            # Skill metadata (not user-invocable)
       hnparse.py          # HN fetcher script (Python, runs via uv)
@@ -35,22 +38,22 @@ Source files live in the root-level directories above. The installer (`bin/insta
 
 - **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline).
 
-- **Agents** (`agents/`): Subagent definitions spawned by the evaluate orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-merger.md` synthesizes the final scorecard on Opus. `ti-researcher.md` gathers web research on Sonnet.
+- **Agents** (`agents/`): Subagent definitions spawned by the evaluate orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-narrative.md` authors the cross-dimensional narrative prose on Opus. `ti-researcher.md` gathers web research on Sonnet.
 
-- **Skills** (`skills/`): Reference knowledge auto-loaded into agent context. `ti-scoring/` contains the evaluation framework (14 dimensions + weights), scoring rubrics, and individual dimension definitions. `ti-founder/` contains the founder profile template and fit question guidance. `ti-html-report/` contains the HTML report template and generation rules. `ti-hnparse/` contains the Python script that fetches HN posts via the Algolia API.
+- **Skills** (`skills/`): Reference knowledge auto-loaded into agent context. `ti-scoring/` contains the evaluation framework (14 dimensions + weights), scoring rubrics, and individual dimension definitions. `ti-founder/` contains the founder profile template and fit question guidance. `ti-report/` contains Jinja2 report templates (markdown + HTML) and embedded CSS. `ti-hnparse/` contains the Python script that fetches HN posts via the Algolia API.
 
 ## Evaluation Pipeline
 
-The `/tweak:evaluate` command runs a 6-stage pipeline:
+The `/tweak:evaluate` command runs a 6-stage pipeline (Stage 0 through Stage 5):
 
-1. **Capture** — Collect the startup idea (from arguments, file, or interactive prompt)
-2. **Prepare** — Two parallel tracks: (Lane A) extract hypotheses + web research; (Lane B) interactive founder profile + fit questions
-3. **Assemble** — Display research brief, confirm hypotheses, build evaluation context
-4. **Evaluate** — Spawn 14 independent evaluator agents in parallel, one per dimension
-5. **Merge** — Synthesize all dimension results into a weighted scorecard with verdict
-6. **Confirm** — Display inline report and save artifacts to `~/.tweakidea/runs/{timestamp}/`
+0. **Init** — Capture idea, resolve script paths, create run directory, write `version.json` + `idea.json`
+1. **Parallel Research + Extraction** — (Lane A) ti-researcher writes `research.json`; (Lane B) ti-extractor writes `hypotheses.json`, founder confirms, orchestrator writes `assumptions.json`
+2. **Parallel Dimension Evaluation** — Spawn 14 independent evaluator agents in parallel; each writes its own `dimensions/{slug}.json`
+3. **Compute + Narrative** — (Stage 3a) `scripts/compute.py` reads dimension JSONs and writes `numbers.json`; (Stage 3b) ti-narrative reads numbers.json and writes 5 prose JSON files
+4. **Render** — `scripts/render_report.py` writes `report.md` + `report.html` via Jinja2
+5. **Confirm** — Display artifact summary and offer browser open
 
-Each evaluator agent gets its own context window and never sees other dimensions' results. This prevents anchoring bias.
+Each evaluator agent gets its own context window and never sees other dimensions' results. This prevents anchoring bias. The orchestrator performs zero text processing on evaluator output -- all math is in `scripts/compute.py`.
 
 ## Suggest-from-HN Pipeline
 
@@ -83,11 +86,12 @@ To modify a dimension's scoring behavior, edit its dimension file. To add a new 
 | Dimension weights | `skills/ti-scoring/EVALUATION.md` |
 | Scoring algorithm | `skills/ti-scoring/EVALUATION.md` |
 | Evaluate pipeline behavior | `commands/tweak/evaluate.md` |
-| Merge/scorecard logic | `agents/ti-merger.md` |
+| Scorecard computation | `scripts/compute.py` |
+| Cross-dimensional narrative | `agents/ti-narrative.md` |
 | Research strategy | `agents/ti-researcher.md` |
 | Evaluator behavior | `agents/ti-evaluator.md` |
 | Founder profile template | `skills/ti-founder/SKILL.md` |
-| HTML report template | `skills/ti-html-report/SKILL.md` |
+| Report templates | `skills/ti-report/` |
 | Hypothesis extraction | `agents/ti-extractor.md` |
 | Suggest pipeline behavior | `commands/tweak/suggest-from-hn.md` |
 | HN fetch/parse logic | `skills/ti-hnparse/hnparse.py` |

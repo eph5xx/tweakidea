@@ -1,0 +1,41 @@
+{
+  "dimension": "Market Size",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of a $1B+ TAM accessible with the current narrow focus on small SaaS teams"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "SMB fintech automation market at $4.2B total does not translate directly to accessible market for a narrow reconciliation tool"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Research-Backed",
+      "evidence": "IDC estimates 180,000 SaaS companies in the US with 10-50 employees; at $80/month average, SOM is ~$17M assuming 1% penetration"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder estimates 50,000+ small SaaS teams with the multi-processor problem based on Stripe and PayPal developer community sizes"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "~180,000 US SaaS SMBs in target size range",
+    "SOM of ~$17M at 1% penetration and $80/month",
+    "Market size adequate for bootstrapped venture but not venture-scale"
+  ],
+  "evidence_basis": "Research",
+  "analysis_narrative": "Market size is adequate but not venture-scale. The IDC data provides a credible top-down estimate: 180,000 SaaS companies in the US with 10-50 employees. Not all of them use multiple payment processors — a conservative 30% estimate yields ~54,000 addressable companies. At $80/month (mid-range of the founder's target), the SOM at 1% penetration is $17M ARR.\n\nFor a bootstrapped or small-team venture, $17M SOM is a reasonable target. For a VC-backed company, it is too small — most seed investors want a path to $100M+ ARR, which would require either a much higher price point (enterprise) or a dramatically larger addressable market.\n\nThe market size numbers also assume no expansion beyond the initial reconciliation use case. If the product grows into a broader finance ops platform, the market grows with it — but that is a future-state assumption, not current evidence.",
+  "key_finding": "Market size supports a profitable bootstrapped venture but falls short of venture-scale — ~180,000 target companies with a ~$17M SOM at 1% penetration.",
+  "score_explanation": "Score 3 reflects a well-researched, plausible market of $10-50M SOM that is compelling for bootstrapped or small-team ventures but below the threshold for VC-scale returns. Score 4 would require evidence of a larger accessible market or a credible expansion strategy."
+}

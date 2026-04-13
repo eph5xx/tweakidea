@@ -1,0 +1,41 @@
+{
+  "dimension": "Founder-Market Fit",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of deep domain expertise in fintech, payment processing APIs, or prior reconciliation product experience"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder has SaaS background but not specifically in financial tooling or payment operations"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder personally experienced the reconciliation problem for 2+ years at previous SaaS company; built internal spreadsheet solutions"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Founder has engineering background sufficient to build the CSV parsing and matching logic"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "Personal problem experience: 2+ years",
+    "Engineering capability confirmed",
+    "No fintech domain expertise or network advantage"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "The founder's fit here is primarily user-centric rather than domain-expert. They experienced the problem firsthand and built internal tooling to cope — which is a meaningful signal of motivation and understanding. However, there is no evidence of specialized fintech expertise, payment processing API knowledge, or existing relationships with finance decision-makers at SMBs.\n\nThe asymmetry matters: a founder who has lived the problem can build a product that solves it, but without domain expertise or network, customer acquisition and trust-building in a finance workflow category will require extra effort. CFOs and finance managers tend to trust tools built by people who understand compliance and accounting conventions — not just the engineering problem.\n\nScore 3 is appropriate: real personal experience + engineering competence, but lacking the domain credibility and network that would support a Score 4 or 5. The potential ceiling is 3 because the gap is knowledge and relationship-based, not easily closed by validation work alone.",
+  "key_finding": "Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building.",
+  "score_explanation": "Score 3 reflects genuine personal experience with the problem and engineering capability, without the specialized fintech knowledge or existing relationships in the finance buyer community that would warrant Score 4 or 5."
+}

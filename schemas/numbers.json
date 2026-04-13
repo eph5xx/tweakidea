@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/numbers.json",
+  "title": "Numbers",
+  "description": "Computed scorecard numbers produced by scripts/compute.py — 100% script-authored, no LLM.",
+  "type": "object",
+  "required": [
+    "weighted_total",
+    "potential_total",
+    "verdict_bucket",
+    "verdict_label",
+    "rankings",
+    "dealbreaker_dims",
+    "evidence_quality",
+    "assumption_impact_math",
+    "radar_svg"
+  ],
+  "properties": {
+    "weighted_total": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Weighted average score across all evaluated dimensions."
+    },
+    "potential_total": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5,
+      "description": "Weighted average potential score if all unconfirmed assumptions are confirmed."
+    },
+    "verdict_bucket": {
+      "type": "string",
+      "enum": ["GO", "PIVOT", "STOP"],
+      "description": "Evaluation verdict bucket."
+    },
+    "verdict_label": {
+      "type": "string",
+      "description": "Human-readable verdict label."
+    },
+    "rankings": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 14,
+      "description": "Per-dimension scores in registry index order.",
+      "items": {
+        "type": "object",
+        "required": ["dim", "slug", "score", "potential", "weighted_score", "tier_counts"],
+        "properties": {
+          "dim": {"type": "string"},
+          "slug": {"type": "string"},
+          "score": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 5
+          },
+          "potential": {
+            "type": ["integer", "null"],
+            "minimum": 1,
+            "maximum": 5
+          },
+          "weighted_score": {
+            "type": "number",
+            "minimum": 0
+          },
+          "tier_counts": {
+            "type": "object",
+            "required": ["verified", "research", "founder", "assumed"],
+            "properties": {
+              "verified": {"type": "integer", "minimum": 0},
+              "research": {"type": "integer", "minimum": 0},
+              "founder": {"type": "integer", "minimum": 0},
+              "assumed": {"type": "integer", "minimum": 0}
+            },
+            "additionalProperties": false
+          },
+          "failed": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "dealbreaker_dims": {
+      "type": "array",
+      "description": "List of dimension slugs where score == 1.",
+      "items": {"type": "string"}
+    },
+    "evidence_quality": {
+      "type": "object",
+      "description": "Aggregate evidence quality percentages across all dimensions.",
+      "required": ["verified_pct", "research_pct", "founder_pct", "assumed_pct"],
+      "properties": {
+        "verified_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "research_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "founder_pct": {"type": "integer", "minimum": 0, "maximum": 100},
+        "assumed_pct": {"type": "integer", "minimum": 0, "maximum": 100}
+      },
+      "additionalProperties": false
+    },
+    "assumption_impact_math": {
+      "type": "array",
+      "description": "Quantified impact of each unconfirmed assumption on the weighted total.",
+      "items": {
+        "type": "object",
+        "required": ["assumption_text", "dim", "score_delta", "weighted_uplift"],
+        "properties": {
+          "assumption_text": {"type": "string"},
+          "dim": {"type": "string"},
+          "score_delta": {"type": "integer"},
+          "weighted_uplift": {"type": "number"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "radar_svg": {
+      "type": "string",
+      "minLength": 100,
+      "description": "Complete SVG polygon string for the radar chart — must start with <svg."
+    }
+  },
+  "additionalProperties": false
+}

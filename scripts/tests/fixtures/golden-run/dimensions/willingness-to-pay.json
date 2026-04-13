@@ -1,0 +1,47 @@
+{
+  "dimension": "Willingness to Pay",
+  "score": 3,
+  "potential": 4,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence of budget pre-allocation or enterprise deal size to justify $500+/month"
+    },
+    {
+      "level": 4,
+      "status": "CONDITIONAL",
+      "tier": "Assumed",
+      "evidence": "Depends on UNCONFIRMED hypothesis that teams would pay $50-100/month; no pricing validation conducted yet"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "Founder believes teams would pay $25-50/month based on comparable SaaS tools in their network"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Verified",
+      "evidence": "Category precedent: bookkeeping SaaS tools like QuickBooks charge $30-90/month for similar time savings"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "Teams would pay $50-100/month for reconciliation automation",
+      "status": "UNCONFIRMED",
+      "impact": "If confirmed, Score 4 criterion would PASS, raising score from 3 to 4"
+    }
+  ],
+  "key_signals": [
+    "Category precedent supports $25-50/month range",
+    "No direct customer pricing interviews yet",
+    "Founder asserts willingness but lacks validation"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Willingness to pay is the weakest dimension in this evaluation because no direct pricing validation has been conducted. The founder asserts that teams would pay $50-100/month, but this is based on analogical reasoning from comparable tools rather than customer interviews or pricing tests.\n\nThe category does support meaningful WTP — QuickBooks and similar bookkeeping SaaS tools charge $30-90/month for time savings in the same ballpark, and the 6+ hours saved weekly represents real labor cost (at $50/hour that's $300/week). However, reconciliation is often perceived as a 'should be free' accounting hygiene task rather than a premium capability.\n\nScore 3 reflects that the category precedent and labor cost math support some willingness to pay, but the pricing sweet spot and customer segment boundary are unvalidated. A Score 4 requires confirming that at least one customer segment (e.g., fintech-native SaaS teams) will pay $50-100/month without friction.",
+  "key_finding": "Willingness to pay is assumed via category analogy — no direct pricing validation has been conducted and the $50-100/month hypothesis is unconfirmed.",
+  "score_explanation": "Score 3 is given because category precedent and labor cost math support some WTP, but no direct customer interview data validates the target price point. The UNCONFIRMED pricing hypothesis prevents advancement to Score 4."
+}

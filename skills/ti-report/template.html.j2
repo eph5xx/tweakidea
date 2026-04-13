@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TweakIdea Evaluation Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>{{ css }}</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>TweakIdea Evaluation</h1>
+      <span style="color:#6b7280;font-size:0.85rem;">{{ timestamp }}</span>
+    </header>
+
+    {% set verdict_bucket = numbers.verdict_bucket | lower %}
+    {% if verdict_bucket == "go" %}
+      {% set verdict_class = "verdict-go" %}
+    {% elif verdict_bucket == "pivot" %}
+      {% set verdict_class = "verdict-pivot" %}
+    {% else %}
+      {% set verdict_class = "verdict-stop" %}
+    {% endif %}
+    <div class="verdict {{ verdict_class }}">
+      <div class="verdict-label">{{ numbers.verdict_label }}</div>
+      <div class="verdict-score">Weighted Score: {{ numbers.weighted_total }}/5.0 | Potential: {{ numbers.potential_total }}/5.0</div>
+    </div>
+
+    {% if dealbreakers %}
+    {% for d in dealbreakers %}
+    <div class="dealbreaker">
+      <span class="dealbreaker-title">DEALBREAKER: {{ d.dim }}</span> scored 1/5 &mdash; {{ d.explanation }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="card">
+      <h2>Idea</h2>
+      {% for para in idea.text.split('\n\n') %}
+      {% if para.strip() %}<p>{{ para | linkify }}</p>{% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="card">
+      <h2>Dimension Overview</h2>
+      <div class="radar-chart">
+        {{ radar_svg|safe }}
+      </div>
+    </div>
+
+    {% if research and research.available %}
+    <div class="card">
+      <h2>Research Highlights</h2>
+      {% if research.clusters %}
+      {% if research.clusters.user %}
+      <h3 style="font-size:0.95rem;margin-bottom:0.5rem;color:#374151;">User Evidence</h3>
+      <ul class="item-list">
+        {% for item in research.clusters.user %}
+        <li>{{ item | linkify }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if research.clusters.competitive %}
+      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Competitive Landscape</h3>
+      <ul class="item-list">
+        {% for item in research.clusters.competitive %}
+        <li>{{ item | linkify }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if research.clusters.market %}
+      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Market Data</h3>
+      <ul class="item-list">
+        {% for item in research.clusters.market %}
+        <li>{{ item | linkify }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="card" style="overflow-x:auto;">
+      <h2>Scorecard</h2>
+      <table class="scorecard-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Score</th>
+            <th style="width:120px;"></th>
+            <th>Potential</th>
+            <th>Evidence</th>
+            <th>Key Finding</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in numbers.rankings %}
+          {% set score_int = r.score | int %}
+          <tr>
+            <td>{{ r.dim }}</td>
+            <td><span class="score-badge score-{{ score_int }}">{{ score_int }}</span></td>
+            <td><div class="progress-container"><div class="progress-bar score-{{ score_int }}" style="width:{{ score_int * 20 }}%"></div></div></td>
+            <td>{{ r.potential }}/5</td>
+            <td>
+              {% if r.tier_counts %}
+              <span class="tier-badge tier-verified">{{ r.tier_counts.verified }}V</span>
+              <span class="tier-badge tier-research">{{ r.tier_counts.research }}R</span>
+              <span class="tier-badge tier-founder">{{ r.tier_counts.founder }}F</span>
+              <span class="tier-badge tier-assumed">{{ r.tier_counts.assumed }}A</span>
+              {% else %}
+              (tier data unavailable)
+              {% endif %}
+            </td>
+            <td>{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding | linkify }}{% endif %}</td>
+          </tr>
+          <tr class="score-explanation">
+            <td colspan="6">{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].score_explanation | linkify }}{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Evidence Quality</h2>
+      <div class="evidence-bar">
+        <div class="ev-verified" style="flex:0 0 {{ numbers.evidence_quality.verified_pct }}%">{% if numbers.evidence_quality.verified_pct >= 8 %}{{ numbers.evidence_quality.verified_pct }}% V{% endif %}</div>
+        <div class="ev-research" style="flex:0 0 {{ numbers.evidence_quality.research_pct }}%">{% if numbers.evidence_quality.research_pct >= 8 %}{{ numbers.evidence_quality.research_pct }}% R{% endif %}</div>
+        <div class="ev-founder" style="flex:0 0 {{ numbers.evidence_quality.founder_pct }}%">{% if numbers.evidence_quality.founder_pct >= 8 %}{{ numbers.evidence_quality.founder_pct }}% F{% endif %}</div>
+        <div class="ev-assumed" style="flex:0 0 {{ numbers.evidence_quality.assumed_pct }}%">{% if numbers.evidence_quality.assumed_pct >= 8 %}{{ numbers.evidence_quality.assumed_pct }}% A{% endif %}</div>
+      </div>
+      <div style="font-size:0.78rem;color:#6b7280;margin-top:0.5rem;">
+        <span style="display:inline-block;width:10px;height:10px;background:#22c55e;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.verified_pct }}% Verified
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.research_pct }}% Research-Backed
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#eab308;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.founder_pct }}% Founder-Asserted
+        &nbsp;
+        <span style="display:inline-block;width:10px;height:10px;background:#9ca3af;border-radius:2px;vertical-align:middle;margin-right:4px;"></span>{{ numbers.evidence_quality.assumed_pct }}% Assumed
+      </div>
+    </div>
+
+    {% if numbers.assumption_impact_math %}
+    <div class="card">
+      <h2>Assumption Impact</h2>
+      <ul class="item-list">
+        {% for a in numbers.assumption_impact_math %}
+        <li><span class="dim-tag">{{ a.dim }}</span> If &ldquo;{{ a.assumption_text }}&rdquo; is confirmed, score rises by {{ a.score_delta }} (+{{ a.weighted_uplift }} on total)</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div class="two-col">
+      <div class="card">
+        <h2>Top 3 Strengths</h2>
+        <ol>
+          {% for s in strengths_weaknesses %}
+          {% if s.kind == "strength" %}
+          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+      </div>
+      <div class="card">
+        <h2>Top 3 Weaknesses</h2>
+        <ol>
+          {% for s in strengths_weaknesses %}
+          {% if s.kind == "weakness" %}
+          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
+          {% endif %}
+          {% endfor %}
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Next Steps</h2>
+      <ol class="item-list">
+        {% for n in next_steps %}
+        <li>{{ n.task | linkify }} &mdash; <span class="dim-tag">{{ n.dim }}</span> {{ n.from }}/5 &rarr; {{ n.to }}/5 (+{{ n.weighted_uplift }} on total)</li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    {% if verdict and verdict.rationale %}
+    <div class="card">
+      <h2>Verdict Rationale</h2>
+      <p>{{ verdict.rationale | linkify }}</p>
+    </div>
+    {% endif %}
+
+    <footer>
+      Generated by TweakIdea v{{ version.tweakidea_version }} &middot; Schema v{{ version.schema_version }} &middot; {{ timestamp }}
+    </footer>
+  </div>
+</body>
+</html>

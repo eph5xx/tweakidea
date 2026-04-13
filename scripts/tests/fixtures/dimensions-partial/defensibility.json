@@ -1,0 +1,47 @@
+{
+  "dimension": "Defensibility",
+  "score": 2,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No indication of proprietary data, patents, or regulatory moat"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No network effects described in the solution — each customer uses it independently"
+    },
+    {
+      "level": 3,
+      "status": "CONDITIONAL",
+      "tier": "Assumed",
+      "evidence": "Depends on UNCONFIRMED hypothesis that accumulated customer reconciliation patterns create a learning advantage over time; possible but not architectured for yet"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "First-mover advantage in the specific multi-processor CSV matching niche; switching cost of migrating reconciliation history"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "Accumulated customer reconciliation data creates a machine-learning defensibility advantage over time",
+      "status": "UNCONFIRMED",
+      "impact": "If confirmed and architected, Score 3 criterion would PASS, raising score from 2 to 3"
+    }
+  ],
+  "key_signals": [
+    "No network effects or proprietary data moat described",
+    "Feature gap is closable by incumbents",
+    "Switching cost is the primary current defensibility"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Defensibility is a significant weakness for this idea. The solution as described is a feature — a useful CSV import and matching dashboard — but features are copyable. Ramp or Brex could ship multi-processor CSV import in a single sprint if they decided it was a priority.\n\nThe primary defensibility lever available today is switching cost: once a team's historical reconciliation data lives in the product, migration is painful. This is a legitimate Score 2 moat but not a strong one — it delays churn without preventing competition from acquiring new customers.\n\nThe path to Score 3 runs through data. If the product accumulates reconciliation patterns across thousands of customers, it could train matching models that improve accuracy beyond what a new entrant could replicate quickly. This is architecturally possible but not described in the current solution spec.",
+  "key_finding": "Defensibility is weak — the solution is a feature gap that incumbents could close, and no network effects or proprietary data moat are currently planned.",
+  "score_explanation": "Score 2 reflects the presence of switching cost defensibility (historical data lock-in) but the absence of any structural moat. Score 3 requires at least one of: network effects, proprietary data, or a technical barrier that incumbents cannot easily replicate."
+}

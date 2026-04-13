@@ -1,0 +1,41 @@
+{
+  "dimension": "Mandatory Nature",
+  "score": 2,
+  "potential": 2,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No regulatory or contractual mandate requiring automated reconciliation tooling specifically"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "Reconciliation is a business necessity but can be performed manually — no external authority requires automation"
+    },
+    {
+      "level": 3,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence that auditors or investors specifically require tooling vs. manual reconciliation records"
+    },
+    {
+      "level": 2,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Reconciliation of financial records is implicitly required for any business with investors, employees, or tax obligations — the task is mandatory, but the tooling is not"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "Reconciliation task is mandatory; tooling is optional",
+    "No regulatory or contractual mandate for automation",
+    "Competing with manual processes, not with mandated software"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Mandatory nature is a weak dimension for this idea. The underlying task — reconciling financial records — is mandatory for any company with investors or tax obligations. But the tooling is not mandatory: teams can and do perform reconciliation manually, with spreadsheets, or with a part-time bookkeeper.\n\nThis creates a softer sales dynamic than tools where the software itself is required (e.g., payroll compliance software, SOC 2 audit tooling). The reconciliation tool competes against inertia and spreadsheet habits, not against the consequences of non-compliance.\n\nScore 2 reflects that the underlying task is non-optional but the specific product category is optional. There is no plausible path to Score 4+ without a regulatory change that mandates automated reconciliation audit trails.",
+  "key_finding": "The reconciliation task is mandatory for businesses with financial obligations, but automated tooling for it is not — the product competes against manual alternatives, not mandates.",
+  "score_explanation": "Score 2 reflects that the underlying task is required by basic business operations but the specific tooling category is discretionary. Score 3 would require evidence that specific stakeholders (auditors, investors, regulations) demand tooling specifically."
+}

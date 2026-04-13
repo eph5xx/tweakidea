@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/strengths-weaknesses.json",
+  "title": "Strengths and Weaknesses",
+  "description": "Top-3 strengths and bottom-3 weaknesses authored by ti-narrative. Exactly 6 entries.",
+  "type": "array",
+  "minItems": 6,
+  "maxItems": 6,
+  "items": {
+    "type": "object",
+    "required": ["kind", "dim", "score", "why"],
+    "properties": {
+      "kind": {
+        "type": "string",
+        "enum": ["strength", "weakness"]
+      },
+      "dim": {
+        "type": "string",
+        "description": "Dimension name."
+      },
+      "score": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 5
+      },
+      "why": {
+        "type": "string",
+        "minLength": 10,
+        "description": "Explanation of why this dimension is a strength or weakness."
+      }
+    },
+    "additionalProperties": false
+  }
+}

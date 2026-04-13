@@ -1,0 +1,5 @@
+[
+  {"text": "Small SaaS teams spend 6+ hours/week on invoice reconciliation", "primary_dimension": "Pain Intensity", "status": "PENDING"},
+  {"text": "Teams would pay $50-100/month for reconciliation automation", "primary_dimension": "Willingness to Pay", "status": "PENDING"},
+  {"text": "No incumbent tool handles multi-processor matching well", "primary_dimension": "Solution Gap", "status": "PENDING"}
+]

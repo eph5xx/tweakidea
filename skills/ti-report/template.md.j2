@@ -1,0 +1,91 @@
+# TweakIdea Evaluation Report — {{ timestamp }}
+
+**Verdict:** {{ numbers.verdict_label }} | Weighted Score: {{ numbers.weighted_total }}/5.0 | Potential: {{ numbers.potential_total }}/5.0
+
+{% if dealbreakers %}
+## Dealbreakers
+
+{% for d in dealbreakers %}
+- **DEALBREAKER: {{ d.dim }}** — {{ d.explanation }}
+{% endfor %}
+
+{% endif %}
+## Idea
+
+{{ idea.text | linkify }}
+
+{% if research and research.available %}
+## Research Highlights
+
+{% if research.clusters and research.clusters.user %}
+### User Evidence
+
+{% for item in research.clusters.user %}
+- {{ item | linkify }}
+{% endfor %}
+
+{% endif %}
+{% if research.clusters and research.clusters.competitive %}
+### Competitive Landscape
+
+{% for item in research.clusters.competitive %}
+- {{ item | linkify }}
+{% endfor %}
+
+{% endif %}
+{% if research.clusters and research.clusters.market %}
+### Market Data
+
+{% for item in research.clusters.market %}
+- {{ item | linkify }}
+{% endfor %}
+
+{% endif %}
+{% endif %}
+## Scorecard
+
+| # | Dimension | Score | Potential | Evidence | Key Finding |
+|---|-----------|-------|-----------|----------|-------------|
+{% for r in numbers.rankings %}
+| {{ loop.index }} | {{ r.dim }} | {{ r.score }}/5 | {{ r.potential }}/5 | {% if r.tier_counts %}{{ r.tier_counts.verified }}V {{ r.tier_counts.research }}R {{ r.tier_counts.founder }}F {{ r.tier_counts.assumed }}A{% else %}—{% endif %} | {% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding }}{% endif %} |
+{% endfor %}
+
+**Evidence Quality:** {{ numbers.evidence_quality.verified_pct }}% Verified | {{ numbers.evidence_quality.research_pct }}% Research-Backed | {{ numbers.evidence_quality.founder_pct }}% Founder-Asserted | {{ numbers.evidence_quality.assumed_pct }}% Assumed
+
+{% if numbers.assumption_impact_math %}
+## Assumption Impact
+
+{% for a in numbers.assumption_impact_math %}
+- **{{ a.dim }}**: If "{{ a.assumption_text }}" is confirmed, score rises by {{ a.score_delta }} (+{{ a.weighted_uplift }} on total)
+{% endfor %}
+
+{% endif %}
+## Top 3 Strengths
+
+{% set strength_count = [0] %}
+{% for s in strengths_weaknesses if s.kind == "strength" %}
+{{ loop.index }}. **{{ s.dim }}** ({{ s.score }}/5): {{ s.why }}
+{% endfor %}
+
+## Top 3 Weaknesses
+
+{% for s in strengths_weaknesses if s.kind == "weakness" %}
+{{ loop.index }}. **{{ s.dim }}** ({{ s.score }}/5): {{ s.why }}
+{% endfor %}
+
+## Next Steps
+
+{% for n in next_steps %}
+{{ loop.index }}. {{ n.task }} — *{{ n.dim }}* {{ n.from }}/5 → {{ n.to }}/5 (+{{ n.weighted_uplift }} on total)
+   - {{ n.rationale }}
+{% endfor %}
+
+{% if verdict and verdict.rationale %}
+## Verdict Rationale
+
+{{ verdict.rationale }}
+
+{% endif %}
+---
+
+*TweakIdea v{{ version.tweakidea_version }} | Schema v{{ version.schema_version }} | {{ timestamp }}*

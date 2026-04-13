@@ -10,7 +10,7 @@ allowed-tools:
   - AskUserQuestion
 skills:
   - ti-founder
-  - ti-html-report
+  - ti-report
   - ti-scoring
 ---
 
@@ -20,15 +20,15 @@ You are the TweakIdea evaluation orchestrator. Your job is to deliver an honest,
 
 **Critical: Clean context.** Each invocation of `/tweak:evaluate` starts with a completely fresh context. There is no state from prior evaluation runs. The only persistent artifact across runs is `FOUNDER.md` at `~/.tweakidea/FOUNDER.md`. Do not look for or rely on any other cross-run state.
 
-**Critical: No intermediate temp files.** All intermediate state stays in-memory during evaluation. You pass context to downstream agents via their prompts, not via temporary files. Final output artifacts (idea.md, dimension files, scorecard, etc.) are written progressively to the run directory as each artifact is finalized — this is NOT intermediate state, these are post-finalization snapshots. Evaluators never read from `~/.tweakidea/` during evaluation.
+**Critical: JSON-only intermediate state.** Every intermediate artifact is a typed JSON file validated against a schema in `.claude/schemas/`. The orchestrator performs ZERO text processing on agent output -- no markdown parsing, no rubric stripping, no tier-count regex. All aggregation happens in `scripts/compute.py`. The only markdown artifact produced by the pipeline is the final `report.md` (and its `report.html` twin).
 
 ---
 
-## Stage 1: Capture
+## Stage 0: Init
+
+### Step 1: Capture idea text
 
 Capture the founder's startup idea from `$ARGUMENTS`.
-
-### Step 1: Check for input
 
 **If `$ARGUMENTS` is non-empty:**
 
@@ -44,13 +44,83 @@ Use AskUserQuestion to prompt the founder: "What startup problem or idea would y
 
 Store the response as IDEA_TEXT.
 
-### Step 2: Hold idea text
-
-Once IDEA_TEXT is captured, hold it in memory for the pipeline stages below.
-
 $ARGUMENTS
 
-### Step 3: Problem/Solution Split
+### Step 2: Resolve HOME_DIR and TWEAKIDEA_SCRIPTS_ROOT
+
+Use the Bash tool:
+
+```bash
+echo "$HOME"
+```
+
+Store returned value as HOME_DIR.
+
+Probe for the scripts directory:
+
+```bash
+if [ -f "$HOME/.claude/scripts/compute.py" ]; then
+  echo "$HOME/.claude/scripts"
+elif [ -f "$(pwd)/.claude/scripts/compute.py" ]; then
+  echo "$(pwd)/.claude/scripts"
+else
+  echo "MISSING"
+fi
+```
+
+If the result is `MISSING`, abort the run with: "TweakIdea scripts not found. Please re-run `npx tweakidea` to install." Otherwise store the returned path as TWEAKIDEA_SCRIPTS_ROOT.
+
+### Step 3: Create RUN_DIR
+
+```bash
+TIMESTAMP=$(date +%Y%m%d-%H%M%S) && mkdir -p "$HOME/.tweakidea/runs/$TIMESTAMP/dimensions" && echo "$TIMESTAMP"
+```
+
+Store returned TIMESTAMP. Compute RUN_DIR = `{HOME_DIR}/.tweakidea/runs/{TIMESTAMP}`.
+
+Ensure the data directory exists:
+
+```bash
+mkdir -p "$HOME/.tweakidea"
+```
+
+### Step 4: Write version.json
+
+Capture runtime versions:
+
+```bash
+uv --version | awk '{print $2}'
+```
+
+```bash
+node --version | sed 's/v//'
+```
+
+```bash
+python3 --version | awk '{print $2}'
+```
+
+```bash
+uname -s | tr '[:upper:]' '[:lower:]'
+```
+
+Read the `tweakidea_version` from `package.json` (use the Read tool on `.claude/package.json` or the installed location; if not found, use `"unknown"`).
+
+Use the Write tool to create `{RUN_DIR}/version.json` with this exact content (substitute real values; schema_version = 1 for Phase 1):
+
+```json
+{
+  "tweakidea_version": "{from package.json}",
+  "schema_version": 1,
+  "node_version": "{from node --version}",
+  "python_version": "{from python3 --version}",
+  "uv_version": "{from uv --version}",
+  "created_at": "{ISO 8601 UTC timestamp}",
+  "platform": "{uname -s result lowercased}"
+}
+```
+
+### Step 5: Problem/Solution Split and Write idea.json
 
 After IDEA_TEXT is captured, parse it into two components:
 
@@ -87,564 +157,291 @@ Problem: [PROBLEM]
 Solution: [SOLUTION]
 ```
 
-Hold this structured IDEA_TEXT for all downstream stages. The split is a Capture-stage UX element -- downstream stages continue to receive the full text.
+Use the Write tool to create `{RUN_DIR}/idea.json` with the parsed IDEA_TEXT:
 
-### Step 4: Create Run Directory
-
-After IDEA_TEXT is confirmed and recombined into structured format, create the run directory for this evaluation:
-
-Use the Bash tool:
-
-```bash
-TIMESTAMP=$(date +%Y%m%d-%H%M%S) && mkdir -p $HOME/.tweakidea/runs/$TIMESTAMP/dimensions && echo $TIMESTAMP
+```json
+{
+  "text": "{full recombined text}",
+  "problem": "{problem statement}",
+  "solution": "{solution statement}"
+}
 ```
-
-Store the returned value as RUN_TIMESTAMP. Construct RUN_DIR = `{HOME_DIR}/.tweakidea/runs/{RUN_TIMESTAMP}`.
-
-Note: HOME_DIR is resolved in Stage 2 Lane A Step 0. Since Stage 1 Step 4 runs before Stage 2, use `$HOME` directly in the Bash call (the shell expands it). Store RUN_TIMESTAMP and resolve RUN_DIR after HOME_DIR is available.
-
-### Step 5: Write idea.md
-
-Use the Write tool to create `{RUN_DIR}/idea.md` with the full structured IDEA_TEXT (the recombined Problem + Solution format from Step 3).
-
-This is the first progressive write — the idea file is finalized and written immediately.
 
 ---
 
-## Stage 2: Prepare
+## Stage 1: Parallel Research + Extraction
 
-Run two parallel tracks after Capture completes. Issue the HOME_DIR resolution Bash call and both background Agent() calls in a SINGLE message for concurrent execution. Then immediately proceed to the interactive founder session (Lane B) while agents run in the background.
+Issue the two background agent spawns in a SINGLE message for concurrent execution.
 
-### Lane A: Background Work
+### Lane A: Research (conditional, background)
 
-#### Step 0: Resolve home directory
-
-Use the Bash tool to resolve the home directory path:
-
-```bash
-echo $HOME
-```
-
-Store the returned value as HOME_DIR.
-
-Ensure the data directory exists:
-
-```bash
-mkdir -p $HOME/.tweakidea
-```
-
-#### Step 1: Spawn hypothesis extraction agent
-
-Spawn the extraction agent to identify testable hypotheses from the idea:
-
-- **agent_type:** `ti-extractor`
-- **prompt:** Construct by concatenating: `Extract hypotheses from this startup idea:\n\n` followed by the full IDEA_TEXT
-- **run_in_background:** true
-
-After the agent returns, parse its output:
-
-1. Check for the `## EXTRACTION COMPLETE` marker. If absent, set HYPOTHESES_LIST to empty and handle as the zero-hypothesis edge case below.
-2. Extract hypotheses from the `### Hypotheses` section -- each line formatted as `- [Hypothesis text] (Primary dimension: [dimension name])`.
-3. Extract the count from `### Count: N`.
-
-Store the parsed hypotheses as HYPOTHESES_LIST for use in Stage 3.
-
-**Zero-Hypothesis Edge Case:** If the agent returns `### Count: 0` or extraction fails:
-
-1. Inform the founder: "I couldn't identify specific claims to verify from your description. The evaluation will proceed without assumption tracking. For more nuanced results, consider providing more detail about your market assumptions."
-2. Set HYPOTHESES_LIST to empty.
-3. In Stage 3, skip the Hypothesis Confirmation step entirely.
-
-Do NOT block the pipeline on a zero-hypothesis result.
-
-#### Step 2: Spawn research agent
-
-Spawn a single research agent to gather competitor, market, and user evidence:
+Spawn ti-researcher:
 
 - **agent_type:** `ti-researcher`
-- **prompt:** Construct by concatenating: `Research this startup idea:\n\n` followed by the full IDEA_TEXT
+- **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
 - **run_in_background:** true
 
-After the agent returns, process results:
+After the agent returns, check:
 
-**If the agent returns successfully AND the output contains `## RESEARCH COMPLETE`:**
+1. If `{RUN_DIR}/research.json` exists, attempt to read it with the Read tool.
+2. If readable and valid JSON, set RESEARCH_AVAILABLE to the value of its `available` field.
+3. If file is missing or unreadable, the orchestrator writes a fallback:
 
-1. Store the full agent output as RESEARCH_RESULTS
-2. Extract the user-facing brief sections (everything from `### Competitors` through `### User Evidence`, stopping before `### Dimension Routing`) -- store for display in Stage 3
-3. Extract the dimension routing sections for later use in context assembly:
-   - COMPETITIVE_CLUSTER_CONTENT = content under `#### COMPETITIVE_CLUSTER`
-   - MARKET_CLUSTER_CONTENT = content under `#### MARKET_CLUSTER`
-   - USER_CLUSTER_CONTENT = content under `#### USER_CLUSTER`
-4. Set RESEARCH_AVAILABLE = true
+   ```json
+   {"available": false, "reason": "ti-researcher failed or returned no file"}
+   ```
 
-**If the agent returns WITHOUT `## RESEARCH COMPLETE`, or fails, or exceeds maxTurns:**
+   using the Write tool at `{RUN_DIR}/research.json`.
 
-1. Set RESEARCH_AVAILABLE = false
-2. Set RESEARCH_RESULTS = empty
-3. Set COMPETITIVE_CLUSTER_CONTENT = empty
-4. Set MARKET_CLUSTER_CONTENT = empty
-5. Set USER_CLUSTER_CONTENT = empty
+The orchestrator does NOT parse markdown, does NOT extract clusters by regex, does NOT trim sections. The research.json file IS the interface -- ti-evaluator spawns read research.json themselves (via their Read tool).
 
-**If the agent returns with `## RESEARCH COMPLETE` but some sections contain "No data found" or "No competitor data found" or "No market sizing data found" or "No user evidence data found":**
+### Lane B: Hypothesis extraction + founder confirmation
 
-For dimension routing, treat "No data found" cluster sections as empty (do not inject them into evaluator context). Store the brief sections as-is for display in Stage 3 (sections containing "No data found" variants appear as-is in the brief).
+Spawn ti-extractor:
 
-**Progressive write:** If RESEARCH_AVAILABLE is true, use the Write tool to create `{RUN_DIR}/research-brief.md` with the user-facing research brief content (the Competitors, Market Data, and User Evidence sections). This writes the research artifact as soon as it is finalized.
+- **agent_type:** `ti-extractor`
+- **prompt:** `Extract hypotheses from this idea and write them to {RUN_DIR}/hypotheses.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
+- **run_in_background:** false (orchestrator waits for this one to proceed to founder confirmation)
 
-### Lane B: Founder Session (interactive, optional)
+After the agent returns:
 
-This lane runs interactively while Lane A agents run in the background. HOME_DIR must be resolved (Lane A Step 0) before this lane can check for FOUNDER.md, but since HOME_DIR resolution is a fast Bash call issued in the same initial message as the agent spawns, it completes before the interactive gate response arrives.
+1. Check `{RUN_DIR}/hypotheses.json` exists. If missing, write `[]` via Write tool at that path and skip to Lane B Step 3 (zero-hypothesis case).
+2. Read `{RUN_DIR}/hypotheses.json` via Read tool. Validate it is a JSON array.
 
-#### Step 1: Founder-fit opt-in gate
+#### Lane B Step 2: Founder hypothesis confirmation
+
+For each hypothesis entry, use AskUserQuestion (or a single list prompt) to ask the founder:
+
+> "I extracted the following hypotheses from your idea. For each, please mark it CONFIRMED (you have evidence), UNCONFIRMED (you don't have evidence yet), MODIFIED (you want to restate it), or REJECTED (not a real claim)."
+
+Collect the founder's status for each hypothesis.
+
+**Note for Phase 2:** The concurrency fix (parallel research + confirmation) is explicitly NOT in Phase 1 scope. For Phase 1, Lane B waits for Lane A to complete before proceeding -- same as v1.0 behavior. The file-based interface change is the Phase 1 deliverable; the concurrency fix ships in Phase 2.
+
+#### Lane B Step 3: Write assumptions.json
+
+Use the Write tool to create `{RUN_DIR}/assumptions.json` with the founder-updated statuses:
+
+```json
+[
+  {"text": "...", "primary_dimension": "...", "status": "CONFIRMED"},
+  {"text": "...", "primary_dimension": "...", "status": "UNCONFIRMED"},
+  {"text": "...", "primary_dimension": "...", "status": "MODIFIED", "note": "Founder's clarification"}
+]
+```
+
+Preserve every entry from hypotheses.json; only the `status` field changes (and optionally an extra `note` field for MODIFIED entries).
+
+Zero-hypothesis case: write `[]` to assumptions.json. Proceed to Stage 2.
+
+---
+
+## Stage 2: Parallel Dimension Evaluation
+
+### Step 1: Load dimension registry
+
+Read `.claude/skills/ti-scoring/EVALUATION.md` via the Read tool. Parse the Dimension Registry table to obtain the 14 dimension entries (name, slug, research cluster, context variant). The 7-column format is a stability contract -- if parsing fails, abort with a clear error.
+
+### Step 2: Founder-fit opt-in gate
 
 Use AskUserQuestion: "Would you like to do a founder-fit assessment? This evaluates how well your background matches this idea and only takes a few minutes."
 
 Options:
-- "Yes, let's do it" -- Set FOUNDER_SESSION_SKIPPED = false. Continue with Step 2.
-- "Skip founder assessment" -- Set FOUNDER_SESSION_SKIPPED = true. Skip the rest of Lane B. In Stage 4, the Founder-Market Fit dimension will NOT be evaluated (only 13 dimensions run).
+- "Yes, let's do it" -- Set FOUNDER_SESSION_SKIPPED = false. Continue with Step 3.
+- "Skip founder assessment" -- Set FOUNDER_SESSION_SKIPPED = true. Skip founder profile steps. The Founder-Market Fit dimension will still be evaluated but will use idea context only (no personal data injected).
 
-#### Step 2: Check for existing FOUNDER.md
+### Step 3: Founder profile (if not skipped)
+
+If FOUNDER_SESSION_SKIPPED is false:
 
 Use the Read tool to attempt reading `{HOME_DIR}/.tweakidea/FOUNDER.md`.
 
 **If FOUNDER.md exists:**
-- Silently load its contents. Do NOT ask the user to confirm or review their profile. Do NOT ask "Is this still accurate?" or any similar confirmation question.
-- Store the loaded content as FOUNDER_CONTEXT for downstream use.
+- Silently load its contents. Do NOT ask the user to confirm or review their profile.
+- Store the loaded content as FOUNDER_CONTEXT.
 - Set FOUNDER_NEEDS_CREATION = false.
 
-**If FOUNDER.md does not exist (Read fails or file not found):**
+**If FOUNDER.md does not exist:**
 - Set FOUNDER_NEEDS_CREATION = true.
-- FOUNDER_CONTEXT remains empty for now -- the creation flow happens in Step 3.
+- Follow the **Profile Creation Questions** flow from the ti-founder skill. Ask the 5 questions sequentially using AskUserQuestion, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from the ti-founder skill.
+- Store the created profile content as FOUNDER_CONTEXT.
 
-#### Step 3: Founder Profile Creation (if needed)
+**Founder-Idea Fit Questions:**
 
-If FOUNDER_NEEDS_CREATION is true, follow the **Profile Creation Questions** flow defined in the ti-founder skill. Ask the 5 questions sequentially using AskUserQuestion, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from the ti-founder skill.
+Follow the **Fit Question Guidance** in the ti-founder skill. Generate 2-4 dual-purpose questions about the founder's connection to THIS specific idea. Present all questions in a single AskUserQuestion call. Store all question-answer pairs as FOUNDER_FIT_ANSWERS.
 
-Store the created profile content as FOUNDER_CONTEXT for downstream use.
+**Optional FOUNDER.md Update:**
 
-If FOUNDER_NEEDS_CREATION is false, skip this step entirely (profile already loaded silently in Step 2).
+Follow the **Profile Update Rules** in the ti-founder skill. Review the fit Q&A answers for new persistent attributes. If found, present update options via AskUserQuestion and append selected items to FOUNDER.md.
 
-#### Step 4: Founder-Idea Fit Questions
-
-Follow the **Fit Question Guidance** in the ti-founder skill. Generate 2-4 dual-purpose questions about the founder's connection to THIS specific idea -- each question should surface a persistent founder attribute while assessing idea-specific fit.
-
-**Present all questions in a single AskUserQuestion call** with 2-4 questions. Do NOT ask questions one at a time. Do NOT preview questions first. The founder sees and answers all fit questions together in one interaction. For each question, provide 2-4 answer options relevant to the question type. AskUserQuestion auto-adds "Other" -- do NOT include "Other" as an explicit option.
-
-Store all question-answer pairs as FOUNDER_FIT_ANSWERS in the format specified by the skill.
-
-Always ask fit questions even when FOUNDER.md already exists (returning user). The questioning session covers founder-market fit for the current idea.
-
-#### Step 5: Optional FOUNDER.md Update
-
-Follow the **Profile Update Rules** in the ti-founder skill. Review the fit Q&A answers for new persistent attributes about the founder, present update options via AskUserQuestion, and append selected items to `{HOME_DIR}/.tweakidea/FOUNDER.md`.
-
-If none of the answers contain persistent founder attributes (all answers are idea-specific), skip this step entirely -- do not present an empty selection to the founder.
-
----
-
-## Stage 3: Assemble
-
-All Stage 2 lanes must be complete before this stage begins. You should have:
-- FOUNDER_SESSION_SKIPPED flag and optionally FOUNDER_CONTEXT + FOUNDER_FIT_ANSWERS (from Lane B)
-- HYPOTHESES_LIST (from Lane A Step 1, via ti-extractor agent)
-- RESEARCH_RESULTS / cluster variables / RESEARCH_AVAILABLE (from Lane A Step 2)
-
-### Step 1: Display Research Brief
-
-If RESEARCH_AVAILABLE is true, display the research brief to the user:
-
-> **Research Brief**
->
-> [Extracted Competitors section content]
->
-> [Extracted Market Data section content]
->
-> [Extracted User Evidence section content]
-
-This is view-only -- display and auto-proceed. No editing or confirmation gate on the research brief -- it is informational context for the founder, not an interactive step.
-
-If RESEARCH_AVAILABLE is false, display:
-
-> **Research unavailable** -- evaluation proceeding with founder-provided evidence only.
-
-Then skip to Step 2.
-
-### Step 2: Hypothesis Confirmation
-
-If HYPOTHESES_LIST is empty (zero-hypothesis edge case), skip this step entirely per the existing zero-hypothesis handling.
-
-Present the extracted hypotheses to the founder for confirmation using a single batched AskUserQuestion call.
-
-#### Grouping
-
-Divide HYPOTHESES_LIST into groups of 3 hypotheses each. If the total number of hypotheses does not divide evenly by 3, the final group contains fewer than 3 (e.g., 11 hypotheses = 3 groups of 3 + 1 group of 2; 7 hypotheses = 2 groups of 3 + 1 group of 1).
-
-The 12-hypothesis cap (enforced by ti-extractor) guarantees at most 4 groups of 3. This means hypothesis confirmation always fits in a single AskUserQuestion call (which supports up to 4 questions per call).
-
-#### Single AskUserQuestion Call
-
-Present ALL groups in **one AskUserQuestion call** with multiple multiSelect questions (one question per group). Do NOT use sequential AskUserQuestion calls. Do NOT ask groups one at a time.
-
-**Per-group question structure:**
-
-- **Question text:** "Which of these claims can you verify as true? (Group {N} of {total})"
-- **Options 1-3** (or fewer for the final group): The hypotheses in this group
-  - `label`: The hypothesis abbreviated to 1-5 words (e.g., "Pain is severe", "Market is large")
-  - `description`: The full hypothesis text with its dimension tag in brackets, e.g., "[Pain Intensity] Small accounting firms struggle significantly with client onboarding, causing lost revenue"
-- **Last option (always):** "None of these apply"
-  - `label`: "None of these apply"
-  - `description`: "I cannot verify any of the claims in this group"
-- **multiSelect:** true
-
-AskUserQuestion auto-adds "Other" -- do NOT include "Other" as an explicit option. The "None of these apply" option occupies the last explicit slot (option 3 or 4 depending on group size).
-
-#### "None of These" Exclusivity Rule
-
-If a founder selects "None of these apply" for a group, treat ALL hypotheses in that group as `[UNCONFIRMED]` regardless of any other selections the founder made in that same group. "None of these apply" is exclusive -- it overrides all other selections in its group.
-
-**Example:** If a founder selects both "Pain is severe" and "None of these apply" in Group 1, treat ALL Group 1 hypotheses as `[UNCONFIRMED]`.
-
-#### Tagging Results
-
-After the single AskUserQuestion call returns:
-
-- **Selected hypotheses** (ones the founder chose, in groups where "None of these apply" was NOT selected): Tag each with `[CONFIRMED]`
-- **Unselected hypotheses** (ones the founder did not choose): Tag each with `[UNCONFIRMED]`
-- **"None of these apply" groups** (groups where the founder selected "None of these apply"): Tag ALL hypotheses in that group as `[UNCONFIRMED]`
-- **Timeout or empty response**: If AskUserQuestion times out or returns an empty response, treat ALL hypotheses across ALL groups as `[UNCONFIRMED]`. This is the conservative default -- unverified until proven otherwise.
-
-If the user selects "Other" and provides free text in any group, treat that text as additional context from the founder. Append it to an ADDITIONAL_FOUNDER_NOTES variable for downstream use. Do NOT create new hypotheses from "Other" text and do NOT modify existing hypothesis wording.
-
-After confirmation is complete, store the final tagged HYPOTHESES_LIST (each hypothesis now carrying `[CONFIRMED]` or `[UNCONFIRMED]` along with its dimension tag) for use by downstream pipeline stages.
-
-**Progressive write:** If HYPOTHESES_LIST is non-empty, use the Write tool to create `{RUN_DIR}/assumptions.md` with the tagged hypotheses:
-
-```
-# Assumptions
-
-## Confirmed
-- [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-
-## Unconfirmed
-- [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-```
-
-List only the sections that have entries (omit `## Confirmed` if none are confirmed, omit `## Unconfirmed` if none are unconfirmed). If ADDITIONAL_FOUNDER_NOTES is non-empty, append:
-
-```
-## Additional Notes
-[ADDITIONAL_FOUNDER_NOTES]
-```
-
-If HYPOTHESES_LIST is empty (zero-hypothesis edge case), skip writing `assumptions.md` entirely.
-
-### Step 3: Evaluation Context Assembly
-
-Build evaluation context variants in memory. Do NOT write these to files -- they are held in memory for Stage 4 subagent injection.
-
-**1. EVALUATION_CONTEXT** (for dimensions other than Founder-Market Fit):
-
-Assemble a markdown string with this exact structure:
-
-```
-## Idea
-
-[Full IDEA_TEXT as provided by the founder]
-
-## Hypotheses
-
-### Confirmed
-- [CONFIRMED] [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-
-### Unconfirmed
-- [UNCONFIRMED] [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-```
-
-If ADDITIONAL_FOUNDER_NOTES is non-empty (from "Other" responses during hypothesis confirmation in Step 2), append:
-
-```
-## Additional Context
-[ADDITIONAL_FOUNDER_NOTES]
-```
-
-This variant contains NO founder profile information and NO founder-idea fit answers. It is intentionally restricted to idea and hypothesis data only. Founder context is scoped exclusively to the Founder-Market Fit evaluator to prevent other dimensions from anchoring on founder attributes.
-
-**2. FOUNDER_EVALUATION_CONTEXT** (for the Founder-Market Fit dimension ONLY):
-
-**Only build this variant if FOUNDER_SESSION_SKIPPED is false.** If the founder skipped the founder-fit assessment, do not build this context -- the Founder-Market Fit dimension will not be evaluated.
-
-Assemble a markdown string with this exact structure:
-
-```
-## Idea
-
-[Full IDEA_TEXT]
-
-## Hypotheses
-
-### Confirmed
-- [CONFIRMED] [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-
-### Unconfirmed
-- [UNCONFIRMED] [Hypothesis text] (Primary dimension: [dimension name])
-- ...
-
-## Founder Profile
-
-[FOUNDER_CONTEXT -- full FOUNDER.md content]
-
-## Founder-Idea Fit
-
-[FOUNDER_FIT_ANSWERS -- all Q&A pairs from the founder-idea fit questions]
-```
-
-If ADDITIONAL_FOUNDER_NOTES is non-empty, append:
-
-```
-## Additional Context
-[ADDITIONAL_FOUNDER_NOTES]
-```
-
-#### Research Context Routing
-
-If RESEARCH_AVAILABLE is true, extend the context variants for dimensions that map to a research cluster. For each dimension that maps to a cluster (see table below), append a `## Research Context` section to that dimension's evaluation context string AFTER the existing content (Idea, Hypotheses, and -- for Founder-Market Fit only -- Founder Profile and Founder-Idea Fit sections).
-
-**Dimension-to-cluster mapping:**
-
-Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows:
-- If the **Research Cluster** column contains a cluster name (USER_CLUSTER, MARKET_CLUSTER, or COMPETITIVE_CLUSTER): this dimension gets research context. Append the content from the corresponding cluster variable (USER_CLUSTER_CONTENT, MARKET_CLUSTER_CONTENT, or COMPETITIVE_CLUSTER_CONTENT) as a `## Research Context` section to that dimension's evaluation context string.
-- If the **Research Cluster** column contains — (em-dash): this dimension gets NO research context. Skip it.
-
-Per D-11, the orchestrator treats — in the Research Cluster column as "skip research injection for this dimension."
-
-For each dimension with a cluster name, append to that dimension's context string:
-
-```
-## Research Context
-[Content from the corresponding cluster variable]
-```
-
-If a cluster variable is empty (because the research agent returned "No data found" for that area, or because RESEARCH_AVAILABLE is false), do NOT append a Research Context section for those dimensions. They proceed without research context, same as the 6 dimensions that have no cluster mapping.
-
-If RESEARCH_AVAILABLE is false, skip this entire section. All dimensions proceed without research context (graceful degradation -- evaluation never blocks on research failure).
-
-**Token budget:** Each cluster section should already be ~500 words (the research agent is instructed to keep each to ~500 words). If any cluster content exceeds approximately 6,000 characters (~1,500 tokens), truncate it to 6,000 characters before injecting into the evaluator's context.
-
-**Assembly rules for both variants:**
-- Both variants include ALL hypotheses regardless of their dimension tag. A hypothesis tagged "Pain Intensity" may still be relevant to Market Size, Defensibility, or any other dimension.
-- Status uses simple tags: `[CONFIRMED]` or `[UNCONFIRMED]`. Downstream evaluators will interpret confirmed hypotheses as given facts and will flag unconfirmed hypotheses in their analysis output.
-- If HYPOTHESES_LIST is empty (zero-hypothesis edge case from Stage 2 Lane A), omit the Hypotheses section entirely from both variants rather than showing empty subsections.
-
-Hold EVALUATION_CONTEXT (and FOUNDER_EVALUATION_CONTEXT if built) in memory for Stage 4.
-
----
-
-## Stage 4: Evaluate
-
-Spawn evaluator agents in parallel using the Agent tool. Issue all Agent() calls in a single message so they execute concurrently.
-
-**If FOUNDER_SESSION_SKIPPED is false:** Spawn all 14 evaluators.
-**If FOUNDER_SESSION_SKIPPED is true:** Spawn 13 evaluators (skip Founder-Market Fit). Include a note in the EVALUATION_RESULTS: `--- DIMENSION: Founder-Market Fit ---\n## EVALUATION SKIPPED\nFounder declined founder-fit assessment.` This distinguishes an intentional skip from a failed evaluator.
+### Step 4: Spawn 14 evaluators in parallel
 
 #### Pre-Spawn Context Isolation Check
 
-Before launching evaluators, validate the Dimension Registry's context routing to prevent silent isolation failures:
+Before launching evaluators, validate the Dimension Registry's context routing:
 
-1. Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill).
+1. Read the Dimension Registry table from EVALUATION.md.
 2. Count the number of registry rows where Context Variant = `FOUNDER_EVALUATION_CONTEXT`.
 3. Assert the count:
-   - **If count == 0:** HALT the evaluation. Display to the founder: "Context isolation error: No dimension is mapped to FOUNDER_EVALUATION_CONTEXT. The Dimension Registry may be corrupted. Evaluation cannot proceed safely." Do NOT spawn any evaluators.
-   - **If count > 1:** HALT the evaluation. Display to the founder: "Context isolation error: [count] dimensions are mapped to FOUNDER_EVALUATION_CONTEXT — only Founder-Market Fit should receive founder data. Affected dimensions: [list their Names]. Evaluation cannot proceed safely." Do NOT spawn any evaluators.
-   - **If count == 1:** Log to the chat: "Context routing validated: [Name of the matching dimension] receives FOUNDER_EVALUATION_CONTEXT; [13 or 12 depending on FOUNDER_SESSION_SKIPPED] dimensions receive EVALUATION_CONTEXT." Proceed to Agent Calls.
+   - **If count == 0:** HALT. Display: "Context isolation error: No dimension is mapped to FOUNDER_EVALUATION_CONTEXT. The Dimension Registry may be corrupted. Evaluation cannot proceed safely." Do NOT spawn any evaluators.
+   - **If count > 1:** HALT. Display: "Context isolation error: [count] dimensions are mapped to FOUNDER_EVALUATION_CONTEXT -- only Founder-Market Fit should receive founder data. Affected dimensions: [list their Names]. Evaluation cannot proceed safely." Do NOT spawn any evaluators.
+   - **If count == 1:** Log: "Context routing validated: [Name of matching dimension] receives FOUNDER_EVALUATION_CONTEXT; remaining dimensions receive EVALUATION_CONTEXT." Proceed.
 
-This assertion runs every evaluation. It catches registry drift (e.g., a copy-paste error that gives a second dimension FOUNDER_EVALUATION_CONTEXT) before any evaluator sees founder data it should not have.
+#### Evaluator Prompt Construction
+
+For each dimension, construct the evaluator prompt with this exact structure:
+
+```
+<files_to_read>
+- .claude/skills/ti-scoring/dimensions/{slug}.md
+- .claude/schemas/dimension-evaluation.json
+</files_to_read>
+
+Your absolute output path: {RUN_DIR}/dimensions/{slug}.json
+Your assigned dimension: {Name}
+
+{EVALUATION_CONTEXT or FOUNDER_EVALUATION_CONTEXT, built from:}
+- The full structured IDEA_TEXT
+- The hypotheses from {RUN_DIR}/hypotheses.json (by reference -- the evaluator reads the file)
+- The research context from {RUN_DIR}/research.json for dimensions whose research_cluster matches (the evaluator reads the file and filters to its assigned cluster)
+- (For Founder-Market Fit only:) The founder profile from {HOME_DIR}/.tweakidea/FOUNDER.md and FOUNDER_FIT_ANSWERS
+
+After completing your analysis, use the Write tool to save your structured result as JSON at the exact path above. The JSON must validate against .claude/schemas/dimension-evaluation.json.
+```
 
 #### Context Routing Rule (CRITICAL)
 
-- **Founder-Market Fit** dimension: use **FOUNDER_EVALUATION_CONTEXT**
-- **All other 13 dimensions**: use **EVALUATION_CONTEXT** (NOT FOUNDER_EVALUATION_CONTEXT)
-
-This is a hard rule. FOUNDER_EVALUATION_CONTEXT contains the founder profile and founder-idea fit answers. Only the Founder-Market Fit evaluator should see this data.
+- **Founder-Market Fit** dimension: inject FOUNDER_CONTEXT and FOUNDER_FIT_ANSWERS into the prompt
+- **All other 13 dimensions**: do NOT inject founder profile data
+- **If FOUNDER_SESSION_SKIPPED is true**: send EVALUATION_CONTEXT for all 14 dimensions (idea + hypotheses only)
 
 #### Agent Calls
 
-**Spawning from the Dimension Registry:**
-
-Read the Dimension Registry table from EVALUATION.md (pre-loaded via ti-scoring skill). For each of the 14 registry rows, spawn one Agent with:
+Issue all 14 Agent() spawns in a SINGLE message for parallel execution. Each spawn uses:
 
 - **agent_type:** `ti-evaluator`
-- **prompt:** Construct by concatenating:
-  1. Dimension file injection: A `<files_to_read>` block pointing to `.claude/skills/ti-scoring/dimensions/{File Slug}.md` where `{File Slug}` is the value from the registry's File Slug column for this row.
-  2. Assignment line: `Your assigned dimension is: {Name}` where `{Name}` is the value from the registry's Name column.
-  3. The context variable determined by the registry's **Context Variant** column:
-     - If Context Variant is `FOUNDER_EVALUATION_CONTEXT`: use FOUNDER_EVALUATION_CONTEXT
-     - If Context Variant is `EVALUATION_CONTEXT`: use EVALUATION_CONTEXT
-     This enforces the context routing rule: only the dimension with Context Variant = FOUNDER_EVALUATION_CONTEXT receives founder data.
-  4. Instruction: `Evaluate this idea on the {Name} dimension only. Use the dimension framework and rubric criteria from the file provided above. Follow the evaluation process in your system prompt exactly.`
+- **prompt:** (constructed above, with RUN_DIR and slug interpolated)
+- **run_in_background:** false (the orchestrator needs the collection to complete before Stage 3a)
 
-**If FOUNDER_SESSION_SKIPPED is true:** Skip the registry row where Name = "Founder-Market Fit" (the row with Context Variant = FOUNDER_EVALUATION_CONTEXT). Spawn only 13 agents. Insert skip marker as before: `--- DIMENSION: Founder-Market Fit ---\n## EVALUATION SKIPPED\nFounder declined founder-fit assessment.`
+### Step 3: Wait for all 14 evaluators to return
 
-#### Result Collection
+After all 14 Agent() calls complete, proceed to Stage 3a. **Do NOT parse evaluator return values. Do NOT extract text from evaluator output. Do NOT compute tier counts. Do NOT strip rubric markers.** `scripts/compute.py` handles all of that deterministically.
 
-After all agents return, collect their outputs. Concatenate all results into a single EVALUATION_RESULTS string with clear delimiters between each dimension's output. Use the `--- DIMENSION: {Name} ---` delimiter where `{Name}` is the value from the registry's Name column for each dimension:
+### Step 4: Retry logic
 
-```
---- DIMENSION: Pain Intensity ---
-[full evaluation output from Pain Intensity evaluator]
+If any evaluator's chat response does not contain a successful write acknowledgment, or if the expected `{RUN_DIR}/dimensions/{slug}.json` file does not exist after the spawn returns, retry that single evaluator ONCE with the same prompt. After retry, if the file still doesn't exist, write a placeholder error file at that path:
 
---- DIMENSION: Urgency ---
-[full evaluation output from Urgency evaluator]
-
-... (all evaluated dimensions) ...
-
---- DIMENSION: Behavior Change Required ---
-[full evaluation output from Behavior Change Required evaluator]
+```json
+{
+  "error": "Evaluator did not produce valid output after retry",
+  "dimension": "{Name}",
+  "failed": true
+}
 ```
 
-If Founder-Market Fit was skipped, include the skip marker in EVALUATION_RESULTS at its position (between Solution Gap and Defensibility).
-
-**Progressive write:** As each evaluator returns, extract its full output and write it to `{RUN_DIR}/dimensions/{Output Filename}` using the Write tool, where `{Output Filename}` comes from the Dimension Registry's Output Filename column for that dimension. Do not wait for all 14 to complete before writing — write each file as soon as that evaluator's result is available.
-
-If Founder-Market Fit was skipped, write the skip marker content to its output file (per the registry's Output Filename for that row).
-
-If an evaluator fails and is retried (see Retry Logic below), write the file after the retry result is available (whether success or failure marker).
-
-#### Retry Logic
-
-After collecting results, check each evaluator's output for the expected `## EVALUATION COMPLETE` marker. If any evaluator returned malformed output (does not contain `## EVALUATION COMPLETE`):
-
-1. Retry that single evaluator ONCE by spawning a new Agent() call with the same prompt.
-2. If the retry also fails, include a failure marker in EVALUATION_RESULTS for that dimension:
-
-```
---- DIMENSION: [Name] ---
-## EVALUATION FAILED
-Evaluator did not return valid output after retry.
-```
-
-Continue to Stage 5 regardless -- the merge agent handles partial failures gracefully.
+This placeholder allows `scripts/compute.py` to recognize the failed dim and re-normalize weights over the remaining 13.
 
 ---
 
-## Stage 5: Merge
+## Stage 3a: Compute
 
-### Evaluator Output Trimming
+Use the Bash tool to invoke the deterministic aggregator:
 
-Before constructing the merger prompt, process each evaluator output in EVALUATION_RESULTS to reduce context size:
-
-**For each dimension's evaluator output:**
-
-1. **Extract evidence tier counts** -- Scan the entire `### Rubric Assessment` section for compound tags matching `[PASS|Tier]`, `[FAIL|Tier]`, or `[CONDITIONAL|Tier]` where Tier is one of: Verified, Research-Backed, Founder-Asserted, Assumed. Count occurrences of each tier across all score levels. Produce a compact string: `{count}V {count}R {count}F {count}A` (e.g., `2V 3R 1F 5A`). If no compound tags are found (older format), set to `(tier data unavailable)`.
-
-2. **Strip the Rubric Assessment section** -- Remove all lines from `### Rubric Assessment` through to the line immediately before `### Score:`. This removes the per-criterion PASS/FAIL detail while preserving Analysis, Score, Potential, Assumptions, Key Signals, and Evidence Basis.
-
-3. **Insert pre-computed tier counts** -- Add a new line immediately before `### Score:` in the trimmed output:
-   ```
-   ### Evidence Tier Counts: {compact tier string from step 1}
-   ```
-
-**CRITICAL ORDERING:** Step 1 (extract) MUST happen before Step 2 (strip). The compound tags `[PASS|Verified]` etc. live inside the Rubric Assessment lines. If you strip first, tier counts will always be zero.
-
-After trimming all evaluator outputs, construct the merger prompt using the TRIMMED_EVALUATION_RESULTS (same format as before, with `--- DIMENSION: [Name] ---` delimiters, but each evaluator output now has the rubric stripped and tier counts pre-computed).
-
-Spawn the merge agent to synthesize evaluation results into a weighted scorecard report.
-
-- **agent_type:** `ti-merger`
-- **prompt:** Construct by concatenating these components:
-  1. Header: If FOUNDER_SESSION_SKIPPED is false: `Here are the evaluation results for all 14 dimensions:`. If true: `Here are the evaluation results for 13 dimensions (Founder-Market Fit was intentionally skipped by the founder -- treat as an opt-out, not a failure):`
-  2. Research availability note (conditional): If RESEARCH_AVAILABLE is false, append this line to the header: `Note: Web research was unavailable for this evaluation. Include this exact note at the bottom of the report, before the Next Steps section: 'Note: Web research was unavailable for this evaluation. Evidence quality may be lower than typical.'`
-  3. The full TRIMMED_EVALUATION_RESULTS string (concatenated output from all evaluators with `--- DIMENSION: [Name] ---` delimiters, rubric stripped and tier counts pre-computed)
-  4. Instruction: `Produce the weighted scorecard report following your system prompt instructions exactly.`
-
-**Registry injection for merger:** Prepend the Dimension Registry table from EVALUATION.md to the merger prompt before TRIMMED_EVALUATION_RESULTS. The merger uses the registry for weight values and scorecard row ordering. Format:
-
-```
-## Dimension Registry
-[Copy the full registry table from EVALUATION.md]
-
-## Evaluation Results
-[TRIMMED_EVALUATION_RESULTS content]
+```bash
+uv run "{TWEAKIDEA_SCRIPTS_ROOT}/compute.py" "{RUN_DIR}"
 ```
 
-This is belt-and-suspenders with ti-scoring already in ti-merger.md skills (from Plan 01), but ensures the merger always has explicit registry access even if skills loading is imperfect.
+Capture stderr. If the command exit code is non-zero, display the stderr content to the founder as an error and abort the run. If exit code is zero, any stderr lines are non-fatal warnings (e.g., one dimension failed validation) -- display them to the founder as info but continue.
 
-Wait for the merge agent to return. Store its returned output as FINAL_REPORT.
-
-**Display FINAL_REPORT inline:** Display the FINAL_REPORT directly in the chat before proceeding. The report IS the output -- do not wrap it in additional formatting, do not add headers above it, do not summarize it. Just display the report as-is. The founder sees the full scorecard here, before being asked about HTML.
-
-### HTML Report Gate
-
-Use AskUserQuestion: "Would you like an HTML report?"
-
-Options:
-- "Yes, generate HTML report" -- Set HTML_REQUESTED = true.
-- "No, scorecard only" -- Set HTML_REQUESTED = false.
-
-**Progressive write:** After FINAL_REPORT is stored and the HTML gate is answered, write:
-
-1. If HTML_REQUESTED is true:
-
-   **HTML Escaping:** Before interpolating any user-provided content into the HTML template, apply these character substitutions:
-   - `&` -> `&amp;`
-   - `<` -> `&lt;`
-   - `>` -> `&gt;`
-   - `"` -> `&quot;`
-
-   Apply escaping to: IDEA_TEXT and any founder-provided content (founder name, idea description text). Do NOT escape merger-generated content (dimension names, analysis text, verdict labels) -- these are safe by construction.
-
-   Generate the HTML report following the ti-html-report skill instructions, then write `{RUN_DIR}/report.html`.
-
-   **Browser Open:** After report.html is written, use AskUserQuestion: "Open the report in your browser?"
-
-   Options:
-   - "Yes" -- Run Bash: `open {RUN_DIR}/report.html`
-   - "No" -- Continue to next step.
-
-2. `{RUN_DIR}/scorecard.md` — Write the full FINAL_REPORT content.
-
-These are the last progressive writes. All output artifacts are now on disk.
+After this step, `{RUN_DIR}/numbers.json` exists and is schema-valid.
 
 ---
 
-## Stage 6: Confirm
+## Stage 3b: Narrative
 
-All output artifacts were written progressively during Stages 1-5. This stage displays a confirmation summary.
+Spawn ti-narrative to author the 5 prose JSON files:
 
-### Step 1: Display confirmation
+- **agent_type:** `ti-narrative`
+- **prompt:** `Author the cross-dimensional narrative for this evaluation. RUN_DIR={RUN_DIR}. Read numbers.json, dimensions/*.json, assumptions.json, research.json (if available), then write the 5 JSON files per your system instructions.`
+- **run_in_background:** false
 
-Count the files in the run directory and display. Build the file list dynamically by including each conditional file only when it was written:
+After the agent returns, verify that all 5 files exist at `{RUN_DIR}/`:
+- `verdict.json`
+- `strengths-weaknesses.json`
+- `next-steps.json`
+- `dealbreakers.json`
+- `potential.json`
 
-- `idea.md` — always included
-- `assumptions.md` — included only when HYPOTHESES_LIST was non-empty
-- `research-brief.md` — included only when RESEARCH_AVAILABLE is true
-- `[13 or 14] dimension files` — use "13" when FOUNDER_SESSION_SKIPPED is true, "14" otherwise
-- `scorecard.md` — always included
-- `report.html` — included only when HTML_REQUESTED is true
+If any are missing, retry the ti-narrative spawn ONCE with a note about the missing files. If the retry also fails, write minimal fallback files:
 
-Join the applicable items with ` + ` and append ` saved to ~/.tweakidea/runs/{RUN_TIMESTAMP}/`.
+```json
+{"rationale": "Narrative generation failed; see dimensions/ for raw analysis."}
+```
 
-If HTML_REQUESTED is true, add a second line:
-> HTML report: `~/.tweakidea/runs/{RUN_TIMESTAMP}/report.html`
-
-If any progressive write failed earlier in the pipeline, add:
-> Note: Some files could not be saved. The evaluation report above is your complete result.
-
-Do NOT use the Write tool in this stage. All files are already written.
+and similar minimal-shape placeholders for the other 4 files so Stage 4 can still render a report.
 
 ---
 
-## Report Output
+## Stage 4: Render
 
-Display the FINAL_REPORT returned by the merge agent directly inline in the chat. The report IS the output -- do not wrap it in additional formatting, do not add headers above it, do not summarize it. Just display the report as-is.
+Invoke the renderer:
 
-After displaying the inline report, execute Stage 6 (Confirm) to display the run directory summary. All files were already written progressively during Stages 1-5.
+```bash
+uv run "{TWEAKIDEA_SCRIPTS_ROOT}/render_report.py" "{RUN_DIR}"
+```
 
-**File output (optional, only on explicit request):** The run directory is written automatically by Stage 6. If the founder additionally asks to save the report to a custom location (e.g., "save this to reports/", "export to evaluation.md"), use the Write tool to save FINAL_REPORT to the user-specified path.
+On success, `{RUN_DIR}/report.md` and `{RUN_DIR}/report.html` both exist. On non-zero exit, display the stderr content and abort.
+
+---
+
+## Stage 5: Confirm
+
+### Step 1: Count files and display summary
+
+Use the Bash tool to list the artifact family:
+
+```bash
+ls "{RUN_DIR}/" && ls "{RUN_DIR}/dimensions/"
+```
+
+Expected manifest (>= 20 files for a full run):
+- version.json, idea.json, hypotheses.json, assumptions.json, research.json, numbers.json, verdict.json, strengths-weaknesses.json, next-steps.json, dealbreakers.json, potential.json, report.md, report.html
+- dimensions/*.json (14 files if all evaluators succeeded; fewer or with failed placeholders if partial)
+
+Read `{RUN_DIR}/numbers.json` via the Read tool. Extract `weighted_total`, `verdict_bucket`, and `verdict_label`.
+
+Display to the founder:
+
+```
+Evaluation complete -- {N} artifact files in {RUN_DIR}
+
+Weighted Score: {numbers.weighted_total}/5.0 ({numbers.verdict_bucket})
+{numbers.verdict_label}
+
+Report:    {RUN_DIR}/report.md
+Report:    {RUN_DIR}/report.html
+```
+
+### Step 2: Optional browser open
+
+Use AskUserQuestion: "Open the HTML report in your browser?"
+
+- "Yes" -- `open "{RUN_DIR}/report.html"` (macOS) or `xdg-open "{RUN_DIR}/report.html"` (Linux)
+- "No" -- Continue to exit
+
+### Step 3: Shadow comparison reminder (Phase 1 only)
+
+If at least one historical v1.0 run exists in `~/.tweakidea/runs/*/scorecard.md`, display:
+
+```
+Shadow comparison reminder (Phase 1 cutover verification):
+  Compare {RUN_DIR}/report.md against any prior ~/.tweakidea/runs/*/scorecard.md
+  - Weighted score delta <= 0.2
+  - Verdict bucket unchanged (GO/PIVOT/STOP prefix)
+  - Top 3 strengths AND top 3 weaknesses: at least 2 of 3 overlap
+```
+
+This is informational only. This block will be removed in a future milestone after the cutover is stable.
 
 After the run directory confirmation, add the closing line:
 

@@ -1,0 +1,20 @@
+{
+  "dimension": "Pain Intensity",
+  "score": 4,
+  "potential": 4,
+  "criteria": [
+    {
+      "level": 4,
+      "status": "PASS",
+      "tier": "Verified",
+      "evidence": "Valid evidence"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": ["Extra field test"],
+  "evidence_basis": "Research",
+  "analysis_narrative": "This fixture has an extra field that should cause additionalProperties: false to reject it.",
+  "key_finding": "Extra field fixture for schema testing.",
+  "score_explanation": "This fixture has an extra_field_not_in_schema property that should be rejected.",
+  "extra_field_not_in_schema": "this should cause validation failure"
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tweakidea.dev/schemas/version.json",
+  "title": "Version",
+  "description": "Runtime version metadata written by the orchestrator at Stage 0.",
+  "type": "object",
+  "required": [
+    "tweakidea_version",
+    "schema_version",
+    "node_version",
+    "python_version",
+    "uv_version",
+    "created_at",
+    "platform"
+  ],
+  "properties": {
+    "tweakidea_version": {
+      "type": "string",
+      "description": "TweakIdea package version."
+    },
+    "schema_version": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Schema version number — increments on any breaking schema change. Starts at 1."
+    },
+    "node_version": {
+      "type": "string",
+      "description": "Node.js version string at time of run."
+    },
+    "python_version": {
+      "type": "string",
+      "description": "Python version string at time of run."
+    },
+    "uv_version": {
+      "type": "string",
+      "description": "uv version string at time of run."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when this run was created."
+    },
+    "platform": {
+      "type": "string",
+      "description": "Platform identifier (e.g., 'darwin', 'linux', 'win32')."
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,20 @@
+{
+  "weighted_total": 3.2,
+  "potential_total": 3.5,
+  "verdict_bucket": "MAYBE",
+  "verdict_label": "MAYBE is not a valid bucket",
+  "rankings": [
+    {
+      "dim": "Pain Intensity",
+      "slug": "pain-intensity",
+      "score": 4,
+      "potential": 4,
+      "weighted_score": 0.48,
+      "tier_counts": {"verified": 2, "research": 1, "founder": 0, "assumed": 1}
+    }
+  ],
+  "dealbreaker_dims": [],
+  "evidence_quality": {"verified_pct": 12, "research_pct": 16, "founder_pct": 12, "assumed_pct": 60},
+  "assumption_impact_math": [],
+  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\"><text>test</text></svg>"
+}

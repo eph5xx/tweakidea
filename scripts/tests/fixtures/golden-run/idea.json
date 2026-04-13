@@ -1,0 +1,5 @@
+{
+  "text": "Problem: Small SaaS teams waste 6+ hours/week manually reconciling invoices from multiple payment processors.\n\nSolution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions by amount, date window, and customer ID.",
+  "problem": "Small SaaS teams waste 6+ hours/week manually reconciling invoices from multiple payment processors.",
+  "solution": "A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions."
+}
