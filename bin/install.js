@@ -19,6 +19,27 @@ const dim = '\x1b[2m';
 const bold = '\x1b[1m';
 const reset = '\x1b[0m';
 
+// ── uv hard requirement (Phase 1) ───────────────────────────────────────────────
+
+function verifyUvOrExit() {
+  const { spawnSync } = require('child_process');
+  const result = spawnSync('uv', ['--version'], { stdio: 'pipe' });
+  if (result.error || result.status !== 0) {
+    console.error('');
+    console.error(`${red}${bold}TweakIdea requires 'uv' for the evaluate pipeline.${reset}`);
+    console.error('');
+    console.error(`  ${bold}Install uv:${reset}`);
+    console.error(`  ${dim}macOS/Linux:${reset}  curl -LsSf https://astral.sh/uv/install.sh | sh`);
+    console.error(`  ${dim}macOS (brew):${reset} brew install uv`);
+    console.error('');
+    console.error(`  Then re-run: ${cyan}npx tweakidea${reset}`);
+    console.error('');
+    process.exit(1);
+  }
+  const version = result.stdout.toString().trim();
+  console.log(`${dim}Verified: ${version}${reset}`);
+}
+
 // ── File manifest ───────────────────────────────────────────────────────────────
 
 const {
@@ -92,6 +113,34 @@ function rmrf(target) {
 
 // ── Cleanup ─────────────────────────────────────────────────────────────────────
 
+// ── Legacy cleanup (v1.0 → v1.1 upgrade) ────────────────────────────────────────
+
+// Items removed between v1.0 and v1.1. This block cleans them from existing
+// .claude/ installs even though they're no longer in AGENT_FILES / SKILL_DIRS.
+const LEGACY_AGENTS = ['ti-merger.md'];
+const LEGACY_SKILL_DIRS = ['ti-html-report'];
+
+function legacyCleanup(targetDir) {
+  let removed = 0;
+  for (const file of LEGACY_AGENTS) {
+    const p = path.join(targetDir, 'agents', file);
+    if (fs.existsSync(p)) {
+      fs.unlinkSync(p);
+      removed++;
+    }
+  }
+  for (const dir of LEGACY_SKILL_DIRS) {
+    const p = path.join(targetDir, 'skills', dir);
+    if (fs.existsSync(p)) {
+      rmrf(p);
+      removed++;
+    }
+  }
+  if (removed > 0) {
+    console.log(`${dim}Removed ${removed} legacy v1.0 file(s) during upgrade.${reset}`);
+  }
+}
+
 function cleanupPreviousInstall(targetDir) {
   let removed = 0;
 
@@ -141,6 +190,18 @@ function cleanupPreviousInstall(targetDir) {
   const versionDir = path.join(targetDir, 'tweakidea');
   if (fs.existsSync(versionDir)) {
     rmrf(versionDir);
+    removed++;
+  }
+
+  // Remove Phase 1 directories (schemas, scripts)
+  const schemasTarget = path.join(targetDir, 'schemas');
+  if (fs.existsSync(schemasTarget)) {
+    rmrf(schemasTarget);
+    removed++;
+  }
+  const scriptsTarget = path.join(targetDir, 'scripts');
+  if (fs.existsSync(scriptsTarget)) {
+    rmrf(scriptsTarget);
     removed++;
   }
 
@@ -217,6 +278,9 @@ function install(isGlobal) {
     ? '~/.claude'
     : path.relative(process.cwd(), targetDir) || '.claude';
 
+  // Phase 1: hard-fail if uv is missing
+  verifyUvOrExit();
+
   // Check existing version
   const existingVersion = readInstalledVersion(targetDir);
   if (existingVersion) {
@@ -237,6 +301,9 @@ function install(isGlobal) {
     console.log(`${dim}Cleaned ${removed} previous TweakIdea file(s).${reset}`);
   }
 
+  // Phase 1: remove v1.0 orphans
+  legacyCleanup(targetDir);
+
   // Copy agents
   mkdirp(path.join(targetDir, 'agents'));
   for (const file of AGENT_FILES) {
@@ -252,6 +319,18 @@ function install(isGlobal) {
       path.join(sourceDir, 'skills', dir),
       path.join(targetDir, 'skills', dir)
     );
+  }
+
+  // Copy schemas (Phase 1)
+  const schemasSource = path.join(sourceDir, 'schemas');
+  if (fs.existsSync(schemasSource)) {
+    copyDirSync(schemasSource, path.join(targetDir, 'schemas'));
+  }
+
+  // Copy scripts (Phase 1)
+  const scriptsSource = path.join(sourceDir, 'scripts');
+  if (fs.existsSync(scriptsSource)) {
+    copyDirSync(scriptsSource, path.join(targetDir, 'scripts'));
   }
 
   // Copy commands
@@ -297,6 +376,14 @@ function install(isGlobal) {
       return fs.existsSync(path.join(targetDir, cmdSrc));
     }
   }).length;
+  const schemaCount = fs.existsSync(path.join(targetDir, 'schemas'))
+    ? fs.readdirSync(path.join(targetDir, 'schemas')).filter((f) => f.endsWith('.json')).length
+    : 0;
+  const scriptCount = fs.existsSync(path.join(targetDir, 'scripts'))
+    ? fs.readdirSync(path.join(targetDir, 'scripts'), { recursive: true }).filter(
+        (f) => typeof f === 'string' && f.endsWith('.py')
+      ).length
+    : 0;
 
   console.log('');
   console.log(`${green}${bold}TweakIdea v${pkg.version} installed successfully!${reset}`);
@@ -305,16 +392,9 @@ function install(isGlobal) {
   console.log(`  ${dim}Agents:${reset}    ${agentCount} installed`);
   console.log(`  ${dim}Skills:${reset}    ${skillCount} installed`);
   console.log(`  ${dim}Commands:${reset}  ${commandCount} installed`);
+  console.log(`  ${dim}Schemas:${reset}   ${schemaCount} installed`);
+  console.log(`  ${dim}Scripts:${reset}   ${scriptCount} installed`);
   console.log('');
-  // Check for uv (needed by suggest-from-hn)
-  try {
-    require('child_process').execSync('command -v uv', { stdio: 'ignore' });
-  } catch {
-    console.log(`  ${yellow}Note:${reset} /tweak:suggest-from-hn requires 'uv' (Python package runner)`);
-    console.log(`  ${dim}Install: curl -LsSf https://astral.sh/uv/install.sh | sh${reset}`);
-    console.log(`  ${dim}Or: brew install uv${reset}`);
-    console.log('');
-  }
 
   console.log(`${cyan}Get started:${reset}`);
   console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);

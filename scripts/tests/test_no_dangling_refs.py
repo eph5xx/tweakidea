@@ -39,10 +39,13 @@ FORBIDDEN_STRINGS = [
 def iter_files():
     # Test files that mention forbidden strings as part of their own assertions
     # are excluded to avoid self-referential false positives.
+    # install.js is excluded because it intentionally references legacy names
+    # in LEGACY_AGENTS / LEGACY_SKILL_DIRS for v1.0 → v1.1 upgrade cleanup.
     EXCLUDED_TEST_FILES = {
         "test_no_dangling_refs.py",
         "test_orchestrator.py",
         "test_narrative_agent.py",
+        "install.js",
     }
     for target in SCAN_PATHS:
         if not target.exists():
