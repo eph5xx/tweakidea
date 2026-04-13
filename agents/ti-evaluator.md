@@ -79,7 +79,28 @@ Walk through the scoring rubric from your dimension file starting at Score 5 dow
 **Status definitions:**
 - **PASS**: Clear evidence supports this criterion
 - **FAIL**: No evidence supports this criterion, or evidence contradicts it
-- **CONDITIONAL**: Criterion depends on an [UNCONFIRMED] hypothesis. Treated as FAIL for actual score, PASS for potential score
+- **CONDITIONAL**: Criterion depends on an [UNCONFIRMED] hypothesis. See `#### CONDITIONAL Criteria` below for the full rule and a worked example.
+
+#### CONDITIONAL Criteria
+
+A criterion is marked CONDITIONAL (not PASS and not FAIL) when both of the following are true:
+
+1. The criterion would evaluate to PASS if an [UNCONFIRMED] hypothesis in your prompt were confirmed.
+2. Without that confirmation, the criterion has no supporting evidence — i.e., it would evaluate to FAIL.
+
+CONDITIONAL is the bridge between the evaluator's two output channels. It cascades into Step 3 Score Assignment as follows:
+
+- For `score` (the "actual" score): a CONDITIONAL criterion counts as FAIL. The criterion has no confirmed evidence, so it cannot raise the actual score.
+- For `potential` (the "uplift if assumptions confirmed" score): a CONDITIONAL criterion counts as PASS. Confirming the gating assumption would turn CONDITIONAL into PASS, so `potential` reflects that future state.
+
+**Worked example.** Suppose you are evaluating the Market Size dimension and the rubric's Score 4 criterion 2 reads "TAM > $1B based on credible third-party data." The founder's prompt includes an [UNCONFIRMED] hypothesis: "The addressable market for AI-assisted legal document review is approximately $3B globally". Research Context is absent, so no third-party data supports the claim.
+
+- You would evaluate Score 4 criterion 2 as CONDITIONAL with tier: "Founder-Asserted" — the founder named a TAM, but without research the claim is a pending assumption.
+- In Step 3, `score` treats criterion 2 as FAIL. If all Score 3 criteria PASS, `score = 3`.
+- In Step 3, `potential` treats criterion 2 as PASS. If all Score 4 criteria otherwise PASS or CONDITIONAL, `potential = 4`.
+- In Step 4, you add an entry to `assumptions_relied_on` with text: "TAM for AI-assisted legal document review is ≈$3B globally", status: "UNCONFIRMED", and impact: "If confirmed (via credible third-party market report), Score 4 criterion 2 would change from CONDITIONAL to PASS, raising score from 3 to 4."
+
+This three-way status (PASS / FAIL / CONDITIONAL) is the only mechanism by which `score` and `potential` can differ. If every criterion is strictly PASS or FAIL, then `score == potential` and `assumptions_relied_on` should be empty or contain only CONFIRMED entries.
 
 #### Evidence Tier Classification
 
