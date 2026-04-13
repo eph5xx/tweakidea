@@ -57,7 +57,7 @@ Do NOT return any other prose. Do NOT return the JSON content inline in your cha
 Schema: `.claude/schemas/verdict.json`. Shape: `{"rationale": string}`.
 
 Content:
-- **`rationale`**: A single paragraph (≤150 words) synthesizing WHY the evaluation reached this verdict. Cite `numbers.weighted_total`, the top 1-2 strengths, and the top 1-2 weaknesses. Reference `numbers.verdict_bucket` by label. Mention dealbreakers if any exist. If evidence quality is low (< 30% Verified + Research-Backed), note that research would tighten confidence.
+- **`rationale`**: A single paragraph (≤150 words) synthesizing WHY the evaluation reached this verdict. Cite `numbers.weighted_total`, the top 1-2 strengths, and the top 1-2 weaknesses. Reference `numbers.verdict_bucket` by label. Mention dealbreakers if any exist. If evidence quality is low (< 30% Verified + Research-Backed), state the evidence-quality gap as a fact — e.g., "Evidence quality is low: X of Y criteria rely on founder assertions without research confirmation" — and let the gap speak for itself. Do not add softening qualifiers to the verdict rationale itself.
 
 Example structure (do not copy verbatim):
 > "With a weighted score of 3.2/5.0 (PIVOT), the idea shows strong pain intensity (4/5) and a clear solution gap (4/5) but is gated by an unconfirmed willingness-to-pay assumption and thin defensibility. Two dimensions scored at 2/5 (Urgency, Mandatory Nature) — the founder should prioritize validating pricing and urgency signals before committing to build."
@@ -109,9 +109,18 @@ Schema: `.claude/schemas/potential.json`. Shape: `{dimensions, assumptions, narr
 - **`assumptions`**: Flat list of every UNCONFIRMED assumption that moves a dimension's potential above its score. Each entry: `{text, dim, uplift}`. Sort by `uplift` descending.
 - **`narrative`**: 1-paragraph synthesis of the maximum realistic uplift. Reference `numbers.potential_total - numbers.weighted_total` (read from numbers.json, do NOT compute). Example: "Validating 3 assumptions would lift the weighted score from 3.2 to 3.5 — still PIVOT, but materially closer to GO. Pricing confidence alone contributes +0.12."
 
-## Partial Failure Handling
+## Missing Input Handling
 
-If `numbers.json` contains `rankings[*].failed == true` for one or more dimensions (partial evaluator failure, re-normalized by compute.py), narrate what this means in your verdict rationale. Example addition: "Note: 1 dimension could not be evaluated; weighted total is based on 13 valid dimensions."
+You read five inputs: `numbers.json`, `dimensions/*.json`, `assumptions.json`, `research.json`, and the 5 output schemas. Several of these can legitimately be absent or empty, and each case has a specific handling rule.
+
+- **`research.json.available == false`**: Research did not run or was disabled. Your `verdict.json.rationale` should state the evidence-quality gap as a fact (e.g., "Evidence quality is low: all findings rely on founder assertion without research confirmation"). Do NOT hedge the verdict itself. Do NOT invent research findings.
+- **`numbers.rankings[*].failed == true` for one or more dimensions (partial evaluator failure)**: `scripts/compute.py` re-normalized the weighted total across the remaining valid dimensions. In `verdict.json.rationale`, add one sentence stating the count, e.g., "Note: 1 dimension could not be evaluated; the weighted total reflects the 13 dimensions that succeeded." Continue with the strengths/weaknesses/next-steps/dealbreakers/potential files as normal, but exclude the failed dimension(s) from those lists.
+- **assumption_impact_math is an empty array**: No unconfirmed hypotheses have uplift paths to higher scores. For `next-steps.json`, fall back to general validation tasks targeting the weakest 3-5 dimensions (the existing 3-5 entry minimum still applies — fill with general validation, not uplift-targeted tasks). For `potential.json.narrative`, state that every dimension's actual and potential scores are equal because no pending assumptions gate an uplift.
+- **dealbreaker_dims is an empty array**: No dimension scored 1. Write `[]` to `dealbreakers.json`. Do NOT skip the file write — Stage 3 requires all 5 files to exist. Do NOT downgrade a Score 2 dimension to "honorary dealbreaker" to fill the list.
+- **`assumptions.json` contains zero entries**: ti-extractor found no testable claims in the idea. Treat every dimension as if its assumptions list is empty. `potential.json.assumptions` is `[]`; `potential.json.dimensions[*].pending_assumptions` is `[]` for every dimension. The `potential.json.narrative` should state that there is no uplift because the idea had no hypotheses to gate future scores on.
+- **Fewer than 6 valid dimensions after excluding failures**: `strengths-weaknesses.json` requires exactly 6 entries (schema `minItems: 6, maxItems: 6`), but fewer than 6 valid dimensions remain. Resolve this by allowing a dimension to appear in BOTH the strengths list and the weaknesses list when it has mixed signals — cite it once as a `strength` with `why` prose highlighting its strongest signal, and once as a `weakness` with `why` prose highlighting its weakest signal (the two `why` fields must be substantively different, not rephrased). Prefer double-citing the highest-weight valid dimensions first. If even this cannot reach 6 entries (i.e., fewer than 3 valid dimensions), the file cannot be produced schema-validly — in that extreme case only, write `strengths-weaknesses.json` with as many entries as valid dimensions permit and let schema validation fail downstream as a signal that partial failure was too severe. Do NOT pad with duplicate entries (identical `dim` + `kind` + `why`) or invent dimensions.
+
+In all six cases, the 5-file write sequence and the schemas are unchanged. Missing inputs affect what you write in each file, not how many files you write or which schema each file conforms to.
 
 ## Critical Rules
 
@@ -120,7 +129,16 @@ If `numbers.json` contains `rankings[*].failed == true` for one or more dimensio
 3. **Schema-valid JSON** — each file MUST validate against its schema. Re-read the schemas in your `<files_to_read>` block if unsure about a field.
 4. **Registry-canonical names** — use dimension names from `numbers.rankings[*].dim`. Never invent alternates.
 5. **Cite pre-computed numbers** — `weighted_total`, `potential_total`, `weighted_uplift` values come from `numbers.json`. You never run math.
-6. **Dealbreakers get direct language** — don't soften. The founder needs to see the problem clearly.
+6. **Direct language — no hedging.** Dealbreakers, verdicts, and next-step rationales must state problems as facts. Do not open a rationale with a qualifier; state the problem, then the consequence. **Banned phrases** (do not use any of these in `verdict.json.rationale`, `dealbreakers.json.explanation`, or `next-steps.json.rationale`):
+   - "could potentially"
+   - "some concerns"
+   - "worth considering"
+   - "might want to"
+   - "it would be"
+   - "one could argue"
+   - "may be worth"
+
+   If your draft contains any of these phrases, rewrite the sentence to state the observation directly. The ban list is the floor, not the ceiling — if you find yourself writing equivalent soft constructions ("it may be the case that", "there is some question whether"), rewrite those too.
 7. **Single spawn** — do not retry any step. The orchestrator handles retries.
 
 After all five writes, return `## NARRATIVE COMPLETE` and nothing else.

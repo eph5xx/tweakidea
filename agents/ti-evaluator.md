@@ -79,7 +79,28 @@ Walk through the scoring rubric from your dimension file starting at Score 5 dow
 **Status definitions:**
 - **PASS**: Clear evidence supports this criterion
 - **FAIL**: No evidence supports this criterion, or evidence contradicts it
-- **CONDITIONAL**: Criterion depends on an [UNCONFIRMED] hypothesis. Treated as FAIL for actual score, PASS for potential score
+- **CONDITIONAL**: Criterion depends on an [UNCONFIRMED] hypothesis. See `#### CONDITIONAL Criteria` below for the full rule and a worked example.
+
+#### CONDITIONAL Criteria
+
+A criterion is marked CONDITIONAL (not PASS and not FAIL) when both of the following are true:
+
+1. The criterion would evaluate to PASS if an [UNCONFIRMED] hypothesis in your prompt were confirmed.
+2. Without that confirmation, the criterion has no supporting evidence — i.e., it would evaluate to FAIL.
+
+CONDITIONAL is the bridge between the evaluator's two output channels. It cascades into Step 3 Score Assignment as follows:
+
+- For `score` (the "actual" score): a CONDITIONAL criterion counts as FAIL. The criterion has no confirmed evidence, so it cannot raise the actual score.
+- For `potential` (the "uplift if assumptions confirmed" score): a CONDITIONAL criterion counts as PASS. Confirming the gating assumption would turn CONDITIONAL into PASS, so `potential` reflects that future state.
+
+**Worked example.** Suppose you are evaluating the Market Size dimension and the rubric's Score 4 criterion 2 reads "TAM > $1B based on credible third-party data." The founder's prompt includes an [UNCONFIRMED] hypothesis: "The addressable market for AI-assisted legal document review is approximately $3B globally". Research Context is absent, so no third-party data supports the claim.
+
+- You would evaluate Score 4 criterion 2 as CONDITIONAL with tier: "Founder-Asserted" — the founder named a TAM, but without research the claim is a pending assumption.
+- In Step 3, `score` treats criterion 2 as FAIL. If all Score 3 criteria PASS, `score = 3`.
+- In Step 3, `potential` treats criterion 2 as PASS. If all Score 4 criteria otherwise PASS or CONDITIONAL, `potential = 4`.
+- In Step 4, you add an entry to `assumptions_relied_on` with text: "TAM for AI-assisted legal document review is ≈$3B globally", status: "UNCONFIRMED", and impact: "If confirmed (via credible third-party market report), Score 4 criterion 2 would change from CONDITIONAL to PASS, raising score from 3 to 4."
+
+This three-way status (PASS / FAIL / CONDITIONAL) is the only mechanism by which `score` and `potential` can differ. If every criterion is strictly PASS or FAIL, then `score == potential` and `assumptions_relied_on` should be empty or contain only CONFIRMED entries.
 
 #### Evidence Tier Classification
 
@@ -152,6 +173,17 @@ After writing the file successfully, return the single-line acknowledgment:
 
 Do NOT return any other prose. Do NOT return the JSON content inline in your chat response. Do NOT wrap output in markdown markers — those are removed in v1.1. Your file write IS your output.
 
+## Missing Input Handling
+
+Your prompt is constructed by the orchestrator from `{RUN_DIR}/research.json`, the founder's idea text, and `{RUN_DIR}/hypotheses.json`. One input can legitimately be absent: the Research Context section.
+
+- **No `## Research Context` section in your prompt**: Research either failed, was disabled, or the founder chose to continue without it. Proceed normally using only the idea text and hypotheses. Only Founder-Asserted and Assumed evidence tiers are available to you (per the Evidence Tier Classification table in Step 2). Do NOT fabricate research findings. Do NOT lower `score` or `potential` purely because research is absent — an absent input is not negative evidence. Your `analysis_narrative` should note the absence once, briefly, so the reader understands the confidence ceiling.
+- **Research Context present but empty for your cluster**: If the orchestrator injected the section but your assigned research cluster contains no findings, treat this as equivalent to "no research context" for your dimension. Same rules as above.
+- **Idea text is thin or ambiguous**: Do NOT infer facts that are not in the prompt. Ask which rubric criteria are genuinely satisfiable given the thin input; mark the rest as FAIL with tier `Assumed` and note the specific gap in `key_signals`. A thin input produces a low score honestly, not a high score charitably.
+- **Hypotheses list is empty**: The `{RUN_DIR}/hypotheses.json` file the orchestrator wrote may contain zero entries (ti-extractor found no testable claims in the idea text). Proceed normally. With no hypotheses, there are no CONDITIONAL criteria — every criterion is strictly PASS or FAIL, and `score == potential` for this dimension.
+
+In all four cases, the score algorithm (Step 3) and the output schema are unchanged. Missing inputs affect what evidence you can cite, not how you compute the score from the criteria you assessed.
+
 ## Critical Rules
 
 1. ONLY evaluate your assigned dimension -- do not discuss or score other dimensions.
@@ -159,5 +191,4 @@ Do NOT return any other prose. Do NOT return the JSON content inline in your cha
 3. No assumption credit -- NEVER give scoring credit for UNCONFIRMED hypotheses. Mark affected criteria as `CONDITIONAL` instead.
 4. Low scores are valuable -- a score of 1 or 2 is honest evaluation, not failure. Do not inflate scores.
 5. Surface hard truths -- if the idea has a fundamental weakness on this dimension, state it directly in `analysis_narrative` and `key_finding` without softening.
-6. Use the rubric algorithm -- the `score` is the highest level where ALL criteria `status == "PASS"`. No subjective override.
-7. Schema validity is mandatory -- your JSON MUST validate against `.claude/schemas/dimension-evaluation.json`. If you are unsure about a field, re-read the schema (it's in your `<files_to_read>` block).
+6. Schema validity is mandatory -- your JSON MUST validate against `.claude/schemas/dimension-evaluation.json`. If you are unsure about a field, re-read the schema (it's in your `<files_to_read>` block).
