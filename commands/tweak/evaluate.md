@@ -181,19 +181,9 @@ Spawn ti-researcher:
 - **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
 - **run_in_background:** true
 
-After the agent returns, check:
+The orchestrator does NOT await this spawn. It proceeds immediately to Lane B (hypothesis extraction + founder confirmation). `ti-researcher` writes `{RUN_DIR}/research.json` on its own schedule — successful output uses `{"available": true, ...}` and intentional failure uses `{"available": false, "reason": "..."}` per the agent's contract in `agents/ti-researcher.md`. The orchestrator synchronizes on this file at Stage 2 Step 4a (Research sync gate), NOT here.
 
-1. If `{RUN_DIR}/research.json` exists, attempt to read it with the Read tool.
-2. If readable and valid JSON, set RESEARCH_AVAILABLE to the value of its `available` field.
-3. If file is missing or unreadable, the orchestrator writes a fallback:
-
-   ```json
-   {"available": false, "reason": "ti-researcher failed or returned no file"}
-   ```
-
-   using the Write tool at `{RUN_DIR}/research.json`.
-
-The orchestrator does NOT parse markdown, does NOT extract clusters by regex, does NOT trim sections. The research.json file IS the interface -- ti-evaluator spawns read research.json themselves (via their Read tool).
+The orchestrator does NOT parse markdown, does NOT extract clusters by regex, does NOT trim sections. The `research.json` file IS the interface — ti-evaluator spawns read it themselves (via their Read tool).
 
 ### Lane B: Hypothesis extraction + founder confirmation
 
