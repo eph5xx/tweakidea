@@ -173,6 +173,17 @@ After writing the file successfully, return the single-line acknowledgment:
 
 Do NOT return any other prose. Do NOT return the JSON content inline in your chat response. Do NOT wrap output in markdown markers — those are removed in v1.1. Your file write IS your output.
 
+## Missing Input Handling
+
+Your prompt is constructed by the orchestrator from `{RUN_DIR}/research.json`, the founder's idea text, and `{RUN_DIR}/hypotheses.json`. One input can legitimately be absent: the Research Context section.
+
+- **No `## Research Context` section in your prompt**: Research either failed, was disabled, or the founder chose to continue without it. Proceed normally using only the idea text and hypotheses. Only Founder-Asserted and Assumed evidence tiers are available to you (per the Evidence Tier Classification table in Step 2). Do NOT fabricate research findings. Do NOT lower `score` or `potential` purely because research is absent — an absent input is not negative evidence. Your `analysis_narrative` should note the absence once, briefly, so the reader understands the confidence ceiling.
+- **Research Context present but empty for your cluster**: If the orchestrator injected the section but your assigned research cluster contains no findings, treat this as equivalent to "no research context" for your dimension. Same rules as above.
+- **Idea text is thin or ambiguous**: Do NOT infer facts that are not in the prompt. Ask which rubric criteria are genuinely satisfiable given the thin input; mark the rest as FAIL with tier `Assumed` and note the specific gap in `key_signals`. A thin input produces a low score honestly, not a high score charitably.
+- **Hypotheses list is empty**: The `{RUN_DIR}/hypotheses.json` file the orchestrator wrote may contain zero entries (ti-extractor found no testable claims in the idea text). Proceed normally. With no hypotheses, there are no CONDITIONAL criteria — every criterion is strictly PASS or FAIL, and `score == potential` for this dimension.
+
+In all four cases, the score algorithm (Step 3) and the output schema are unchanged. Missing inputs affect what evidence you can cite, not how you compute the score from the criteria you assessed.
+
 ## Critical Rules
 
 1. ONLY evaluate your assigned dimension -- do not discuss or score other dimensions.
