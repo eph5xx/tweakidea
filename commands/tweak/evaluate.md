@@ -306,6 +306,41 @@ Three possible results:
 
 The orchestrator does NOT parse markdown from research.json, does NOT extract clusters by regex, does NOT trim sections. The file IS the interface — each `ti-evaluator` spawn reads it itself via the Read tool once research is confirmed available.
 
+#### Step 4a-fail: Research failure handler
+
+Triggered from **Step 4a** when either (a) `research.json` contains `{"available": false, ...}`, or (b) the `invalid` branch wrote the fallback after a JSON parse failure. This is the **only** point in the pipeline where research failure is surfaced to the founder — do not display research errors during Lane B (hypothesis confirmation) or Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). Failure detection is buffered to this gate per D-07/D-08.
+
+Use the Read tool to read `{RUN_DIR}/research.json` and capture the `reason` string. Display to the founder:
+
+> **Research did not complete:** `{reason from research.json}`
+>
+> The 14 dimension evaluators can still run — they will fall back to founder-asserted and assumed evidence only. What would you like to do?
+
+Use AskUserQuestion with these three options:
+
+- **"Retry research"** — Re-spawn `ti-researcher` once with the same prompt shape used at Stage 1 Lane A:
+  - **agent_type:** `ti-researcher`
+  - **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
+  - **run_in_background:** false (this retry is synchronous — wait in-line for the result)
+
+  After the retry agent returns, re-run the Step 4a Bash probe. If the result is `ready` AND `available` is `true`, proceed to the Pre-Spawn Context Isolation Check. If the result is `ready` AND `available` is `false`, OR the result is `invalid`, return to Step 4a-fail with the new reason — BUT on this SECOND failure, present only the "Continue without research" and "Abort run" options. Do NOT offer "Retry research" a second time. Single retry only per D-06.
+
+  If the original background `ti-researcher` from Stage 1 is still in flight when the retry spawn completes, its eventual write may overwrite the retry's output; this race is acceptable and produces either the correct successful result or the `invalid` branch, which recurses through this handler. The orchestrator does not attempt to kill the original spawn.
+
+- **"Continue without research"** — Use the Write tool to overwrite `{RUN_DIR}/research.json` with:
+
+  ```json
+  {"available": false, "reason": "founder chose to continue without research"}
+  ```
+
+  Then proceed to the Pre-Spawn Context Isolation Check below. The 14 evaluators will see `available: false` in `research.json` and rely on founder-asserted + assumed evidence only. The normal "research unavailable" banner in `report.md` / `report.html` (rendered by `scripts/render_report.py` from Phase 1) handles the downstream UX — no new banner is needed here.
+
+- **"Abort run"** — Display to the founder:
+
+  > Run directory preserved at `{RUN_DIR}`. Re-run `/tweak:evaluate` when ready.
+
+  Exit the slash command by returning without further instructions. Do NOT clean up `{RUN_DIR}` — preserve it for forensics per D-06. Do NOT write a sentinel file; the absence of `numbers.json` and `report.md` in the run directory is its own diagnostic signal.
+
 #### Pre-Spawn Context Isolation Check
 
 Before launching evaluators, validate the Dimension Registry's context routing:
