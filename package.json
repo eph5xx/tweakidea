@@ -13,7 +13,9 @@
     "bin",
     "agents",
     "commands",
-    "skills"
+    "skills",
+    "schemas",
+    "scripts"
   ],
   "keywords": [
     "claude",
