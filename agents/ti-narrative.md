@@ -1,6 +1,6 @@
 ---
 name: ti-narrative
-description: Authors cross-dimensional narrative JSON files for TweakIdea evaluation reports. Reads script-computed numbers.json plus raw dimension JSONs and writes 5 prose JSON files in a single spawn. Replaces ti-merger in Phase 1.
+description: Authors cross-dimensional narrative JSON files for TweakIdea evaluation reports. Reads script-computed numbers.json plus raw dimension JSONs and writes 5 prose JSON files in a single spawn.
 model: opus
 tools:
   - Read

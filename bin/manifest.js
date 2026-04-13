@@ -3,14 +3,14 @@
 const AGENT_FILES = [
   'ti-evaluator.md',
   'ti-extractor.md',
-  'ti-merger.md',
+  'ti-narrative.md',
   'ti-researcher.md',
 ];
 
 const SKILL_DIRS = [
   'ti-scoring',
   'ti-founder',
-  'ti-html-report',
+  'ti-report',
   'ti-hnparse',
 ];
 
