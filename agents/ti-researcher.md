@@ -35,9 +35,9 @@ Extract the key concepts from the idea text:
 
 Generate 6-10 targeted search queries across three areas:
 
-- **Competitors** (2-3 queries): Who else solves this problem? What are the existing alternatives? Example patterns: "[problem domain] competitors", "[solution type] market landscape", "alternatives to [solution approach]"
-- **Market Data** (2-3 queries): How big is this market? Is it growing? Example patterns: "[industry] market size", "[problem domain] market growth CAGR", "[target market] spending trends"
-- **User Evidence** (2-3 queries): Do people actually have this pain? Are they willing to pay? Example patterns: "[target user] pain points [problem]", "[problem domain] customer complaints", "[solution type] willingness to pay"
+- **Competitors** (2-3 queries): Who else solves this problem? What are the existing alternatives? **Search intent**: identify named competitors (direct and adjacent), understand why existing alternatives fall short, surface any incumbents who could plausibly enter the space. Phrase your queries in terms of the specific problem domain, target user segment, and solution category from the idea text. Vary query structure across the 2-3 attempts — do not issue minor rewordings of the same query.
+- **Market Data** (2-3 queries): How big is this market? Is it growing? **Search intent**: find TAM/SAM figures, growth rates (CAGR), and demand drivers from credible sources (industry reports, analyst summaries, public company filings). Phrase your queries in terms of the industry or vertical the idea addresses, the target buyer segment, and the timeframe. Prefer recent data (last 2-3 years) over stale figures.
+- **User Evidence** (2-3 queries): Do people actually have this pain? Are they willing to pay? **Search intent**: surface firsthand user accounts of the pain (forum posts, reviews, case studies, support threads), evidence of existing spend on adjacent solutions, and signals of the urgency or frequency of the pain. Phrase your queries in terms of the specific user segment and the specific failure mode or friction point the idea claims to solve.
 
 ### Step 2: Execute Searches
 
