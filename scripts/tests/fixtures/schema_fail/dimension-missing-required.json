@@ -1,0 +1,10 @@
+{
+  "dimension": "Pain Intensity",
+  "score": 4,
+  "criteria": [],
+  "assumptions_relied_on": [],
+  "key_signals": ["Missing required fields"],
+  "evidence_basis": "Research",
+  "analysis_narrative": "This fixture is missing required fields: potential, key_finding, score_explanation.",
+  "score_explanation": "Missing the key_finding and potential fields."
+}

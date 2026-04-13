@@ -1,0 +1,4 @@
+{
+  "assumptions": [],
+  "narrative": "Missing the required dimensions field should fail schema validation."
+}

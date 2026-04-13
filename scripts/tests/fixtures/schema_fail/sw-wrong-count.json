@@ -1,0 +1,4 @@
+[
+  {"kind": "strength", "dim": "Pain Intensity", "score": 4, "why": "Strong pain signal"},
+  {"kind": "weakness", "dim": "Urgency", "score": 2, "why": "Low urgency"}
+]

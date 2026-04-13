@@ -1,0 +1,41 @@
+{
+  "dimension": "Behavior Change Required",
+  "score": 3,
+  "potential": 4,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence this is a zero-behavior-change drop-in; some workflow integration is always required"
+    },
+    {
+      "level": 4,
+      "status": "CONDITIONAL",
+      "tier": "Founder-Asserted",
+      "evidence": "If API integrations with Stripe/PayPal are offered (vs CSV upload), behavior change drops significantly; currently unconfirmed whether API mode will ship"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Founder-Asserted",
+      "evidence": "The behavior change — export CSVs from each processor and upload to dashboard — is a minimal incremental step that replaces a more tedious manual process"
+    }
+  ],
+  "assumptions_relied_on": [
+    {
+      "text": "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users",
+      "status": "UNCONFIRMED",
+      "impact": "If API integrations ship, Score 4 criterion (CONDITIONAL) would PASS, raising score from 3 to 4"
+    }
+  ],
+  "key_signals": [
+    "CSV upload replaces existing manual export habit",
+    "Behavior change is incremental, not disruptive",
+    "API integrations would further reduce friction"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "The behavior change required is moderate and manageable. Users already export CSVs from their payment processors manually — the product asks them to redirect that export to a dashboard instead of a spreadsheet. This is an incremental habit change rather than a disruptive workflow transformation.\n\nThe key friction point is adoption: getting teams to establish the new habit of uploading to the dashboard instead of the familiar spreadsheet. Once the habit is formed, the product becomes sticky. The behavior change concern is further mitigated if API integrations are eventually offered — automated data ingest would reduce the required behavior change to near-zero.\n\nScore 3 reflects that behavior change is real but manageable. The current MVP (CSV upload) asks for a small step change from an existing habit. Score 4 would be appropriate if API integrations were confirmed to ship in the near-term, reducing the required behavior change substantially.",
+  "key_finding": "Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift.",
+  "score_explanation": "Score 3 reflects an incremental behavior change that builds on existing user habits (CSV exports already happen). Score 4 would require API integrations that automate data ingest, which is currently unconfirmed."
+}

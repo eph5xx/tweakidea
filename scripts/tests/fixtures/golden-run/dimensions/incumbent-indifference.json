@@ -1,0 +1,35 @@
+{
+  "dimension": "Incumbent Indifference",
+  "score": 3,
+  "potential": 3,
+  "criteria": [
+    {
+      "level": 5,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "No evidence that incumbents are structurally prevented from addressing this problem (their core business model doesn't conflict)"
+    },
+    {
+      "level": 4,
+      "status": "FAIL",
+      "tier": "Assumed",
+      "evidence": "QuickBooks, Ramp, and Brex are all technically capable of adding this feature; market hasn't been definitively ignored"
+    },
+    {
+      "level": 3,
+      "status": "PASS",
+      "tier": "Assumed",
+      "evidence": "Incumbents have not prioritized this specific multi-processor CSV reconciliation niche in their product roadmaps — market has been de facto underserved for 3+ years"
+    }
+  ],
+  "assumptions_relied_on": [],
+  "key_signals": [
+    "No incumbent has shipped this feature in 3+ years",
+    "Feature would require incumbents to support competitor processor integrations",
+    "Incumbents not structurally prevented but haven't prioritized"
+  ],
+  "evidence_basis": "Founder",
+  "analysis_narrative": "Incumbent indifference is moderate. The three relevant incumbents — QuickBooks, Ramp, Brex — are all technically capable of building this feature but have not done so. The de facto under-service for 3+ years suggests the niche is not on their immediate roadmap.\n\nThe reason incumbents haven't prioritized this is likely competitive: Ramp and Brex don't want to make it easy to reconcile against competitor processors; QuickBooks is focused on accountants, not finance operators. This creates an accidental moat — not structural protection, but a window of inattention.\n\nScore 3 reflects that incumbents are indifferent today but not structurally prevented from entering. A single feature prioritization decision by any of the three incumbents could change the competitive landscape quickly.",
+  "key_finding": "Incumbents have de facto ignored this niche for 3+ years, creating a window of opportunity — but none are structurally prevented from entering.",
+  "score_explanation": "Score 3 reflects de facto incumbent indifference rather than structural impossibility. The opportunity window is real but fragile — incumbents could address this with a feature sprint if motivated."
+}

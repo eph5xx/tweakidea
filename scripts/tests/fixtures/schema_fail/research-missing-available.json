@@ -1,0 +1,7 @@
+{
+  "clusters": {
+    "user": ["Some user research"],
+    "competitive": ["Some competitive intel"],
+    "market": ["Some market data"]
+  }
+}
