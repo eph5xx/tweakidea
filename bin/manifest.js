@@ -16,6 +16,8 @@ const SKILL_DIRS = [
 
 const COMMAND_FILES = [
   'commands/tweak/evaluate.md',
+  'commands/tweak/list.md',
+  'commands/tweak/show.md',
   'commands/tweak/suggest-from-hn.md',
 ];
 

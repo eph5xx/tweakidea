@@ -2,7 +2,7 @@
 
 **TweakIdea**
 
-A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Two commands: `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking. `/tweak:suggest-from-hn` analyzes Hacker News discussions to identify technology shifts and surface product ideas.
+A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Four commands: `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:suggest-from-hn` analyzes Hacker News discussions to identify technology shifts and surface product ideas; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`.
 
 **Core Value:** Help founders make better decisions -- evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
@@ -230,7 +230,7 @@ TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that
 ## Architecture
 
 ## Pattern Overview
-- **Command-centric entry points**: Two primary slash commands (`/tweak:evaluate`, `/tweak:suggest-from-hn`) define user interactions
+- **Command-centric entry points**: Four slash commands — `/tweak:evaluate` and `/tweak:suggest-from-hn` run the two pipelines; `/tweak:list` and `/tweak:show` are read-only browsers over `~/.tweakidea/` artifacts
 - **Parallel agent execution**: Independent dimension evaluators run concurrently (no cross-contamination)
 - **Modular skill system**: Shared reference data (scoring framework, dimensions, templates) injected at runtime
 - **Persistent founder profile**: Single source of truth at `~/.tweakidea/FOUNDER.md` persists across evaluation runs

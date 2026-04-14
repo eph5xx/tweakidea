@@ -399,6 +399,8 @@ function install(isGlobal) {
   console.log(`${cyan}Get started:${reset}`);
   console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);
   console.log(`  ${bold}/tweak:suggest-from-hn${reset} ${dim}<hn-url-or-id>${reset}`);
+  console.log(`  ${bold}/tweak:list${reset} ${dim}runs 20${reset}`);
+  console.log(`  ${bold}/tweak:show${reset} ${dim}latest${reset}`);
   console.log('');
 }
 
