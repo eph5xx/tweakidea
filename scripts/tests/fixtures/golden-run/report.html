@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TweakIdea Evaluation Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: &#39;Inter&#39;, system-ui, -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, &#39;Helvetica Neue&#39;, Arial, sans-serif;
+  font-family: &#39;DM Sans&#39;, system-ui, -apple-system, BlinkMacSystemFont, &#39;Segoe UI&#39;, Roboto, &#39;Helvetica Neue&#39;, Arial, sans-serif;
   line-height: 1.65; color: #1a1a2e; background-color: #f8f9fc; padding: 2.5rem 1.5rem;
-  letter-spacing: -0.01em;
 }
 .container { max-width: 940px; margin: 0 auto; }
 h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; color: #111827; }
@@ -61,20 +63,42 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.85rem; color: #1f2937
 .progress-container { background-color: #e5e7eb; border-radius: 9999px; height: 10px; width: 100%; overflow: hidden; display: inline-block; vertical-align: middle; }
 .progress-bar { height: 100%; border-radius: 9999px; }
 
-/* Evidence tier badges */
-.tier-badge { display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
-.tier-verified { background-color: #22c55e; color: #1a1a1a; }
-.tier-research { background-color: #3b82f6; color: #ffffff; }
-.tier-founder { background-color: #eab308; color: #1a1a1a; }
-.tier-assumed { background-color: #9ca3af; color: #1a1a1a; }
+/* Evidence grade pill (per scorecard row) */
+.evidence-grade {
+  display: inline-block;
+  min-width: 2.25rem;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+}
 
-/* Evidence quality bar */
-.evidence-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; font-size: 0.75rem; font-weight: 600; }
-.evidence-bar &gt; div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 2rem; }
-.evidence-bar .ev-verified { background-color: #22c55e; }
-.evidence-bar .ev-research { background-color: #3b82f6; color: #fff; }
-.evidence-bar .ev-founder { background-color: #eab308; }
-.evidence-bar .ev-assumed { background-color: #9ca3af; }
+/* Overall grade (big letter card) */
+.overall-grade-block { text-align: center; padding: 0.75rem 0 0.25rem; }
+.overall-grade {
+  display: inline-block;
+  min-width: 5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+.overall-grade-caption { font-size: 0.8rem; color: #6b7280; margin-top: 0.65rem; }
+
+/* Grade color ramp — applies to both .evidence-grade and .overall-grade */
+.grade-aplus, .grade-a { background-color: #22c55e; }
+.grade-aminus { background-color: #4ade80; }
+.grade-bplus { background-color: #14b8a6; color: #ffffff; }
+.grade-b { background-color: #2dd4bf; }
+.grade-bminus { background-color: #5eead4; }
+.grade-c { background-color: #eab308; }
+.grade-d { background-color: #f97316; color: #ffffff; }
+.grade-f { background-color: #ef4444; color: #ffffff; }
 
 /* Two-column layout */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -93,7 +117,7 @@ footer { text-align: center; color: #9ca3af; font-size: 0.78rem; margin-top: 2.5
 @media print {
   body { background: #fff; padding: 0; }
   .card { box-shadow: none; border: 1px solid #e5e7eb; }
-  .verdict, .score-badge, .tier-badge, .evidence-bar &gt; div, .dealbreaker {
+  .verdict, .score-badge, .evidence-grade, .overall-grade, .dealbreaker {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .card, .scorecard-table tr { break-inside: avoid; }
@@ -118,10 +142,7 @@ footer { text-align: center; color: #9ca3af; font-size: 0.78rem; margin-top: 2.5
 
     <div class="card">
       <h2>Idea</h2>
-      <p>Problem: Small SaaS teams waste 6+ hours/week manually reconciling invoices from multiple payment processors.
-
-Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions by amount, date window, and customer ID.</p>
-    </div>
+<p>Problem: Small SaaS teams waste 6+ hours/week manually reconciling invoices from multiple payment processors.</p><p>Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions by amount, date window, and customer ID.</p>    </div>
 
     <div class="card">
       <h2>Dimension Overview</h2>
@@ -201,15 +222,12 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">2V</span>
-              <span class="tier-badge tier-research">1R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-c" title="2 both-confirmed, 1 research-only, 0 founder-only, 1 assumed">C</span>
             </td>
             <td>Invoice reconciliation across multiple processors is a well-documented, quantified weekly pain for small SaaS teams — research and founder data agree.</td>
           </tr>
           <tr class="score-explanation">
-            <td colspan="6">Score 4 is awarded because both Verified and Research-Backed evidence confirm significant weekly time loss (4-8 hours), and the pain is consistently reported across independent sources. Score 5 is not reached because the problem lacks crisis-level urgency or hard downstream consequences that would make teams pay any price to fix it immediately.</td>
+            <td colspan="6">Score 4 is awarded because both founder and research evidence confirm significant weekly time loss (4-8 hours), and the pain is consistently reported across independent sources. Score 5 is not reached because the problem lacks crisis-level urgency or hard downstream consequences that would make teams pay any price to fix it immediately.</td>
           </tr>
           <tr>
             <td>Willingness to Pay</td>
@@ -217,10 +235,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">1V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">1F</span>
-              <span class="tier-badge tier-assumed">2A</span>
+              <span class="evidence-grade grade-d" title="1 both-confirmed, 0 research-only, 1 founder-only, 2 assumed">D</span>
             </td>
             <td>Willingness to pay is assumed via category analogy — no direct pricing validation has been conducted and the $50-100/month hypothesis is unconfirmed.</td>
           </tr>
@@ -233,10 +248,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">3R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">0A</span>
+              <span class="evidence-grade grade-c" title="0 both-confirmed, 3 research-only, 0 founder-only, 0 assumed">C</span>
             </td>
             <td>No existing tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams — the specific triangulation use case is an unaddressed gap.</td>
           </tr>
@@ -249,10 +261,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">2F</span>
-              <span class="tier-badge tier-assumed">2A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 2 founder-only, 2 assumed">F</span>
             </td>
             <td>Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building.</td>
           </tr>
@@ -265,10 +274,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">1F</span>
-              <span class="tier-badge tier-assumed">3A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 1 founder-only, 3 assumed">F</span>
             </td>
             <td>Urgency is low — the problem is chronic rather than acute, with no forcing event or external deadline identified to accelerate solution-seeking behavior.</td>
           </tr>
@@ -281,10 +287,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">2V</span>
-              <span class="tier-badge tier-research">1R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-c" title="2 both-confirmed, 1 research-only, 0 founder-only, 1 assumed">C</span>
             </td>
             <td>Weekly reconciliation cadence is confirmed by founder and research — frequency is a strong positive signal for product engagement and retention.</td>
           </tr>
@@ -297,10 +300,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">2R</span>
-              <span class="tier-badge tier-founder">1F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-d" title="0 both-confirmed, 2 research-only, 1 founder-only, 1 assumed">D</span>
             </td>
             <td>Market size is real but bounded — the specific multi-processor SMB reconciliation niche is a $30M-120M SAM, viable for an indie SaaS but not venture-scale without use case expansion.</td>
           </tr>
@@ -313,10 +313,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">4A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 0 founder-only, 4 assumed">F</span>
             </td>
             <td>Defensibility is weak — no structural moat, network effect, or data flywheel has been identified; the product is replicable by incumbents with a feature update.</td>
           </tr>
@@ -329,10 +326,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">2R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-d" title="0 both-confirmed, 2 research-only, 0 founder-only, 1 assumed">D</span>
             </td>
             <td>Market growth is steady at 18% CAGR, supported by payment infrastructure fragmentation, but not in hyper-growth territory.</td>
           </tr>
@@ -345,10 +339,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-4" style="width:80%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">1V</span>
-              <span class="tier-badge tier-research">1R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-d" title="1 both-confirmed, 1 research-only, 0 founder-only, 1 assumed">D</span>
             </td>
             <td>Technical scalability is strong — the CSV matching architecture scales linearly and category precedent confirms the SMB-to-midmarket path without re-architecting.</td>
           </tr>
@@ -361,10 +352,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">2F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 2 founder-only, 1 assumed">F</span>
             </td>
             <td>Target customer is broadly defined as &#39;small SaaS teams with 2+ processors&#39; — workable for discovery but too broad for efficient acquisition without sharper firmographic filters.</td>
           </tr>
@@ -377,10 +365,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>4/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">2F</span>
-              <span class="tier-badge tier-assumed">1A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 2 founder-only, 1 assumed">F</span>
             </td>
             <td>Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift.</td>
           </tr>
@@ -393,10 +378,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-2" style="width:40%"></div></div></td>
             <td>2/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">4A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 0 founder-only, 4 assumed">F</span>
             </td>
             <td>Reconciliation automation is optional — no regulatory mandate, compliance requirement, or audit obligation forces SMBs to automate multi-processor matching.</td>
           </tr>
@@ -409,10 +391,7 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
             <td><div class="progress-container"><div class="progress-bar score-3" style="width:60%"></div></div></td>
             <td>3/5</td>
             <td>
-              <span class="tier-badge tier-verified">0V</span>
-              <span class="tier-badge tier-research">0R</span>
-              <span class="tier-badge tier-founder">0F</span>
-              <span class="tier-badge tier-assumed">3A</span>
+              <span class="evidence-grade grade-f" title="0 both-confirmed, 0 research-only, 0 founder-only, 3 assumed">F</span>
             </td>
             <td>Incumbents have de facto ignored this niche for 3+ years, creating a window of opportunity — but none are structurally prevented from entering.</td>
           </tr>
@@ -424,14 +403,11 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
     </div>
 
     <div class="card">
-      <h2>Evidence Quality</h2>
-      <div class="evidence-bar">
-        <div class="ev-verified" style="width:12%">12% V</div>
-        <div class="ev-research" style="width:20%">20% R</div>
-        <div class="ev-founder" style="width:18%">18% F</div>
-        <div class="ev-assumed" style="width:50%">50% A</div>
+      <h2>Overall Evidence</h2>
+      <div class="overall-grade-block">
+        <div class="overall-grade grade-d">D</div>
+        <div class="overall-grade-caption">Average evidence strength across all dimensions. A = strong research-backed, F = no real evidence.</div>
       </div>
-      <div style="font-size:0.75rem;color:#6b7280;margin-top:0.25rem;">V=Verified R=Research-Backed F=Founder-Asserted A=Assumed</div>
     </div>
 
     <div class="card">

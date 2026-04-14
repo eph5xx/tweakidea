@@ -4,7 +4,7 @@ A Claude Code skillset that helps founders evaluate startup problems and discove
 
 ## Evaluate: `/tweak:evaluate`
 
-Runs 14 independent subagents in parallel — one per problem dimension — then merges results into a weighted scorecard with assumption tracking and evidence tiers.
+Runs 14 independent subagents in parallel — one per problem dimension — then merges results into a weighted scorecard with assumption tracking and letter-graded evidence strength.
 
 1. **Capture** — Describe your startup idea (inline, from a file, or interactively)
 2. **Prepare** — Two parallel tracks: extract hypotheses + web research in background; interactive founder profile + fit questions
@@ -114,17 +114,17 @@ First run takes 30-40 minutes (includes founder profile creation). Subsequent ru
 ```
 PIVOT -- Promising, address weak areas | Weighted Score: 3.4/5.0 | Potential: 4.0/5.0
 
-| Dimension              | Score | Potential | Evidence        | Key Finding                                    |
-|------------------------|-------|-----------|-----------------|------------------------------------------------|
-| Pain Intensity         | 4/5   | 4/5       | 2V 3R 1F 0A     | Clear pain with existing demand signals        |
-| Willingness to Pay     | 3/5   | 4/5*      | 0V 1R 2F 2A     | Budget exists but price sensitivity unknown    |
-| Solution Gap           | 2/5   | 2/5       | 1V 4R 0F 1A     | Crowded market with strong incumbents          |
-| Founder-Market Fit     | 4/5   | 4/5       | 0V 0R 3F 1A     | Strong domain expertise and network            |
-| ...                    | ...   | ...       | ...             | ...                                            |
+| Dimension              | Score | Potential | Evidence | Key Finding                                    |
+|------------------------|-------|-----------|----------|------------------------------------------------|
+| Pain Intensity         | 4/5   | 4/5       | B        | Clear pain with existing demand signals        |
+| Willingness to Pay     | 3/5   | 4/5*      | D        | Budget exists but price sensitivity unknown    |
+| Solution Gap           | 2/5   | 2/5       | B+       | Crowded market with strong incumbents          |
+| Founder-Market Fit     | 4/5   | 4/5       | C        | Strong domain expertise and network            |
+| ...                    | ...   | ...       | ...      | ...                                            |
 
-V=Verified R=Research-Backed F=Founder-Asserted A=Assumed
+Evidence grade (per row and overall): A+/A/A− strong research-backed, B+/B/B− mixed, C modest, D weak, F no real evidence.
 
-Evidence Quality: 8% Verified | 32% Research-Backed | 35% Founder-Asserted | 25% Assumed
+**Overall Evidence Grade:** C+
 
 ### Top 3 Strengths
 1. **Pain Intensity** (4/5): Active workarounds and food waste regulations driving urgency

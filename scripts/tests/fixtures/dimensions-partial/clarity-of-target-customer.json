@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No specific named companies or customer personas with validated buying intent identified"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Target customer segment is described by size and problem but not by specific vertical, buying trigger, or decision-maker role"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder clearly identifies small SaaS teams (10-50 employees) using 2+ payment processors as the target — a workable segment definition for early customer discovery"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "The pain description implies a finance or operations lead as the primary user — a coherent buyer persona even if not explicitly stated"
     }
   ],

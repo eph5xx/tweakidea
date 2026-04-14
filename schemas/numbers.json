@@ -11,7 +11,7 @@
     "verdict_label",
     "rankings",
     "dealbreaker_dims",
-    "evidence_quality",
+    "overall_grade",
     "assumption_impact_math",
     "radar_svg"
   ],
@@ -44,7 +44,7 @@
       "description": "Per-dimension scores in registry index order.",
       "items": {
         "type": "object",
-        "required": ["dim", "slug", "score", "potential", "weighted_score", "tier_counts"],
+        "required": ["dim", "slug", "score", "potential", "weighted_score", "evidence_strength"],
         "properties": {
           "dim": {"type": "string"},
           "slug": {"type": "string"},
@@ -62,14 +62,18 @@
             "type": "number",
             "minimum": 0
           },
-          "tier_counts": {
+          "evidence_strength": {
             "type": "object",
-            "required": ["verified", "research", "founder", "assumed"],
+            "required": ["both_confirmed", "research_only", "founder_only", "assumed", "grade"],
             "properties": {
-              "verified": {"type": "integer", "minimum": 0},
-              "research": {"type": "integer", "minimum": 0},
-              "founder": {"type": "integer", "minimum": 0},
-              "assumed": {"type": "integer", "minimum": 0}
+              "both_confirmed": {"type": "integer", "minimum": 0},
+              "research_only": {"type": "integer", "minimum": 0},
+              "founder_only": {"type": "integer", "minimum": 0},
+              "assumed": {"type": "integer", "minimum": 0},
+              "grade": {
+                "type": "string",
+                "enum": ["A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"]
+              }
             },
             "additionalProperties": false
           },
@@ -83,17 +87,10 @@
       "description": "List of dimension slugs where score == 1.",
       "items": {"type": "string"}
     },
-    "evidence_quality": {
-      "type": "object",
-      "description": "Aggregate evidence quality percentages across all dimensions.",
-      "required": ["verified_pct", "research_pct", "founder_pct", "assumed_pct"],
-      "properties": {
-        "verified_pct": {"type": "integer", "minimum": 0, "maximum": 100},
-        "research_pct": {"type": "integer", "minimum": 0, "maximum": 100},
-        "founder_pct": {"type": "integer", "minimum": 0, "maximum": 100},
-        "assumed_pct": {"type": "integer", "minimum": 0, "maximum": 100}
-      },
-      "additionalProperties": false
+    "overall_grade": {
+      "type": "string",
+      "enum": ["A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"],
+      "description": "Single letter grade summarizing evidence strength across all dimensions."
     },
     "assumption_impact_math": {
       "type": "array",

@@ -52,7 +52,7 @@ Before beginning your analysis, you MAY perform 2-3 targeted web searches to fin
 - If searches return nothing useful, proceed with available information
 
 **How to use results:**
-- Treat web search findings as Research-Backed evidence tier
+- Treat web search findings as `research_only` evidence tier
 - Cite sources (URLs) when referencing search results in your analysis
 
 ### Step 1: Analysis Narrative
@@ -73,7 +73,7 @@ Walk through the scoring rubric from your dimension file starting at Score 5 dow
 
 - `level`: integer 1-5
 - `status`: one of `PASS`, `FAIL`, `CONDITIONAL`
-- `tier`: one of `Verified`, `Research-Backed`, `Founder-Asserted`, `Assumed` (see Evidence Tier Classification below)
+- `tier`: one of `both_confirmed`, `research_only`, `founder_only`, `assumed` (see Evidence Tier Classification below)
 - `evidence`: a short string stating the specific evidence (or lack thereof) for this criterion
 
 **Status definitions:**
@@ -95,7 +95,7 @@ CONDITIONAL is the bridge between the evaluator's two output channels. It cascad
 
 **Worked example.** Suppose you are evaluating the Market Size dimension and the rubric's Score 4 criterion 2 reads "TAM > $1B based on credible third-party data." The founder's prompt includes an [UNCONFIRMED] hypothesis: "The addressable market for AI-assisted legal document review is approximately $3B globally". Research Context is absent, so no third-party data supports the claim.
 
-- You would evaluate Score 4 criterion 2 as CONDITIONAL with tier: "Founder-Asserted" — the founder named a TAM, but without research the claim is a pending assumption.
+- You would evaluate Score 4 criterion 2 as CONDITIONAL with tier: "founder_only" — the founder named a TAM, but without research the claim is a pending assumption.
 - In Step 3, `score` treats criterion 2 as FAIL. If all Score 3 criteria PASS, `score = 3`.
 - In Step 3, `potential` treats criterion 2 as PASS. If all Score 4 criteria otherwise PASS or CONDITIONAL, `potential = 4`.
 - In Step 4, you add an entry to `assumptions_relied_on` with text: "TAM for AI-assisted legal document review is ≈$3B globally", status: "UNCONFIRMED", and impact: "If confirmed (via credible third-party market report), Score 4 criterion 2 would change from CONDITIONAL to PASS, raising score from 3 to 4."
@@ -106,12 +106,12 @@ This three-way status (PASS / FAIL / CONDITIONAL) is the only mechanism by which
 
 | Condition | Tier |
 |-----------|------|
-| Founder confirmed the underlying claim AND Research Context supports the same claim | **Verified** |
-| Research Context supports, founder did not specifically confirm | **Research-Backed** |
-| Founder confirmed, no research data supports | **Founder-Asserted** |
-| Inferred from reasoning / [UNCONFIRMED] hypotheses | **Assumed** |
+| Founder confirmed the underlying claim AND Research Context supports the same claim | `both_confirmed` |
+| Research Context supports, founder did not specifically confirm | `research_only` |
+| Founder confirmed, no research data supports | `founder_only` |
+| Inferred from reasoning / [UNCONFIRMED] hypotheses | `assumed` |
 
-If no `## Research Context` section is present, only `Founder-Asserted` and `Assumed` tiers are possible.
+If no `## Research Context` section is present, only `founder_only` and `assumed` tiers are possible.
 
 ### Step 3: Score Assignment
 
@@ -152,9 +152,9 @@ The JSON content MUST validate against `.claude/schemas/dimension-evaluation.jso
   "score": 3,
   "potential": 4,
   "criteria": [
-    {"level": 5, "status": "FAIL", "tier": "Assumed", "evidence": "..."},
-    {"level": 4, "status": "CONDITIONAL", "tier": "Founder-Asserted", "evidence": "..."},
-    {"level": 3, "status": "PASS", "tier": "Verified", "evidence": "..."}
+    {"level": 5, "status": "FAIL", "tier": "assumed", "evidence": "..."},
+    {"level": 4, "status": "CONDITIONAL", "tier": "founder_only", "evidence": "..."},
+    {"level": 3, "status": "PASS", "tier": "both_confirmed", "evidence": "..."}
   ],
   "assumptions_relied_on": [
     {"text": "...", "status": "UNCONFIRMED", "impact": "..."}
@@ -177,9 +177,9 @@ Do NOT return any other prose. Do NOT return the JSON content inline in your cha
 
 Your prompt is constructed by the orchestrator from `{RUN_DIR}/research.json`, the founder's idea text, and `{RUN_DIR}/hypotheses.json`. One input can legitimately be absent: the Research Context section.
 
-- **No `## Research Context` section in your prompt**: Research either failed, was disabled, or the founder chose to continue without it. Proceed normally using only the idea text and hypotheses. Only Founder-Asserted and Assumed evidence tiers are available to you (per the Evidence Tier Classification table in Step 2). Do NOT fabricate research findings. Do NOT lower `score` or `potential` purely because research is absent — an absent input is not negative evidence. Your `analysis_narrative` should note the absence once, briefly, so the reader understands the confidence ceiling.
+- **No `## Research Context` section in your prompt**: Research either failed, was disabled, or the founder chose to continue without it. Proceed normally using only the idea text and hypotheses. Only `founder_only` and `assumed` evidence tiers are available to you (per the Evidence Tier Classification table in Step 2). Do NOT fabricate research findings. Do NOT lower `score` or `potential` purely because research is absent — an absent input is not negative evidence. Your `analysis_narrative` should note the absence once, briefly, so the reader understands the confidence ceiling.
 - **Research Context present but empty for your cluster**: If the orchestrator injected the section but your assigned research cluster contains no findings, treat this as equivalent to "no research context" for your dimension. Same rules as above.
-- **Idea text is thin or ambiguous**: Do NOT infer facts that are not in the prompt. Ask which rubric criteria are genuinely satisfiable given the thin input; mark the rest as FAIL with tier `Assumed` and note the specific gap in `key_signals`. A thin input produces a low score honestly, not a high score charitably.
+- **Idea text is thin or ambiguous**: Do NOT infer facts that are not in the prompt. Ask which rubric criteria are genuinely satisfiable given the thin input; mark the rest as FAIL with tier `assumed` and note the specific gap in `key_signals`. A thin input produces a low score honestly, not a high score charitably.
 - **Hypotheses list is empty**: The `{RUN_DIR}/hypotheses.json` file the orchestrator wrote may contain zero entries (ti-extractor found no testable claims in the idea text). Proceed normally. With no hypotheses, there are no CONDITIONAL criteria — every criterion is strictly PASS or FAIL, and `score == potential` for this dimension.
 
 In all four cases, the score algorithm (Step 3) and the output schema are unchanged. Missing inputs affect what evidence you can cite, not how you compute the score from the criteria you assessed.

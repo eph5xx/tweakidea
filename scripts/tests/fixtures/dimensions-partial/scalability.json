@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of network effects or exponential value growth with scale"
     },
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "CSV processing and matching logic is stateless and horizontally scalable; adding more customers does not degrade performance for existing customers"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "SaaS delivery model is inherently more scalable than professional services alternatives"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Digital delivery with no physical component means no fulfillment bottleneck"
     }
   ],

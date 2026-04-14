@@ -52,7 +52,7 @@
           },
           "tier": {
             "type": "string",
-            "enum": ["Verified", "Research-Backed", "Founder-Asserted", "Assumed"]
+            "enum": ["both_confirmed", "research_only", "founder_only", "assumed"]
           },
           "evidence": {
             "type": "string"

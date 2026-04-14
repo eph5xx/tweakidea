@@ -54,20 +54,42 @@ h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.85rem; color: #1f2937
 .progress-container { background-color: #e5e7eb; border-radius: 9999px; height: 10px; width: 100%; overflow: hidden; display: inline-block; vertical-align: middle; }
 .progress-bar { height: 100%; border-radius: 9999px; }
 
-/* Evidence tier badges */
-.tier-badge { display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; margin-right: 3px; }
-.tier-verified { background-color: #22c55e; color: #1a1a1a; }
-.tier-research { background-color: #3b82f6; color: #ffffff; }
-.tier-founder { background-color: #eab308; color: #1a1a1a; }
-.tier-assumed { background-color: #9ca3af; color: #1a1a1a; }
+/* Evidence grade pill (per scorecard row) */
+.evidence-grade {
+  display: inline-block;
+  min-width: 2.25rem;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  color: #1a1a1a;
+}
 
-/* Evidence quality bar */
-.evidence-bar { display: flex; height: 24px; border-radius: 6px; overflow: hidden; margin: 0.5rem 0; font-size: 0.75rem; font-weight: 600; }
-.evidence-bar > div { display: flex; align-items: center; justify-content: center; color: #1a1a1a; min-width: 0; overflow: hidden; white-space: nowrap; }
-.evidence-bar .ev-verified { background-color: #22c55e; }
-.evidence-bar .ev-research { background-color: #3b82f6; color: #fff; }
-.evidence-bar .ev-founder { background-color: #eab308; }
-.evidence-bar .ev-assumed { background-color: #9ca3af; }
+/* Overall grade (big letter card) */
+.overall-grade-block { text-align: center; padding: 0.75rem 0 0.25rem; }
+.overall-grade {
+  display: inline-block;
+  min-width: 5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+.overall-grade-caption { font-size: 0.8rem; color: #6b7280; margin-top: 0.65rem; }
+
+/* Grade color ramp — applies to both .evidence-grade and .overall-grade */
+.grade-aplus, .grade-a { background-color: #22c55e; }
+.grade-aminus { background-color: #4ade80; }
+.grade-bplus { background-color: #14b8a6; color: #ffffff; }
+.grade-b { background-color: #2dd4bf; }
+.grade-bminus { background-color: #5eead4; }
+.grade-c { background-color: #eab308; }
+.grade-d { background-color: #f97316; color: #ffffff; }
+.grade-f { background-color: #ef4444; color: #ffffff; }
 
 /* Two-column layout */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -86,7 +108,7 @@ footer { text-align: center; color: #9ca3af; font-size: 0.78rem; margin-top: 2.5
 @media print {
   body { background: #fff; padding: 0; }
   .card { box-shadow: none; border: 1px solid #e5e7eb; }
-  .verdict, .score-badge, .tier-badge, .evidence-bar > div, .dealbreaker {
+  .verdict, .score-badge, .evidence-grade, .overall-grade, .dealbreaker {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
   .card, .scorecard-table tr { break-inside: avoid; }

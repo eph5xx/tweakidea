@@ -41,20 +41,51 @@ def verdict_for(total: float) -> tuple[str, str]:
     return "STOP", "STOP — Likely not worth pursuing"
 
 
+TIER_KEYS = ("both_confirmed", "research_only", "founder_only", "assumed")
+
+
 def count_tiers(criteria: list) -> dict:
     """Count evidence tiers across a dimension's criteria array."""
-    counts = {"verified": 0, "research": 0, "founder": 0, "assumed": 0}
+    counts = {k: 0 for k in TIER_KEYS}
     for c in criteria:
         t = c.get("tier", "")
-        if t == "Verified":
-            counts["verified"] += 1
-        elif t == "Research-Backed":
-            counts["research"] += 1
-        elif t == "Founder-Asserted":
-            counts["founder"] += 1
-        elif t == "Assumed":
-            counts["assumed"] += 1
+        if t in counts:
+            counts[t] += 1
     return counts
+
+
+def points_from_counts(counts: dict) -> int:
+    """Weighted evidence points: both_confirmed=3, research_only=2, founder_only=1, assumed=0."""
+    return (
+        3 * counts["both_confirmed"]
+        + 2 * counts["research_only"]
+        + 1 * counts["founder_only"]
+    )
+
+
+def grade_from_points(points: int) -> str:
+    """Map weighted evidence points to a letter grade."""
+    if points >= 24:
+        return "A+"
+    if points >= 21:
+        return "A"
+    if points >= 18:
+        return "A-"
+    if points >= 15:
+        return "B+"
+    if points >= 12:
+        return "B"
+    if points >= 9:
+        return "B-"
+    if points >= 6:
+        return "C"
+    if points >= 3:
+        return "D"
+    return "F"
+
+
+def grade_from_counts(counts: dict) -> str:
+    return grade_from_points(points_from_counts(counts))
 
 
 def load_dimension(run_dir: pathlib.Path, slug: str):
@@ -137,17 +168,19 @@ def main() -> int:
 
     weighted_total = 0.0
     potential_total = 0.0
+    total_points = 0
     rankings = []
     for d in dims:
         result = dim_results.get(d.slug)
         if result is None:
+            empty_counts = {k: 0 for k in TIER_KEYS}
             rankings.append({
                 "dim": d.name,
                 "slug": d.slug,
                 "score": None,
                 "potential": None,
                 "weighted_score": 0.0,
-                "tier_counts": {"verified": 0, "research": 0, "founder": 0, "assumed": 0},
+                "evidence_strength": {**empty_counts, "grade": "F"},
                 "failed": True,
             })
             continue
@@ -156,13 +189,16 @@ def main() -> int:
         potential = result["potential"]
         weighted_total += score * norm_w
         potential_total += potential * norm_w
+        counts = count_tiers(result.get("criteria", []))
+        points = points_from_counts(counts)
+        total_points += points
         rankings.append({
             "dim": d.name,
             "slug": d.slug,
             "score": score,
             "potential": potential,
             "weighted_score": round(score * norm_w, 3),
-            "tier_counts": count_tiers(result.get("criteria", [])),
+            "evidence_strength": {**counts, "grade": grade_from_points(points)},
         })
 
     weighted_total = round(weighted_total, 1)
@@ -177,28 +213,9 @@ def main() -> int:
         and dim_results[d.slug]["score"] == 1
     ]
 
-    # Aggregate evidence quality across all valid criteria
-    tier_totals = {"verified": 0, "research": 0, "founder": 0, "assumed": 0}
-    total_criteria = 0
-    for slug in valid_slugs:
-        for c in dim_results[slug].get("criteria", []):
-            t = c.get("tier")
-            if t == "Verified":
-                tier_totals["verified"] += 1
-            elif t == "Research-Backed":
-                tier_totals["research"] += 1
-            elif t == "Founder-Asserted":
-                tier_totals["founder"] += 1
-            elif t == "Assumed":
-                tier_totals["assumed"] += 1
-            total_criteria += 1
-    denom = max(total_criteria, 1)
-    evidence_quality = {
-        "verified_pct": round(tier_totals["verified"] / denom * 100),
-        "research_pct": round(tier_totals["research"] / denom * 100),
-        "founder_pct": round(tier_totals["founder"] / denom * 100),
-        "assumed_pct": round(tier_totals["assumed"] / denom * 100),
-    }
+    # Overall grade: average weighted-points across valid dims, then grade.
+    avg_points = round(total_points / len(valid_slugs))
+    overall_grade = grade_from_points(avg_points)
 
     # Assumption impact math
     assumption_impact_math = []
@@ -233,7 +250,7 @@ def main() -> int:
         "verdict_label": label,
         "rankings": rankings,
         "dealbreaker_dims": dealbreaker_dims,
-        "evidence_quality": evidence_quality,
+        "overall_grade": overall_grade,
         "assumption_impact_math": assumption_impact_math,
         "radar_svg": radar_svg,
     }

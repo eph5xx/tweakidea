@@ -6,19 +6,19 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Research found no tool that fully automates multi-processor CSV reconciliation end-to-end including bank statement matching"
     },
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Ramp and Brex handle card spend but lack custom CSV ingest; QuickBooks requires manual mapping; no multi-processor automated matching tool found"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Category sweep confirmed no product directly addresses the Stripe + PayPal + bank CSV triangulation use case for small SaaS teams"
     }
   ],

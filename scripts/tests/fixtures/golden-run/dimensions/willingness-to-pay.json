@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of budget pre-allocation or enterprise deal size to justify $500+/month"
     },
     {
       "level": 4,
       "status": "CONDITIONAL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Depends on UNCONFIRMED hypothesis that teams would pay $50-100/month; no pricing validation conducted yet"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder believes teams would pay $25-50/month based on comparable SaaS tools in their network"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "Category precedent: bookkeeping SaaS tools like QuickBooks charge $30-90/month for similar time savings"
     }
   ],

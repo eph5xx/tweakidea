@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Switching from spreadsheets to a new tool requires workflow change for the finance/ops team"
     },
     {
       "level": 4,
       "status": "CONDITIONAL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Depends on UNCONFIRMED hypothesis that teams will adopt CSV-export workflow without needing API integrations — founder believes export workflow is already habitual but no confirmation"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Core workflow maps onto existing behavior: download CSV from each processor, upload to dashboard — less disruptive than tools requiring new integrations or new credentials"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Teams already export CSVs manually — the tool replaces the spreadsheet step, not the export step"
     }
   ],

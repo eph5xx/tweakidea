@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of a $1B+ TAM accessible with the current narrow focus on small SaaS teams"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "SMB fintech automation market at $4.2B total does not translate directly to accessible market for a narrow reconciliation tool"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "IDC estimates 180,000 SaaS companies in the US with 10-50 employees; at $80/month average, SOM is ~$17M assuming 1% penetration"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder estimates 50,000+ small SaaS teams with the multi-processor problem based on Stripe and PayPal developer community sizes"
     }
   ],

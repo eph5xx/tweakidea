@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of deep domain expertise in fintech, payment processing APIs, or prior reconciliation product experience"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder has SaaS background but not specifically in financial tooling or payment operations"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder personally experienced the reconciliation problem for 2+ years at previous SaaS company; built internal spreadsheet solutions"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Founder has engineering background sufficient to build the CSV parsing and matching logic"
     }
   ],
