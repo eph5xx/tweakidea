@@ -11,6 +11,8 @@ tweakidea/
   commands/tweak/
     evaluate.md           # Evaluation pipeline (6 stages)
     suggest-from-hn.md    # HN opportunity discovery (7 phases)
+    list.md               # List runs, HN analyses, and founder profiles (read-only)
+    show.md               # Open any artifact by timestamp, keyword, or query (read-only)
   agents/
     ti-extractor.md       # Hypothesis extractor (Sonnet)
     ti-evaluator.md       # Dimension evaluator (spawned 14x with Sonnet)
@@ -36,7 +38,7 @@ tweakidea/
 
 Source files live in the root-level directories above. The installer (`bin/install.js`) copies them into `.claude/` where Claude Code discovers them. **Edit the root-level files, not the `.claude/` copies.**
 
-- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline).
+- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline). `list.md` and `show.md` are read-only browsers over artifacts under `~/.tweakidea/` — no subagents, no writes.
 
 - **Agents** (`agents/`): Subagent definitions spawned by the evaluate orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-narrative.md` authors the cross-dimensional narrative prose on Opus. `ti-researcher.md` gathers web research on Sonnet.
 
@@ -95,6 +97,7 @@ To modify a dimension's scoring behavior, edit its dimension file. To add a new 
 | Hypothesis extraction | `agents/ti-extractor.md` |
 | Suggest pipeline behavior | `commands/tweak/suggest-from-hn.md` |
 | HN fetch/parse logic | `skills/ti-hnparse/hnparse.py` |
+| List/Show browser behavior | `commands/tweak/list.md`, `commands/tweak/show.md` |
 
 ### PR conventions
 

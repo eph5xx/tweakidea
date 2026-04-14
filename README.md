@@ -1,6 +1,6 @@
 # TweakIdea
 
-A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Two commands: **evaluate** an idea across 14 weighted dimensions, or **suggest** new ideas from Hacker News discussions.
+A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Four commands: **evaluate** an idea across 14 weighted dimensions, **suggest** new ideas from Hacker News discussions, **list** your accumulated runs and profiles, or **show** any saved artifact.
 
 ## Evaluate: `/tweak:evaluate`
 
@@ -26,6 +26,29 @@ Fetches a Hacker News post (article + full comment tree), identifies technology 
 5. **Write** — Detailed problem/solution writeups saved to `~/.tweakidea/hn/hn-{id}/`
 
 Confirmed ideas can be fed directly into `/tweak:evaluate` for a full 14-dimension assessment.
+
+## List: `/tweak:list`
+
+Lists what you have accumulated under `~/.tweakidea/`: evaluation runs, HN analyses, and founder profiles. Read-only.
+
+- `/tweak:list` — default (all categories, 5 most recent per section)
+- `/tweak:list runs 20` — the 20 most recent evaluation runs
+- `/tweak:list best ideas` — runs ranked by weighted score
+- `/tweak:list hn` — just HN analyses
+
+Arguments are a free-form hint; use whatever phrasing feels natural. Use `/tweak:show` to open any item.
+
+## Show: `/tweak:show`
+
+Opens any artifact under `~/.tweakidea/` by timestamp, keyword, HN id, founder name, or natural query.
+
+- `/tweak:show latest` — most recent evaluation run
+- `/tweak:show 20260412-143022` — a specific run by timestamp
+- `/tweak:show restaurant food waste` — keyword match on idea text
+- `/tweak:show hn 43374458` — an HN analysis by id
+- `/tweak:show best ideas` — ranked query over saved runs
+
+Run reports open in the browser; HN and founder artifacts are inlined.
 
 ## The 14 Dimensions
 
@@ -66,7 +89,7 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` — you should see `evaluate` and `suggest-from-hn` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `evaluate`, `suggest-from-hn`, `list`, and `show` in the autocomplete.
 
 For better article extraction from JS-heavy sites, optionally run `uv run playwright install chromium` once. Without it, the script falls back to plain HTTP which works fine for most sites.
 
