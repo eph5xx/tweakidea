@@ -1,4 +1,4 @@
-# TweakIdea Evaluation Report — 2026-04-13
+# TweakIdea Evaluation Report — 2026-04-14 12:00 UTC
 
 **Verdict:** PIVOT — Promising, address weak areas | Weighted Score: 3.2/5.0 | Potential: 3.5/5.0
 
@@ -26,22 +26,22 @@ Solution: A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV e
 
 | # | Dimension | Score | Potential | Evidence | Key Finding |
 |---|-----------|-------|-----------|----------|-------------|
-| 1 | Pain Intensity | 4/5 | 4/5 | 2V 1R 0F 1A | Invoice reconciliation across multiple processors is a well-documented, quantified weekly pain for small SaaS teams — research and founder data agree. |
-| 2 | Willingness to Pay | 3/5 | 4/5 | 1V 0R 1F 2A | Willingness to pay is assumed via category analogy — no direct pricing validation has been conducted and the $50-100/month hypothesis is unconfirmed. |
-| 3 | Solution Gap | 4/5 | 4/5 | 0V 2R 0F 1A | No existing tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams — the specific triangulation use case is an unaddressed gap. |
-| 4 | Founder-Market Fit | 3/5 | 3/5 | 0V 0R 1F 3A | Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building. |
-| 5 | Urgency | 2/5 | 3/5 | 0V 0R 1F 3A | Urgency is low — the problem is chronic rather than acute, with no forcing event or external deadline identified to accelerate solution-seeking behavior. |
-| 6 | Frequency | 4/5 | 4/5 | 2V 1R 0F 1A | Weekly reconciliation cadence is confirmed by founder and research — frequency is a strong positive signal for product engagement and retention. |
-| 7 | Market Size | 3/5 | 3/5 | 0V 2R 1F 1A | Market size is real but bounded — the specific multi-processor SMB reconciliation niche is a $30M-120M SAM, viable for an indie SaaS but not venture-scale without use case expansion. |
-| 8 | Defensibility | 2/5 | 3/5 | 0V 0R 0F 4A | Defensibility is weak — no structural moat, network effect, or data flywheel has been identified; the product is replicable by incumbents with a feature update. |
-| 9 | Market Growth | 3/5 | 3/5 | 0V 1R 0F 2A | Market growth is steady at 18% CAGR, supported by payment infrastructure fragmentation, but not in hyper-growth territory. |
-| 10 | Scalability | 4/5 | 4/5 | 1V 1R 0F 1A | Technical scalability is strong — the CSV matching architecture scales linearly and category precedent confirms the SMB-to-midmarket path without re-architecting. |
-| 11 | Clarity of Target Customer | 3/5 | 3/5 | 0V 0R 1F 2A | Target customer is broadly defined as 'small SaaS teams with 2+ processors' — workable for discovery but too broad for efficient acquisition without sharper firmographic filters. |
-| 12 | Behavior Change Required | 3/5 | 4/5 | 0V 0R 1F 2A | Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift. |
-| 13 | Mandatory Nature | 2/5 | 2/5 | 0V 0R 0F 4A | Reconciliation automation is optional — no regulatory mandate, compliance requirement, or audit obligation forces SMBs to automate multi-processor matching. |
-| 14 | Incumbent Indifference | 3/5 | 3/5 | 0V 0R 0F 3A | Incumbents have de facto ignored this niche for 3+ years, creating a window of opportunity — but none are structurally prevented from entering. |
+| 1 | Pain Intensity | 4/5 | 4/5 | C | Invoice reconciliation across multiple processors is a well-documented, quantified weekly pain for small SaaS teams — research and founder data agree. |
+| 2 | Willingness to Pay | 3/5 | 4/5 | D | Willingness to pay is assumed via category analogy — no direct pricing validation has been conducted and the $50-100/month hypothesis is unconfirmed. |
+| 3 | Solution Gap | 4/5 | 4/5 | C | No existing tool handles multi-processor CSV reconciliation end-to-end for small SaaS teams — the specific triangulation use case is an unaddressed gap. |
+| 4 | Founder-Market Fit | 3/5 | 3/5 | F | Founder has lived the problem for 2+ years and can build it, but lacks fintech domain expertise and finance decision-maker network needed for faster trust-building. |
+| 5 | Urgency | 2/5 | 3/5 | F | Urgency is low — the problem is chronic rather than acute, with no forcing event or external deadline identified to accelerate solution-seeking behavior. |
+| 6 | Frequency | 4/5 | 4/5 | C | Weekly reconciliation cadence is confirmed by founder and research — frequency is a strong positive signal for product engagement and retention. |
+| 7 | Market Size | 3/5 | 3/5 | D | Market size is real but bounded — the specific multi-processor SMB reconciliation niche is a $30M-120M SAM, viable for an indie SaaS but not venture-scale without use case expansion. |
+| 8 | Defensibility | 2/5 | 3/5 | F | Defensibility is weak — no structural moat, network effect, or data flywheel has been identified; the product is replicable by incumbents with a feature update. |
+| 9 | Market Growth | 3/5 | 3/5 | D | Market growth is steady at 18% CAGR, supported by payment infrastructure fragmentation, but not in hyper-growth territory. |
+| 10 | Scalability | 4/5 | 4/5 | D | Technical scalability is strong — the CSV matching architecture scales linearly and category precedent confirms the SMB-to-midmarket path without re-architecting. |
+| 11 | Clarity of Target Customer | 3/5 | 3/5 | F | Target customer is broadly defined as 'small SaaS teams with 2+ processors' — workable for discovery but too broad for efficient acquisition without sharper firmographic filters. |
+| 12 | Behavior Change Required | 3/5 | 4/5 | F | Behavior change is manageable — the product asks users to redirect existing CSV exports to a dashboard rather than a spreadsheet, an incremental rather than disruptive workflow shift. |
+| 13 | Mandatory Nature | 2/5 | 2/5 | F | Reconciliation automation is optional — no regulatory mandate, compliance requirement, or audit obligation forces SMBs to automate multi-processor matching. |
+| 14 | Incumbent Indifference | 3/5 | 3/5 | F | Incumbents have de facto ignored this niche for 3+ years, creating a window of opportunity — but none are structurally prevented from entering. |
 
-**Evidence Quality:** 12% Verified | 16% Research-Backed | 12% Founder-Asserted | 60% Assumed
+**Overall Evidence Grade:** D
 
 ## Assumption Impact
 
@@ -77,4 +77,4 @@ The idea shows clear pain (3.2 weighted score, PIVOT verdict) with strong soluti
 
 ---
 
-*TweakIdea v0.0.0 | Schema v1 | 2026-04-13*
+*TweakIdea v0.0.0 | Schema v1 | 2026-04-14 12:00 UTC*

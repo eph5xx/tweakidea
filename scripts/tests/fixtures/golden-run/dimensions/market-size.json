@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of a $1B+ addressable market at the specific multi-processor SMB reconciliation niche"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "SMB fintech automation market is $4.2B (IDC 2025) but the reconciliation-specific niche is a fraction of this; no $100M+ TAM estimate found for the exact use case"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "IDC estimates 2.8M SMBs in the US use 2+ payment processors; at $50/month average ACV that's a theoretical ~$1.7B TAM, but realistic SAM is much smaller"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder's network alone has 20+ teams with the problem; implies non-trivial addressable base in the SaaS segment"
     }
   ],

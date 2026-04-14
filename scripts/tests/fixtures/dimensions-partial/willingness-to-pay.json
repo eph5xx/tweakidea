@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of teams willing to pay enterprise pricing ($500+/month) for this category"
     },
     {
       "level": 4,
       "status": "CONDITIONAL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Depends on UNCONFIRMED hypothesis that teams would pay $50-100/month — founder believes so but has no pricing conversations"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "Comparable automation tools (Ramp, Brex integrations) command $30-80/month for similar time-saving features; founder's target price is in range"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Teams spending 6+ hours/week at $50/hour engineer time implies $15,000+/year cost — any tool under $2,000/year is ROI-positive"
     }
   ],

@@ -6,7 +6,7 @@
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "Score out of range — 6 is invalid (must be 1-5)"
     }
   ],

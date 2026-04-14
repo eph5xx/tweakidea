@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No indication of proprietary data, patents, or regulatory moat"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No network effects described in the solution — each customer uses it independently"
     },
     {
       "level": 3,
       "status": "CONDITIONAL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Depends on UNCONFIRMED hypothesis that accumulated customer reconciliation patterns create a learning advantage over time; possible but not architectured for yet"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "First-mover advantage in the specific multi-processor CSV matching niche; switching cost of migrating reconciliation history"
     }
   ],

@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of regulatory deadlines or critical business events forcing immediate adoption"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Pain is chronic but not acute — teams have coping mechanisms (spreadsheets, interns, part-time bookkeepers)"
     },
     {
       "level": 3,
       "status": "CONDITIONAL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Depends on UNCONFIRMED hypothesis that month-end close pressure creates periodic urgency spikes; founder believes this drives willingness to switch but no confirmation"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Teams do the work every month — the problem recurs, creating a persistent but low-urgency demand"
     }
   ],

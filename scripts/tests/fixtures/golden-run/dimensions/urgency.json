@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of a deadline, compliance event, or business crisis that forces immediate action"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence teams are actively searching for solutions or have recently escalated the problem"
     },
     {
       "level": 3,
       "status": "CONDITIONAL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder believes urgency increases at month-end close; depends on unconfirmed hypothesis about month-end behavior patterns"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Problem is chronic and recurring weekly, implying persistent low-grade urgency even without a forcing event"
     }
   ],

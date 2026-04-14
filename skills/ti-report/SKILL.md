@@ -84,6 +84,7 @@ Key lookups used in templates:
 
 - `numbers.rankings[i].slug` → key into `dimensions` dict for `dimensions[r.slug].key_finding` and `dimensions[r.slug].score_explanation`
 - `numbers.verdict_bucket` → one of `GO|PIVOT|STOP` — used to derive CSS class: `verdict-go`, `verdict-pivot`, `verdict-stop`
-- `numbers.evidence_quality` → `{verified_pct, research_pct, founder_pct, assumed_pct}`
+- `numbers.rankings[i].evidence_strength` → `{both_confirmed, research_only, founder_only, assumed, grade}`; `grade` is one of `A+|A|A-|B+|B|B-|C|D|F`
+- `numbers.overall_grade` → single letter grade summarizing evidence strength across all dimensions (same enum as per-dim `grade`)
 - `numbers.assumption_impact_math` → `[{assumption_text, dim, score_delta, weighted_uplift}]`
 - `research.available` → boolean gate for the Research Highlights card

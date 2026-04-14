@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Existing incumbents have engineering resources to close the gap if the market proves large enough"
     },
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Competitive research shows Ramp and Brex offer partial reconciliation but neither ingests arbitrary bank CSVs or supports triple-source matching (Stripe + PayPal + bank)"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "QuickBooks and Xero handle single-source bank imports but do not automate multi-processor transaction matching by amount + date window + customer ID"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Manual spreadsheet workflows remain the fallback — confirmed by the 6-hour/week pain data"
     }
   ],
@@ -37,5 +37,5 @@
   "evidence_basis": "Research",
   "analysis_narrative": "The competitive research surfaces a genuine gap: every major tool in the space handles one side of the equation. Ramp and Brex are card-spend tools — they do not ingest external payment processor exports. QuickBooks and Xero support bank imports but treat reconciliation as a single-source operation; their matching logic was not built for the multi-processor scenario where the same customer appears in Stripe, PayPal, and a bank statement with different formatting conventions.\n\nThe gap is real and current as of Q1 2025. It persists because the incumbent market leaders serve either the enterprise (Coupa, Tipalti) or the freelancer/micro-business segment (Wave, FreshBooks), with small SaaS teams (10-50 employees, 2-4 payment processors) underserved by both tiers.\n\nScore 5 is withheld because the gap is closable by incumbents — it is not a structural moat but a feature gap. Ramp's recent funding ($620M Series D) means they have the resources to ship multi-processor support if they prioritize it.",
   "key_finding": "No current tool handles triple-source transaction matching (Stripe + PayPal + bank CSV) — the gap is real, current, and well-evidenced by competitive research.",
-  "score_explanation": "Score 4 reflects a confirmed, specific feature gap in the current competitive landscape with Research-Backed evidence from two independent competitive sources. Score 5 is not awarded because the gap is a product decision by incumbents rather than a structural or technical barrier."
+  "score_explanation": "Score 4 reflects a confirmed, specific feature gap in the current competitive landscape supported by research findings from two independent competitive sources. Score 5 is not awarded because the gap is a product decision by incumbents rather than a structural or technical barrier."
 }

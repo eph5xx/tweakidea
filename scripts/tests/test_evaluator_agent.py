@@ -96,8 +96,8 @@ class TestEvaluatorAgent(unittest.TestCase):
         self.assertIn("Evidence Tier Classification", self.body)
 
     def test_all_four_tier_names_present(self):
-        """EVAL-03: All four tier names must appear in the body (Verified, Research-Backed, etc.)."""
-        for tier in ("Verified", "Research-Backed", "Founder-Asserted", "Assumed"):
+        """EVAL-03: All four tier names must appear in the body."""
+        for tier in ("both_confirmed", "research_only", "founder_only", "assumed"):
             self.assertIn(tier, self.body, f"Tier name {tier!r} missing from body")
 
     def test_critical_rules_section(self):

@@ -129,10 +129,10 @@ TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that
 - Use explicit ordering: "Follow these steps IN ORDER. Step 0 is optional -- skip it if..."
 - Mark optional steps clearly: `### Step 0: Targeted Research (Optional)`
 - Mandatory steps marked as "mandatory and must not be skipped"
-- `[PASS|Verified]` — Both founder confirmation AND research data support the claim
-- `[PASS|Research-Backed]` — Research data exists without explicit founder statement
-- `[PASS|Founder-Asserted]` — Founder stated it but no research data supports
-- `[PASS|Assumed]` — Inferred from context or unconfirmed hypotheses
+- `[PASS|both_confirmed]` — Founder confirmation AND research data support the claim
+- `[PASS|research_only]` — Research data exists without explicit founder statement
+- `[PASS|founder_only]` — Founder stated it but no research data supports
+- `[PASS|assumed]` — Inferred from context or unconfirmed hypotheses
 ## Hypothesis Handling
 - `[CONFIRMED]` hypothesis: Treat as evidence with full weight
 - `[UNCONFIRMED]` hypothesis: Withhold scoring credit but note as CONDITIONAL
@@ -189,7 +189,7 @@ TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that
 - `## RESEARCH COMPLETE` — Researcher completion marker
 ### Dimension: [name]
 ### Analysis
-### Evidence Tier Counts: {count}V {count}R {count}F {count}A
+### Evidence Strength: {grade} (where grade is A+/A/A-/B+/B/B-/C/D/F)
 ### Score: [X]/5
 ### Potential: [Y]/5 (if [assumptions] confirmed)
 ### Assumptions Relied On

@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence that incumbents are structurally unable to address this — it is a feature decision, not a capability gap"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Ramp and Brex have both the engineering resources and customer relationships to ship multi-processor CSV support if they prioritize it"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Small SaaS teams represent a low-revenue segment for enterprise fintech incumbents; product teams at Ramp/Brex are focused on larger ACVs"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "QuickBooks and Xero have not shipped meaningful automation improvements in years — organizational inertia is documented"
     }
   ],

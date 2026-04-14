@@ -10,11 +10,12 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
-      "tier_counts": {
-        "verified": 2,
-        "research": 1,
-        "founder": 0,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 2,
+        "research_only": 1,
+        "founder_only": 0,
+        "assumed": 1,
+        "grade": "C"
       }
     },
     {
@@ -23,11 +24,12 @@
       "score": 3,
       "potential": 4,
       "weighted_score": 0.36,
-      "tier_counts": {
-        "verified": 1,
-        "research": 0,
-        "founder": 1,
-        "assumed": 2
+      "evidence_strength": {
+        "both_confirmed": 1,
+        "research_only": 0,
+        "founder_only": 1,
+        "assumed": 2,
+        "grade": "D"
       }
     },
     {
@@ -36,11 +38,12 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
-      "tier_counts": {
-        "verified": 0,
-        "research": 3,
-        "founder": 0,
-        "assumed": 0
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 3,
+        "founder_only": 0,
+        "assumed": 0,
+        "grade": "C"
       }
     },
     {
@@ -49,11 +52,12 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.36,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 2,
-        "assumed": 2
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 2,
+        "assumed": 2,
+        "grade": "F"
       }
     },
     {
@@ -62,11 +66,12 @@
       "score": 2,
       "potential": 3,
       "weighted_score": 0.16,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 1,
-        "assumed": 3
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 1,
+        "assumed": 3,
+        "grade": "F"
       }
     },
     {
@@ -75,11 +80,12 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.32,
-      "tier_counts": {
-        "verified": 2,
-        "research": 1,
-        "founder": 0,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 2,
+        "research_only": 1,
+        "founder_only": 0,
+        "assumed": 1,
+        "grade": "C"
       }
     },
     {
@@ -88,11 +94,12 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.24,
-      "tier_counts": {
-        "verified": 0,
-        "research": 2,
-        "founder": 1,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 2,
+        "founder_only": 1,
+        "assumed": 1,
+        "grade": "D"
       }
     },
     {
@@ -101,11 +108,12 @@
       "score": 2,
       "potential": 3,
       "weighted_score": 0.16,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 0,
-        "assumed": 4
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 0,
+        "assumed": 4,
+        "grade": "F"
       }
     },
     {
@@ -114,11 +122,12 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
-      "tier_counts": {
-        "verified": 0,
-        "research": 2,
-        "founder": 0,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 2,
+        "founder_only": 0,
+        "assumed": 1,
+        "grade": "D"
       }
     },
     {
@@ -127,11 +136,12 @@
       "score": 4,
       "potential": 4,
       "weighted_score": 0.16,
-      "tier_counts": {
-        "verified": 1,
-        "research": 1,
-        "founder": 0,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 1,
+        "research_only": 1,
+        "founder_only": 0,
+        "assumed": 1,
+        "grade": "D"
       }
     },
     {
@@ -140,11 +150,12 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 2,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 2,
+        "assumed": 1,
+        "grade": "F"
       }
     },
     {
@@ -153,11 +164,12 @@
       "score": 3,
       "potential": 4,
       "weighted_score": 0.12,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 2,
-        "assumed": 1
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 2,
+        "assumed": 1,
+        "grade": "F"
       }
     },
     {
@@ -166,11 +178,12 @@
       "score": 2,
       "potential": 2,
       "weighted_score": 0.04,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 0,
-        "assumed": 4
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 0,
+        "assumed": 4,
+        "grade": "F"
       }
     },
     {
@@ -179,21 +192,17 @@
       "score": 3,
       "potential": 3,
       "weighted_score": 0.06,
-      "tier_counts": {
-        "verified": 0,
-        "research": 0,
-        "founder": 0,
-        "assumed": 3
+      "evidence_strength": {
+        "both_confirmed": 0,
+        "research_only": 0,
+        "founder_only": 0,
+        "assumed": 3,
+        "grade": "F"
       }
     }
   ],
   "dealbreaker_dims": [],
-  "evidence_quality": {
-    "verified_pct": 12,
-    "research_pct": 20,
-    "founder_pct": 18,
-    "assumed_pct": 50
-  },
+  "overall_grade": "D",
   "assumption_impact_math": [
     {
       "assumption_text": "Teams would pay $50-100/month for reconciliation automation",

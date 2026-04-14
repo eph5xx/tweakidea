@@ -6,19 +6,19 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence that incumbents are structurally prevented from addressing this problem (their core business model doesn't conflict)"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "QuickBooks, Ramp, and Brex are all technically capable of adding this feature; market hasn't been definitively ignored"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Incumbents have not prioritized this specific multi-processor CSV reconciliation niche in their product roadmaps — market has been de facto underserved for 3+ years"
     }
   ],

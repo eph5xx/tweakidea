@@ -47,10 +47,10 @@
 | # | Dimension | Score | Potential | Evidence | Key Finding |
 |---|-----------|-------|-----------|----------|-------------|
 {% for r in numbers.rankings %}
-| {{ loop.index }} | {{ r.dim }} | {{ r.score }}/5 | {{ r.potential }}/5 | {% if r.tier_counts %}{{ r.tier_counts.verified }}V {{ r.tier_counts.research }}R {{ r.tier_counts.founder }}F {{ r.tier_counts.assumed }}A{% else %}—{% endif %} | {% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding }}{% endif %} |
+| {{ loop.index }} | {{ r.dim }} | {{ r.score }}/5 | {{ r.potential }}/5 | {% if r.evidence_strength %}{{ r.evidence_strength.grade }}{% else %}—{% endif %} | {% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding }}{% endif %} |
 {% endfor %}
 
-**Evidence Quality:** {{ numbers.evidence_quality.verified_pct }}% Verified | {{ numbers.evidence_quality.research_pct }}% Research-Backed | {{ numbers.evidence_quality.founder_pct }}% Founder-Asserted | {{ numbers.evidence_quality.assumed_pct }}% Assumed
+**Overall Evidence Grade:** {{ numbers.overall_grade }}
 
 {% if numbers.assumption_impact_math %}
 ## Assumption Impact

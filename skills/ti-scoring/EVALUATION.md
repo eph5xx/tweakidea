@@ -14,10 +14,12 @@ For criteria depending on an [UNCONFIRMED] hypothesis: mark as CONDITIONAL. COND
 
 | Condition | Tier |
 |-----------|------|
-| Founder confirmed AND research supports | Verified |
-| Research supports, founder did not confirm | Research-Backed |
-| Founder confirmed, no research support | Founder-Asserted |
-| Inferred from reasoning, no direct support | Assumed |
+| Founder confirmed AND research supports | `both_confirmed` |
+| Research supports, founder did not confirm | `research_only` |
+| Founder confirmed, no research support | `founder_only` |
+| Inferred from reasoning, no direct support | `assumed` |
+
+Counts feed `scripts/compute.py` which maps each dimension to a letter grade (A+/A/A−/B+/B/B−/C/D/F) via `points = 3·both_confirmed + 2·research_only + 1·founder_only`. See `agents/ti-evaluator.md` for the canonical classification rules.
 
 ---
 

@@ -6,19 +6,19 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of viral distribution, API-led growth, or PLG flywheel that would enable exponential user acquisition"
     },
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "CSV parsing and matching logic scales linearly with transaction volume; no fundamental architectural barriers to handling enterprise-scale ledgers identified"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Category precedent: similar fintech tools (Ramp, Brex) scale from SMB to mid-market without re-architecting core matching logic"
     }
   ],

@@ -6,19 +6,19 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence this is a zero-behavior-change drop-in; some workflow integration is always required"
     },
     {
       "level": 4,
       "status": "CONDITIONAL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "If API integrations with Stripe/PayPal are offered (vs CSV upload), behavior change drops significantly; currently unconfirmed whether API mode will ship"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "The behavior change — export CSVs from each processor and upload to dashboard — is a minimal incremental step that replaces a more tedious manual process"
     }
   ],

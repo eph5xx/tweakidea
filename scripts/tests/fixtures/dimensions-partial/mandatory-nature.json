@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No regulatory or contractual mandate requiring automated reconciliation tooling specifically"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Reconciliation is a business necessity but can be performed manually — no external authority requires automation"
     },
     {
       "level": 3,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence that auditors or investors specifically require tooling vs. manual reconciliation records"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Reconciliation of financial records is implicitly required for any business with investors, employees, or tax obligations — the task is mandatory, but the tooling is not"
     }
   ],

@@ -6,7 +6,7 @@
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "Valid evidence"
     }
   ],

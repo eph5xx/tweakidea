@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of explosive category creation or winner-takes-all dynamics in SMB fintech automation"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "18% CAGR is strong but not hypergrowth; no technology shift (e.g., AI adoption wave) specifically accelerating this niche"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "IDC: SMB fintech automation market $4.2B in 2025, growing at 18% CAGR — market expanding faster than most SaaS categories"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Ongoing SaaS proliferation (more teams adopting multiple payment processors) structurally grows the addressable problem space"
     }
   ],

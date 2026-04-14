@@ -6,19 +6,19 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "No evidence of a crystallized ICP with specific firmographic or behavioral filters that make the target customer instantly identifiable"
     },
     {
       "level": 4,
       "status": "FAIL",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Founder describes 'small SaaS teams' broadly — no firmographic boundaries (ARR range, team size, specific processors) explicitly defined"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Founder-Asserted",
+      "tier": "founder_only",
       "evidence": "Target customer is reasonably defined: SaaS company, 5-50 employees, using 2+ payment processors, doing manual reconciliation weekly"
     }
   ],

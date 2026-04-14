@@ -6,25 +6,25 @@
     {
       "level": 5,
       "status": "FAIL",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Daily reconciliation use would require real-time processor sync; current CSV-based workflow is inherently batch"
     },
     {
       "level": 4,
       "status": "PASS",
-      "tier": "Verified",
+      "tier": "both_confirmed",
       "evidence": "Founder confirmed weekly reconciliation runs; IDC survey independently reports weekly cadence for 74% of SMBs with multiple processors"
     },
     {
       "level": 3,
       "status": "PASS",
-      "tier": "Research-Backed",
+      "tier": "research_only",
       "evidence": "Monthly close is the minimum reconciliation frequency for any business with external auditors or investors"
     },
     {
       "level": 2,
       "status": "PASS",
-      "tier": "Assumed",
+      "tier": "assumed",
       "evidence": "Even quarterly reconciliation creates the same multi-processor matching problem at a lower cadence"
     }
   ],
@@ -37,5 +37,5 @@
   "evidence_basis": "Research",
   "analysis_narrative": "Frequency is a strong dimension for this idea. The reconciliation problem recurs weekly for the vast majority of target customers — confirmed by both the founder's direct experience and independent research. The IDC survey finding (74% of SMBs with multiple payment processors do weekly reconciliation) is particularly valuable because it covers a market segment beyond just the founder's personal network.\n\nWeekly frequency is the sweet spot for a SaaS product: often enough to justify a subscription but not so frequent that users expect millisecond latency. A tool that saves 6 hours/week creates a visible, recurring benefit that drives retention and referrals.\n\nScore 5 would require daily or real-time use, which is architecturally feasible (webhook-based) but not the current use case. The CSV-import workflow is inherently batch, and the target market has weekly close cycles.",
   "key_finding": "Weekly reconciliation frequency is confirmed by both founder experience and independent research — high recurring engagement supports strong retention economics.",
-  "score_explanation": "Score 4 reflects Verified evidence of weekly frequency from dual sources (founder + research). Score 5 requires daily or real-time engagement, which would need a different technical architecture than the CSV-import workflow specified in the solution."
+  "score_explanation": "Score 4 reflects dual-source evidence (founder + research) of weekly frequency. Score 5 requires daily or real-time engagement, which would need a different technical architecture than the CSV-import workflow specified in the solution."
 }
