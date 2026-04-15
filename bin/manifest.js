@@ -15,6 +15,7 @@ const SKILL_DIRS = [
 ];
 
 const COMMAND_FILES = [
+  'commands/tweak/browse-hn.md',
   'commands/tweak/evaluate.md',
   'commands/tweak/list.md',
   'commands/tweak/show.md',

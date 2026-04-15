@@ -1,6 +1,17 @@
 # TweakIdea
 
-A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Four commands: **evaluate** an idea across 14 weighted dimensions, **suggest** new ideas from Hacker News discussions, **list** your accumulated runs and profiles, or **show** any saved artifact.
+A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Five commands: **browse** HN for idea candidates, **suggest** new ideas from a Hacker News discussion, **evaluate** an idea across 14 weighted dimensions, **list** your accumulated runs and profiles, or **show** any saved artifact.
+
+## Browse: `/tweak:browse-hn`
+
+Searches Hacker News via Algolia and prints a ranked table of threads worth feeding into `/tweak:suggest-from-hn`. Each hit is scored 1–5 on how likely it is to yield a real startup-idea seed. Read-only — nothing is saved to `~/.tweakidea/`.
+
+- `/tweak:browse-hn llm agents week` — topic `llm agents`, last 7 days
+- `/tweak:browse-hn robotics` — topic only; command asks for a time window
+- `/tweak:browse-hn today` — window only; browses everything recent
+- `/tweak:browse-hn` — fully interactive
+
+Pick any `id` from the table and run `/tweak:suggest-from-hn <id>` to analyze tech shifts and surface product opportunities.
 
 ## Evaluate: `/tweak:evaluate`
 
@@ -73,7 +84,7 @@ Run reports open in the browser; HN and founder artifacts are inlined.
 
 - [Claude Code](https://claude.ai/download) installed
 - Model access: **Claude Sonnet** (evaluators + researcher) and **Claude Opus** (merge agent)
-- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:suggest-from-hn` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
+- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:suggest-from-hn` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
 
 ## Installation
 
@@ -89,11 +100,25 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` — you should see `evaluate`, `suggest-from-hn`, `list`, and `show` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `suggest-from-hn`, `evaluate`, `list`, and `show` in the autocomplete.
 
 For better article extraction from JS-heavy sites, optionally run `uv run playwright install chromium` once. Without it, the script falls back to plain HTTP which works fine for most sites.
 
 ## Quickstart
+
+**Browse HN for candidate threads:**
+
+```
+/tweak:browse-hn llm agents week
+```
+
+Pick an `id` from the ranked table, then:
+
+**Discover opportunities from HN:**
+
+```
+/tweak:suggest-from-hn https://news.ycombinator.com/item?id=43374458
+```
 
 **Evaluate an idea:**
 
@@ -101,13 +126,7 @@ For better article extraction from JS-heavy sites, optionally run `uv run playwr
 /tweak:evaluate "A mobile app that lets restaurants sell unsold food at a discount 30 minutes before closing"
 ```
 
-First run takes 30-40 minutes (includes founder profile creation). Subsequent runs are faster.
-
-**Discover opportunities from HN:**
-
-```
-/tweak:suggest-from-hn https://news.ycombinator.com/item?id=43374458
-```
+First evaluate run takes 30-40 minutes (includes founder profile creation). Subsequent runs are faster.
 
 ## Example Output
 
