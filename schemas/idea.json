@@ -20,6 +20,18 @@
       "type": "string",
       "minLength": 1,
       "description": "Extracted solution statement."
+    },
+    "codename": {
+      "type": "string",
+      "description": "Optional short codename for the idea (e.g. 'Airlock'). Shown in the report topbar and doc header."
+    },
+    "icon": {
+      "type": "string",
+      "description": "Optional single emoji used as the doc icon in the report. Defaults to 📋 when absent."
+    },
+    "subtitle": {
+      "type": "string",
+      "description": "Optional one-sentence framing shown under the doc title. Falls back to the first sentence of text when absent."
     }
   },
   "additionalProperties": false

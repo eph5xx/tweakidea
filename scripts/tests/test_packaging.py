@@ -43,15 +43,15 @@ class TestRealDirectories(unittest.TestCase):
     def test_scripts_directory_exists(self):
         self.assertTrue((ROOT / "scripts").is_dir())
 
-    def test_schemas_has_twelve_files(self):
+    def test_schemas_has_ten_files(self):
         count = len(list((ROOT / "schemas").glob("*.json")))
-        self.assertEqual(count, 12)
+        self.assertEqual(count, 10)
 
     def test_scripts_has_compute_and_render(self):
         self.assertTrue((ROOT / "scripts" / "compute.py").exists())
         self.assertTrue((ROOT / "scripts" / "render_report.py").exists())
 
     def test_scripts_has_lib(self):
-        for name in ("schema.py", "registry.py", "radar.py", "errors.py"):
+        for name in ("schema.py", "registry.py", "errors.py"):
             with self.subTest(name=name):
                 self.assertTrue((ROOT / "scripts" / "lib" / name).exists())

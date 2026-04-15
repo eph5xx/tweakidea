@@ -7,6 +7,7 @@
     {
       "dim": "Pain Intensity",
       "slug": "pain-intensity",
+      "weight": 0.12,
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
@@ -21,6 +22,7 @@
     {
       "dim": "Willingness to Pay",
       "slug": "willingness-to-pay",
+      "weight": 0.12,
       "score": 3,
       "potential": 4,
       "weighted_score": 0.36,
@@ -35,6 +37,7 @@
     {
       "dim": "Solution Gap",
       "slug": "solution-gap",
+      "weight": 0.12,
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
@@ -49,6 +52,7 @@
     {
       "dim": "Founder-Market Fit",
       "slug": "founder-market-fit",
+      "weight": 0.12,
       "score": 3,
       "potential": 3,
       "weighted_score": 0.36,
@@ -63,6 +67,7 @@
     {
       "dim": "Urgency",
       "slug": "urgency",
+      "weight": 0.08,
       "score": 2,
       "potential": 3,
       "weighted_score": 0.16,
@@ -77,6 +82,7 @@
     {
       "dim": "Frequency",
       "slug": "frequency",
+      "weight": 0.08,
       "score": 4,
       "potential": 4,
       "weighted_score": 0.32,
@@ -91,6 +97,7 @@
     {
       "dim": "Market Size",
       "slug": "market-size",
+      "weight": 0.08,
       "score": 3,
       "potential": 3,
       "weighted_score": 0.24,
@@ -105,6 +112,7 @@
     {
       "dim": "Defensibility",
       "slug": "defensibility",
+      "weight": 0.08,
       "score": 2,
       "potential": 3,
       "weighted_score": 0.16,
@@ -119,6 +127,7 @@
     {
       "dim": "Market Growth",
       "slug": "market-growth",
+      "weight": 0.04,
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
@@ -133,6 +142,7 @@
     {
       "dim": "Scalability",
       "slug": "scalability",
+      "weight": 0.04,
       "score": 4,
       "potential": 4,
       "weighted_score": 0.16,
@@ -147,6 +157,7 @@
     {
       "dim": "Clarity of Target Customer",
       "slug": "clarity-of-target-customer",
+      "weight": 0.04,
       "score": 3,
       "potential": 3,
       "weighted_score": 0.12,
@@ -161,6 +172,7 @@
     {
       "dim": "Behavior Change Required",
       "slug": "behavior-change-required",
+      "weight": 0.04,
       "score": 3,
       "potential": 4,
       "weighted_score": 0.12,
@@ -175,6 +187,7 @@
     {
       "dim": "Mandatory Nature",
       "slug": "mandatory-nature",
+      "weight": 0.02,
       "score": 2,
       "potential": 2,
       "weighted_score": 0.04,
@@ -189,6 +202,7 @@
     {
       "dim": "Incumbent Indifference",
       "slug": "incumbent-indifference",
+      "weight": 0.02,
       "score": 3,
       "potential": 3,
       "weighted_score": 0.06,
@@ -201,7 +215,6 @@
       }
     }
   ],
-  "dealbreaker_dims": [],
   "overall_grade": "D",
   "assumption_impact_math": [
     {
@@ -229,5 +242,52 @@
       "weighted_uplift": 0.04
     }
   ],
-  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\">\n  <polygon points=\"250.0,180.0 263.0,183.0 273.5,191.3 279.2,203.3 279.2,216.7 273.5,228.7 263.0,237.0 250.0,240.0 237.0,237.0 226.5,228.7 220.8,216.7 220.8,203.3 226.5,191.3 237.0,183.0\" fill=\"none\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <polygon points=\"250.0,150.0 276.0,155.9 296.9,172.6 308.5,196.6 308.5,223.4 296.9,247.4 276.0,264.1 250.0,270.0 224.0,264.1 203.1,247.4 191.5,223.4 191.5,196.6 203.1,172.6 224.0,155.9\" fill=\"none\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <polygon points=\"250.0,120.0 289.0,128.9 320.4,153.9 337.7,190.0 337.7,230.0 320.4,266.1 289.0,291.1 250.0,300.0 211.0,291.1 179.6,266.1 162.3,230.0 162.3,190.0 179.6,153.9 211.0,128.9\" fill=\"none\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <polygon points=\"250.0,90.0 302.1,101.9 343.8,135.2 367.0,183.3 367.0,236.7 343.8,284.8 302.1,318.1 250.0,330.0 197.9,318.1 156.2,284.8 133.0,236.7 133.0,183.3 156.2,135.2 197.9,101.9\" fill=\"none\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <polygon points=\"250.0,60.0 315.1,74.9 367.3,116.5 396.2,176.6 396.2,243.4 367.3,303.5 315.1,345.1 250.0,360.0 184.9,345.1 132.7,303.5 103.8,243.4 103.8,176.6 132.7,116.5 184.9,74.9\" fill=\"none\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"250.0\" y2=\"60.0\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"315.1\" y2=\"74.9\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"367.3\" y2=\"116.5\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"396.2\" y2=\"176.6\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"396.2\" y2=\"243.4\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"367.3\" y2=\"303.5\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"315.1\" y2=\"345.1\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"250.0\" y2=\"360.0\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"184.9\" y2=\"345.1\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"132.7\" y2=\"303.5\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"103.8\" y2=\"243.4\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"103.8\" y2=\"176.6\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"132.7\" y2=\"116.5\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <line x1=\"250\" y1=\"210\" x2=\"184.9\" y2=\"74.9\" stroke=\"#ddd\" stroke-width=\"1\"/>\n  <polygon points=\"250.0,90.0 289.0,128.9 343.8,135.2 337.7,190.0 308.5,223.4 343.8,284.8 289.0,291.1 250.0,270.0 211.0,291.1 156.2,284.8 162.3,230.0 162.3,190.0 203.1,172.6 211.0,128.9\" fill=\"rgba(66,153,225,0.3)\" stroke=\"#3182ce\" stroke-width=\"2\"/>\n  <text x=\"250.0\" y=\"35.0\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Pain Intensity</text>\n  <text x=\"325.9\" y=\"52.3\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Willingness to Pay</text>\n  <text x=\"386.8\" y=\"100.9\" text-anchor=\"start\" font-size=\"11\" fill=\"#2d3748\">Solution Gap</text>\n  <text x=\"420.6\" y=\"171.1\" text-anchor=\"start\" font-size=\"11\" fill=\"#2d3748\">Founder Fit</text>\n  <text x=\"420.6\" y=\"248.9\" text-anchor=\"start\" font-size=\"11\" fill=\"#2d3748\">Urgency</text>\n  <text x=\"386.8\" y=\"319.1\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Frequency</text>\n  <text x=\"325.9\" y=\"367.7\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Market Size</text>\n  <text x=\"250.0\" y=\"385.0\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Defensibility</text>\n  <text x=\"174.1\" y=\"367.7\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Market Growth</text>\n  <text x=\"113.2\" y=\"319.1\" text-anchor=\"end\" font-size=\"11\" fill=\"#2d3748\">Scalability</text>\n  <text x=\"79.4\" y=\"248.9\" text-anchor=\"end\" font-size=\"11\" fill=\"#2d3748\">Target Customer</text>\n  <text x=\"79.4\" y=\"171.1\" text-anchor=\"end\" font-size=\"11\" fill=\"#2d3748\">Behavior Change</text>\n  <text x=\"113.2\" y=\"100.9\" text-anchor=\"end\" font-size=\"11\" fill=\"#2d3748\">Mandatory Nature</text>\n  <text x=\"174.1\" y=\"52.3\" text-anchor=\"middle\" font-size=\"11\" fill=\"#2d3748\">Incumbent</text>\n</svg>"
+  "evidence_totals": {
+    "both_confirmed": 6,
+    "research_only": 10,
+    "founder_only": 9,
+    "assumed": 25
+  },
+  "reach_potential_blocks": [
+    {
+      "dim": "Willingness to Pay",
+      "slug": "willingness-to-pay",
+      "from": 3,
+      "to": 4,
+      "weighted_uplift": 0.12,
+      "assumption_texts": [
+        "Teams would pay $50-100/month for reconciliation automation"
+      ]
+    },
+    {
+      "dim": "Urgency",
+      "slug": "urgency",
+      "from": 2,
+      "to": 3,
+      "weighted_uplift": 0.08,
+      "assumption_texts": [
+        "Month-end close creates a forcing event that raises urgency above the chronic baseline"
+      ]
+    },
+    {
+      "dim": "Defensibility",
+      "slug": "defensibility",
+      "from": 2,
+      "to": 3,
+      "weighted_uplift": 0.08,
+      "assumption_texts": [
+        "Accumulated reconciliation pattern data creates a matching-accuracy flywheel"
+      ]
+    },
+    {
+      "dim": "Behavior Change Required",
+      "slug": "behavior-change-required",
+      "from": 3,
+      "to": 4,
+      "weighted_uplift": 0.04,
+      "assumption_texts": [
+        "API integrations (vs CSV upload) will reduce behavior change to near-zero for Stripe/PayPal users"
+      ]
+    }
+  ]
 }

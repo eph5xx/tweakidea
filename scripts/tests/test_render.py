@@ -65,18 +65,21 @@ class TestGoldenRender(unittest.TestCase):
         # CSS content should be present — look for a common selector
         self.assertIn("font-family", html.lower())
 
-    def test_radar_svg_unescaped_in_html(self):
+    def test_html_has_hero_stats(self):
         run_render(self.run)
         html = (self.run / "report.html").read_text()
-        self.assertIn('viewBox="0 0 500 440"', html)
-        # Pitfall 2 regression: make sure SVG didn't get escaped
-        self.assertNotIn("&lt;svg", html)
+        # Notion-port sections present
+        self.assertIn('id="summary"', html)
+        self.assertIn('class="hero-stats"', html)
+        self.assertIn('class="dim-grid"', html)
+        # No radar chart residue
+        self.assertNotIn('viewBox="0 0 500 440"', html)
 
     def test_md_has_verdict_line(self):
         run_render(self.run)
         md = (self.run / "report.md").read_text()
         self.assertIn("PIVOT", md)
-        self.assertIn("Weighted Score", md)
+        self.assertIn("Weighted", md)
 
     def test_md_not_escaped(self):
         """Markdown env uses autoescape=False so raw symbols pass through."""
@@ -94,9 +97,9 @@ class TestHtmlAutoescape(unittest.TestCase):
         self.tmpdir = pathlib.Path(tempfile.mkdtemp())
         self.run = self.tmpdir / "run"
         shutil.copytree(GOLDEN, self.run)
-        # Inject a script tag into idea.text
+        # Inject a script tag into idea.problem — the field the new template renders
         idea = json.loads((self.run / "idea.json").read_text())
-        idea["text"] = "<script>alert(1)</script> " + idea["text"]
+        idea["problem"] = "<script>alert(1)</script> " + idea["problem"]
         (self.run / "idea.json").write_text(json.dumps(idea))
         for n in ("report.md", "report.html"):
             p = self.run / n

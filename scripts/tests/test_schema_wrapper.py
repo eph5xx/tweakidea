@@ -22,10 +22,8 @@ class TestValidatePass(unittest.TestCase):
         ("assumptions.json", "assumptions"),
         ("research.json", "research"),
         ("numbers.json", "numbers"),
-        ("verdict.json", "verdict"),
         ("strengths-weaknesses.json", "strengths-weaknesses"),
         ("next-steps.json", "next-steps"),
-        ("dealbreakers.json", "dealbreakers"),
         ("potential.json", "potential"),
         ("version.json", "version"),
     ]
@@ -48,7 +46,6 @@ class TestValidateFail(unittest.TestCase):
         ("dimension-extra-field.json", "dimension-evaluation"),
         ("dimension-missing-required.json", "dimension-evaluation"),
         ("numbers-bad-bucket.json", "numbers"),
-        ("verdict-too-long.json", "verdict"),
         ("sw-wrong-count.json", "strengths-weaknesses"),
         ("idea-missing-text.json", "idea"),
         ("hypotheses-bad-status.json", "hypotheses"),
@@ -56,7 +53,6 @@ class TestValidateFail(unittest.TestCase):
         ("assumptions-bad-status.json", "assumptions"),
         ("next-steps-empty-task.json", "next-steps"),
         ("version-missing-schema.json", "version"),
-        ("dealbreakers-wrong-shape.json", "dealbreakers"),
         ("potential-missing-dims.json", "potential"),
     ]
 

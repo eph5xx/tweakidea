@@ -20,12 +20,8 @@
       },
       "status": {
         "type": "string",
-        "enum": ["CONFIRMED", "UNCONFIRMED", "MODIFIED", "REJECTED"],
+        "enum": ["CONFIRMED", "UNCONFIRMED", "REJECTED"],
         "description": "Post-confirmation status — PENDING is not valid here."
-      },
-      "note": {
-        "type": "string",
-        "description": "Optional clarification from the founder when status is MODIFIED."
       }
     },
     "additionalProperties": false

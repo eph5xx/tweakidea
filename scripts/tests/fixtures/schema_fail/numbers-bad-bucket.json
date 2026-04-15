@@ -7,6 +7,7 @@
     {
       "dim": "Pain Intensity",
       "slug": "pain-intensity",
+      "weight": 0.12,
       "score": 4,
       "potential": 4,
       "weighted_score": 0.48,
@@ -19,8 +20,13 @@
       }
     }
   ],
-  "dealbreaker_dims": [],
   "overall_grade": "C",
   "assumption_impact_math": [],
-  "radar_svg": "<svg viewBox=\"0 0 500 440\" xmlns=\"http://www.w3.org/2000/svg\"><text>test</text></svg>"
+  "evidence_totals": {
+    "both_confirmed": 2,
+    "research_only": 1,
+    "founder_only": 0,
+    "assumed": 1
+  },
+  "reach_potential_blocks": []
 }
