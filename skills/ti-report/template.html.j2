@@ -1,190 +1,545 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TweakIdea Evaluation Report</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>{{ css }}</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TweakIdea — {{ idea.codename or "Evaluation" }}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>{{ css | safe }}</style>
+<script>
+  (function () {
+    try {
+      var stored = localStorage.getItem('ti-theme');
+      var prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      var theme = stored || (prefers ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  })();
+</script>
 </head>
+{% set doc_icon = idea.icon or "📋" %}
+{% set doc_codename = idea.codename or "Evaluation" %}
+{% set doc_title = idea.codename or "Idea Evaluation" %}
+{% set doc_subtitle = idea.subtitle or idea.problem %}
+{% set verdict_bucket = numbers.verdict_bucket | lower %}
+{% if verdict_bucket == "go" %}
+{% set verdict_pill = "green" %}
+{% elif verdict_bucket == "pivot" %}
+{% set verdict_pill = "yellow" %}
+{% else %}
+{% set verdict_pill = "red" %}
+{% endif %}
 {% macro grade_class(g) -%}
-grade-{{ g | lower | replace('+', 'plus') | replace('-', 'minus') }}
+{{ g | lower | replace('+', '') | replace('-', '') | replace('a', 'a') | replace('b', 'b') | replace('c', 'c') | replace('d', 'd') | replace('f', 'f') }}
 {%- endmacro %}
+{% set eg = numbers.overall_grade %}
+{% if eg.startswith('A') %}{% set eg_class = 'a' %}
+{% elif eg.startswith('B') %}{% set eg_class = 'b' %}
+{% elif eg.startswith('C') %}{% set eg_class = 'c' %}
+{% elif eg.startswith('D') %}{% set eg_class = 'd' %}
+{% else %}{% set eg_class = 'f' %}{% endif %}
+{% set ev_total = (numbers.evidence_totals.both_confirmed + numbers.evidence_totals.research_only + numbers.evidence_totals.founder_only + numbers.evidence_totals.assumed) or 1 %}
+{% set weighted_pct = (numbers.weighted_total / 5 * 100) | round(1) %}
+{% set potential_pct = (numbers.potential_total / 5 * 100) | round(1) %}
+{% set potential_delta = (numbers.potential_total - numbers.weighted_total) | round(1) %}
+{% set unconfirmed_list = (assumptions | selectattr("status", "equalto", "UNCONFIRMED") | list) if assumptions else [] %}
+{% set confirmed_list = (assumptions | rejectattr("status", "equalto", "UNCONFIRMED") | rejectattr("status", "equalto", "REJECTED") | list) if assumptions else [] %}
+{% set unconfirmed_count = unconfirmed_list | length %}
+{% set confirmed_count = confirmed_list | length %}
+{% set research_available = research and research.available %}
+{% set user_items = (research.clusters.user if research_available and research.clusters and research.clusters.user else []) %}
+{% set comp_items = (research.clusters.competitive if research_available and research.clusters and research.clusters.competitive else []) %}
+{% set mkt_items = (research.clusters.market if research_available and research.clusters and research.clusters.market else []) %}
+{% set top_strength = (strengths_weaknesses | selectattr("kind", "equalto", "strength") | list) %}
+{% set top_weakness = (strengths_weaknesses | selectattr("kind", "equalto", "weakness") | list) %}
 <body>
-  <div class="container">
-    <header>
-      <h1>TweakIdea Evaluation</h1>
-      <span style="color:#6b7280;font-size:0.85rem;">{{ timestamp }}</span>
-    </header>
 
-    {% set verdict_bucket = numbers.verdict_bucket | lower %}
-    {% if verdict_bucket == "go" %}
-      {% set verdict_class = "verdict-go" %}
-    {% elif verdict_bucket == "pivot" %}
-      {% set verdict_class = "verdict-pivot" %}
-    {% else %}
-      {% set verdict_class = "verdict-stop" %}
-    {% endif %}
-    <div class="verdict {{ verdict_class }}">
-      <div class="verdict-label">{{ numbers.verdict_label }}</div>
-      <div class="verdict-score">Weighted Score: {{ numbers.weighted_total }}/5.0 | Potential: {{ numbers.potential_total }}/5.0</div>
+<!-- SVG icon sprite (hidden). Reused via <use href="#i-ext"> for external-link and up-right arrow glyphs. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ext" viewBox="0 0 24 24">
+    <path d="M7 17 17 7"/>
+    <path d="M7 7h10v10"/>
+  </symbol>
+</svg>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-title">
+      <span class="emoji">{{ doc_icon }}</span>
+      TweakIdea
+      <span class="chev">/</span>
+      Runs
+      <span class="chev">/</span>
+      {{ doc_codename }}
     </div>
+    <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+    </button>
+  </div>
+</div>
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    var root = document.documentElement;
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ti-theme', next); } catch (e) {}
+  });
+</script>
 
-    {% if dealbreakers %}
-    {% for d in dealbreakers %}
-    <div class="dealbreaker">
-      <span class="dealbreaker-title">DEALBREAKER: {{ d.dim }}</span> scored 1/5 &mdash; {{ d.explanation }}
+<main class="page">
+  <div class="doc-icon" aria-hidden="true">{{ doc_icon }}</div>
+  <div class="doc-codename">{{ doc_codename }}</div>
+  <h1 class="doc-title">{{ doc_title }}</h1>
+  <p class="doc-subtitle">{{ doc_subtitle }}</p>
+
+  <div class="props">
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+      Verdict
+    </div>
+    <div class="v"><span class="pill {{ verdict_pill }}">{{ numbers.verdict_bucket }}</span></div>
+
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 9.5 8 10 4.5-.5 8-5 8-10V6z"/></svg>
+      Evidence grade
+    </div>
+    <div class="v"><span class="grade {{ eg_class }}">{{ numbers.overall_grade }}</span></div>
+
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      Weighted score
+    </div>
+    <div class="v">{{ numbers.weighted_total }} <span class="sub">/ 5.0</span></div>
+
+    <div class="k">
+      <svg aria-hidden="true"><use href="#i-ext"/></svg>
+      Potential score
+    </div>
+    <div class="v"><span class="score-pot">{{ numbers.potential_total }}</span> <span class="sub">/ 5.0</span></div>
+
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg>
+      Dimensions
+    </div>
+    <div class="v">{{ numbers.rankings | length }} <span class="sub">/ 14 evaluated</span></div>
+
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/></svg>
+      Created at
+    </div>
+    <div class="v">{{ timestamp }}</div>
+
+    <div class="k">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="m4.93 19.07 2.83-2.83"/><path d="m16.24 7.76 2.83-2.83"/></svg>
+      TweakIdea version
+    </div>
+    <div class="v">v{{ version.tweakidea_version }}</div>
+  </div>
+
+  <nav class="toc" aria-label="On this page">
+    <div class="toc-label">On this page</div>
+    <div class="toc-grid">
+      <a class="toc-link" href="#idea">Idea</a>
+      <a class="toc-link" href="#summary">Summary</a>
+      <a class="toc-link" href="#assumptions">Assumptions</a>
+      {% if research_available %}<a class="toc-link" href="#research-highlights">Research highlights</a>{% endif %}
+      <a class="toc-link" href="#dimensions">Dimensions</a>
+      {% if numbers.reach_potential_blocks %}<a class="toc-link" href="#reach-potential">Reach potential</a>{% endif %}
+      <a class="toc-link" href="#next-steps">Next steps</a>
+    </div>
+  </nav>
+
+  <h2 class="section-heading" id="idea">Idea</h2>
+  <div class="idea">
+    <div class="idea-field">
+      <div class="idea-field-label">Problem</div>
+      <p class="idea-field-body">{{ idea.problem | linkify }}</p>
+    </div>
+    <div class="idea-field">
+      <div class="idea-field-label">Solution</div>
+      <p class="idea-field-body">{{ idea.solution | linkify }}</p>
+    </div>
+  </div>
+
+  <h2 class="section-heading" id="summary">Summary</h2>
+
+  <!-- Hero stats -->
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-label">Weighted score</div>
+      <div class="stat-value"><span class="stat-num">{{ numbers.weighted_total }}</span><span class="stat-denom">/ 5.0</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill weighted" style="width: {{ weighted_pct }}%;"></div>
+        {% if numbers.potential_total > numbers.weighted_total %}
+        <div class="stat-bar-ghost" style="left: {{ weighted_pct }}%; width: {{ (potential_pct - weighted_pct) | round(1) }}%;"></div>
+        {% endif %}
+      </div>
+      {% set verdict_tail = numbers.verdict_label.split(' — ', 1) | last %}
+      <div class="stat-meta"><strong class="verdict-word {{ verdict_bucket }}">{{ numbers.verdict_bucket }}</strong> — {{ verdict_tail }}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Potential score</div>
+      <div class="stat-value"><span class="stat-num">{{ numbers.potential_total }}</span><span class="stat-denom">/ 5.0</span></div>
+      <div class="stat-bar">
+        <div class="stat-bar-fill potential" style="width: {{ potential_pct }}%;"></div>
+      </div>
+      <div class="stat-meta">{% if potential_delta > 0 %}+{{ potential_delta }} uplift if {{ unconfirmed_count }} unconfirmed assumptions confirm.{% else %}No uplift available — all dimensions at potential.{% endif %}</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Evidence grade</div>
+      <div class="stat-value"><span class="grade-big {{ eg_class }}">{{ numbers.overall_grade }}</span></div>
+      <div class="evidence-bar">
+        <div class="evidence-seg ev-verified" style="width: {{ (numbers.evidence_totals.both_confirmed / ev_total * 100) | round(1) }}%;"></div>
+        <div class="evidence-seg ev-research" style="width: {{ (numbers.evidence_totals.research_only / ev_total * 100) | round(1) }}%;"></div>
+        <div class="evidence-seg ev-founder"  style="width: {{ (numbers.evidence_totals.founder_only / ev_total * 100) | round(1) }}%;"></div>
+        <div class="evidence-seg ev-assumed"  style="width: {{ (numbers.evidence_totals.assumed / ev_total * 100) | round(1) }}%;"></div>
+      </div>
+      <div class="evidence-legend">
+        <span class="evidence-legend-item">
+          <span class="ev-dot ev-verified"></span>
+          <span class="label">Verified</span>
+          <b>{{ numbers.evidence_totals.both_confirmed }}</b>
+        </span>
+        <span class="evidence-legend-item">
+          <span class="ev-dot ev-research"></span>
+          <span class="label">Research</span>
+          <b>{{ numbers.evidence_totals.research_only }}</b>
+        </span>
+        <span class="evidence-legend-item">
+          <span class="ev-dot ev-founder"></span>
+          <span class="label">Founder</span>
+          <b>{{ numbers.evidence_totals.founder_only }}</b>
+        </span>
+        <span class="evidence-legend-item">
+          <span class="ev-dot ev-assumed"></span>
+          <span class="label">Assumed</span>
+          <b>{{ numbers.evidence_totals.assumed }}</b>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dimensions overview -->
+  <h3 class="sub-heading">Dimensions overview</h3>
+  <div class="dim-grid">
+    {% for r in numbers.rankings %}
+    {% set score_int = r.score | int if r.score is not none else 0 %}
+    {% set potential_int = r.potential | int if r.potential is not none else score_int %}
+    <div class="dim-row">
+      <div class="dim-name">{{ r.dim }}<span class="w">{{ (r.weight * 100) | round | int }}%</span></div>
+      <div class="dim-bar">
+        <div class="dim-bar-fill sc-{{ score_int }}" style="width: {{ score_int * 20 }}%;"></div>
+        {% if potential_int > score_int %}
+        <div class="dim-bar-ghost sc-{{ score_int }}" style="left: {{ score_int * 20 }}%; width: {{ (potential_int - score_int) * 20 }}%;"></div>
+        {% endif %}
+      </div>
     </div>
     {% endfor %}
-    {% endif %}
+  </div>
 
-    <div class="card">
-      <h2>Idea</h2>
-      {% for para in idea.text.split('\n\n') %}
-      {% if para.strip() %}<p>{{ para | linkify }}</p>{% endif %}
+  {% if top_strength or top_weakness %}
+  <!-- Risk callouts -->
+  <h3 class="sub-heading">Lowest &amp; highest risk</h3>
+  <div class="risks">
+    {% if top_strength %}
+    {% set s = top_strength[0] %}
+    <div class="risk-card risk-card--strength">
+      <span class="risk-kind">Lowest risk · biggest strength</span>
+      <div class="risk-head">
+        <div class="risk-dim">{{ s.dim }}</div>
+        <div class="risk-score">{{ s.score }} / 5</div>
+      </div>
+      <p class="risk-body">{{ s.why | linkify }}</p>
+    </div>
+    {% endif %}
+    {% if top_weakness %}
+    {% set w = top_weakness[0] %}
+    <div class="risk-card risk-card--weakness">
+      <span class="risk-kind">Highest risk · biggest weakness</span>
+      <div class="risk-head">
+        <div class="risk-dim">{{ w.dim }}</div>
+        <div class="risk-score">{{ w.score }} / 5</div>
+      </div>
+      <p class="risk-body">{{ w.why | linkify }}</p>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if assumptions %}
+  <h2 class="section-heading" id="assumptions">Assumptions</h2>
+
+  {% if unconfirmed_count > 0 %}
+  <div class="a-group">
+    <h3 class="sub-heading">Unconfirmed <span class="sub-heading-count">{{ unconfirmed_count }}</span></h3>
+    {% for a in unconfirmed_list %}
+    <div class="a-row">
+      <span class="a-dot unconfirmed"></span>
+      <span class="a-text">{{ a.text | linkify }}</span>
+      <span class="a-dim-tag">{{ a.primary_dimension }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if confirmed_count > 0 %}
+  <div class="a-group">
+    <h3 class="sub-heading">Confirmed <span class="sub-heading-count">{{ confirmed_count }}</span></h3>
+    {% for a in confirmed_list %}
+    <div class="a-row">
+      <span class="a-dot confirmed"></span>
+      <span class="a-text">{{ a.text | linkify }}</span>
+      <span class="a-dim-tag">{{ a.primary_dimension }}</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endif %}
+
+  {% if research_available %}
+  <h2 class="section-heading" id="research-highlights">Research highlights</h2>
+
+  <div class="rh-tabs">
+    <input type="radio" name="rh-tab" id="rh-tab-user" checked>
+    <input type="radio" name="rh-tab" id="rh-tab-comp">
+    <input type="radio" name="rh-tab" id="rh-tab-mkt">
+    <div class="rh-tab-bar">
+      <label for="rh-tab-user">Users <span class="rh-tab-count">{{ user_items | length }}</span></label>
+      <label for="rh-tab-comp">Competitive <span class="rh-tab-count">{{ comp_items | length }}</span></label>
+      <label for="rh-tab-mkt">Market <span class="rh-tab-count">{{ mkt_items | length }}</span></label>
+    </div>
+
+    <div class="rh-tab-panel" data-panel="user">
+      {% for item in user_items %}
+      <div class="rh-a-row">
+        <span class="rh-a-dot"></span>
+        <span class="rh-a-text">{{ item.text | linkify }}</span>
+        {% if item.source_url %}
+        <a href="{{ item.source_url }}" class="rh-a-source" target="_blank" rel="noopener">
+          {{ item.source_title or item.source_url }} <svg aria-hidden="true"><use href="#i-ext"/></svg>
+        </a>
+        {% else %}
+        <span class="rh-synth-chip">synthesis</span>
+        {% endif %}
+      </div>
       {% endfor %}
     </div>
 
-    <div class="card">
-      <h2>Dimension Overview</h2>
-      <div class="radar-chart">
-        {{ radar_svg|safe }}
+    <div class="rh-tab-panel" data-panel="comp">
+      {% for item in comp_items %}
+      <div class="rh-a-row">
+        <span class="rh-a-dot"></span>
+        <span class="rh-a-text">{{ item.text | linkify }}</span>
+        {% if item.source_url %}
+        <a href="{{ item.source_url }}" class="rh-a-source" target="_blank" rel="noopener">
+          {{ item.source_title or item.source_url }} <svg aria-hidden="true"><use href="#i-ext"/></svg>
+        </a>
+        {% else %}
+        <span class="rh-synth-chip">synthesis</span>
+        {% endif %}
       </div>
+      {% endfor %}
     </div>
 
-    {% if research and research.available %}
-    <div class="card">
-      <h2>Research Highlights</h2>
-      {% if research.clusters %}
-      {% if research.clusters.user %}
-      <h3 style="font-size:0.95rem;margin-bottom:0.5rem;color:#374151;">User Evidence</h3>
-      <ul class="item-list">
-        {% for item in research.clusters.user %}
-        <li>{{ item | linkify }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      {% if research.clusters.competitive %}
-      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Competitive Landscape</h3>
-      <ul class="item-list">
-        {% for item in research.clusters.competitive %}
-        <li>{{ item | linkify }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      {% if research.clusters.market %}
-      <h3 style="font-size:0.95rem;margin:0.75rem 0 0.5rem;color:#374151;">Market Data</h3>
-      <ul class="item-list">
-        {% for item in research.clusters.market %}
-        <li>{{ item | linkify }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      {% endif %}
-    </div>
-    {% endif %}
-
-    <div class="card" style="overflow-x:auto;">
-      <h2>Scorecard</h2>
-      <table class="scorecard-table">
-        <thead>
-          <tr>
-            <th>Dimension</th>
-            <th>Score</th>
-            <th style="width:120px;"></th>
-            <th>Potential</th>
-            <th>Evidence</th>
-            <th>Key Finding</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for r in numbers.rankings %}
-          {% set score_int = r.score | int %}
-          <tr>
-            <td>{{ r.dim }}</td>
-            <td><span class="score-badge score-{{ score_int }}">{{ score_int }}</span></td>
-            <td><div class="progress-container"><div class="progress-bar score-{{ score_int }}" style="width:{{ score_int * 20 }}%"></div></div></td>
-            <td>{{ r.potential }}/5</td>
-            <td>
-              {% if r.evidence_strength %}
-              <span class="evidence-grade {{ grade_class(r.evidence_strength.grade) }}" title="{{ r.evidence_strength.both_confirmed }} both-confirmed, {{ r.evidence_strength.research_only }} research-only, {{ r.evidence_strength.founder_only }} founder-only, {{ r.evidence_strength.assumed }} assumed">{{ r.evidence_strength.grade }}</span>
-              {% else %}
-              —
-              {% endif %}
-            </td>
-            <td>{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].key_finding | linkify }}{% endif %}</td>
-          </tr>
-          <tr class="score-explanation">
-            <td colspan="6">{% if dimensions and r.slug in dimensions %}{{ dimensions[r.slug].score_explanation | linkify }}{% endif %}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>Overall Evidence</h2>
-      <div class="overall-grade-block">
-        <div class="overall-grade {{ grade_class(numbers.overall_grade) }}">{{ numbers.overall_grade }}</div>
-        <div class="overall-grade-caption">Average evidence strength across all dimensions. A = strong research-backed, F = no real evidence.</div>
+    <div class="rh-tab-panel" data-panel="mkt">
+      {% for item in mkt_items %}
+      <div class="rh-a-row">
+        <span class="rh-a-dot"></span>
+        <span class="rh-a-text">{{ item.text | linkify }}</span>
+        {% if item.source_url %}
+        <a href="{{ item.source_url }}" class="rh-a-source" target="_blank" rel="noopener">
+          {{ item.source_title or item.source_url }} <svg aria-hidden="true"><use href="#i-ext"/></svg>
+        </a>
+        {% else %}
+        <span class="rh-synth-chip">synthesis</span>
+        {% endif %}
       </div>
+      {% endfor %}
     </div>
-
-    {% if numbers.assumption_impact_math %}
-    <div class="card">
-      <h2>Assumption Impact</h2>
-      <ul class="item-list">
-        {% for a in numbers.assumption_impact_math %}
-        <li><span class="dim-tag">{{ a.dim }}</span> If &ldquo;{{ a.assumption_text }}&rdquo; is confirmed, score rises by {{ a.score_delta }} (+{{ a.weighted_uplift }} on total)</li>
-        {% endfor %}
-      </ul>
-    </div>
-    {% endif %}
-
-    <div class="two-col">
-      <div class="card">
-        <h2>Top 3 Strengths</h2>
-        <ol>
-          {% for s in strengths_weaknesses %}
-          {% if s.kind == "strength" %}
-          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
-          {% endif %}
-          {% endfor %}
-        </ol>
-      </div>
-      <div class="card">
-        <h2>Top 3 Weaknesses</h2>
-        <ol>
-          {% for s in strengths_weaknesses %}
-          {% if s.kind == "weakness" %}
-          <li><strong>{{ s.dim }}</strong> ({{ s.score }}/5): {{ s.why | linkify }}</li>
-          {% endif %}
-          {% endfor %}
-        </ol>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Next Steps</h2>
-      <ol class="item-list">
-        {% for n in next_steps %}
-        <li>{{ n.task | linkify }} &mdash; <span class="dim-tag">{{ n.dim }}</span> {{ n.from }}/5 &rarr; {{ n.to }}/5 (+{{ n.weighted_uplift }} on total)</li>
-        {% endfor %}
-      </ol>
-    </div>
-
-    {% if verdict and verdict.rationale %}
-    <div class="card">
-      <h2>Verdict Rationale</h2>
-      <p>{{ verdict.rationale | linkify }}</p>
-    </div>
-    {% endif %}
-
-    <footer>
-      Generated by TweakIdea v{{ version.tweakidea_version }} &middot; Schema v{{ version.schema_version }} &middot; {{ timestamp }}
-    </footer>
   </div>
+  {% endif %}
+
+  <h2 class="section-heading" id="dimensions">Dimensions</h2>
+
+  <div class="dim-rows">
+    {% for r in numbers.rankings %}
+    {% set score_int = r.score | int if r.score is not none else 0 %}
+    {% set potential_int = r.potential | int if r.potential is not none else score_int %}
+    {% set dim_data = dimensions[r.slug] if dimensions and r.slug in dimensions else none %}
+    {% set es = r.evidence_strength %}
+    {% if es.grade.startswith('A') %}{% set es_class = 'a' %}
+    {% elif es.grade.startswith('B') %}{% set es_class = 'b' %}
+    {% elif es.grade.startswith('C') %}{% set es_class = 'c' %}
+    {% elif es.grade.startswith('D') %}{% set es_class = 'd' %}
+    {% else %}{% set es_class = 'f' %}{% endif %}
+    <details class="dim-item" id="dim-{{ r.slug }}">
+      <summary>
+        <svg class="dim-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+        <div class="dim-row-name">{{ r.dim }}<span class="w">{{ (r.weight * 100) | round | int }}%</span></div>
+        <div class="dim-row-score">{{ score_int }}{% if potential_int > score_int %} <span class="arrow">→</span> {{ potential_int }}{% endif %}</div>
+        <div class="dim-bar dim-row-bar">
+          <div class="dim-bar-fill sc-{{ score_int }}" style="width: {{ score_int * 20 }}%;"></div>
+          {% if potential_int > score_int %}
+          <div class="dim-bar-ghost sc-{{ score_int }}" style="left: {{ score_int * 20 }}%; width: {{ (potential_int - score_int) * 20 }}%;"></div>
+          {% endif %}
+        </div>
+      </summary>
+      <div class="dim-item-body">
+        {% if dim_data %}
+        <p class="dim-body-kf">{{ dim_data.key_finding | linkify }}</p>
+        <p class="dim-body-exp">{{ dim_data.score_explanation | linkify }}</p>
+        {% else %}
+        <p class="dim-body-kf">Evaluation unavailable for this dimension.</p>
+        {% endif %}
+        <div class="dim-body-ev">
+          <div class="dim-body-ev-head">
+            <span class="dim-body-ev-label">Evidence</span>
+            <span class="dim-body-ev-letter grade {{ es_class }}">{{ es.grade }}</span>
+          </div>
+          <div class="dim-body-ev-tiers">
+            <span class="tier"><span class="ev-dot ev-verified"></span>Verified <b>{{ es.both_confirmed }}</b></span>
+            <span class="tier"><span class="ev-dot ev-research"></span>Research <b>{{ es.research_only }}</b></span>
+            <span class="tier"><span class="ev-dot ev-founder"></span>Founder <b>{{ es.founder_only }}</b></span>
+            <span class="tier"><span class="ev-dot ev-assumed"></span>Assumed <b>{{ es.assumed }}</b></span>
+          </div>
+        </div>
+      </div>
+    </details>
+    {% endfor %}
+  </div>
+
+  {% if numbers.reach_potential_blocks %}
+  <h2 class="section-heading" id="reach-potential">Reach potential</h2>
+
+  <div class="rp-callout">
+    <div class="rp-headline">
+      <span class="rp-headline-from">{{ numbers.weighted_total }}</span>
+      <span class="rp-headline-arrow">→</span>
+      <span class="rp-headline-to">{{ numbers.potential_total }}</span>
+      <span class="rp-headline-delta">+{{ potential_delta }}</span>
+    </div>
+
+    <div class="rp-bar-wrap">
+      <div class="rp-track" role="img" aria-label="Current weighted total {{ numbers.weighted_total }}, potential {{ numbers.potential_total }}">
+        <div class="rp-delta" style="left: {{ weighted_pct }}%; width: {{ (potential_pct - weighted_pct) | round(1) }}%;"></div>
+        <div class="rp-marker rp-marker-current" style="left: {{ weighted_pct }}%;">
+          <span class="rp-marker-label">{{ numbers.weighted_total }}</span>
+        </div>
+        <div class="rp-marker rp-marker-potential" style="left: {{ potential_pct }}%;">
+          <span class="rp-marker-label">{{ numbers.potential_total }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rp-blocks">
+    {% for block in numbers.reach_potential_blocks %}
+    <div class="rp-block">
+      <div class="rp-block-head">
+        <span class="rp-block-name">{{ block.dim }}</span>
+        <div class="rp-block-meta">
+          <span class="rp-block-jump">{{ block.from }} <span class="arrow">→</span> {{ block.to }}</span>
+          <span class="rp-block-uplift">+{{ block.weighted_uplift }}</span>
+        </div>
+      </div>
+      <p class="rp-block-hint">{% if block.assumption_texts | length > 1 %}Confirm any of these assumptions{% else %}Confirm this assumption{% endif %}</p>
+      <ul class="rp-block-list">
+        {% for t in block.assumption_texts %}
+        <li>{{ t | linkify }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <h2 class="section-heading" id="next-steps">Next steps</h2>
+
+  <div class="ns-list">
+    {% for n in next_steps %}
+    <div class="ns-row">
+      <span class="ns-num">{{ loop.index }}.</span>
+      <div class="ns-main">
+        <p class="ns-text">{{ n.task | linkify }}</p>
+        <div class="ns-context">
+          <span class="ns-dim">{{ n.dim }}</span>
+          <span class="ns-sep">·</span>
+          <span class="ns-jump">{{ n.from }} <span class="arrow">→</span> {{ n.to }}</span>
+        </div>
+      </div>
+      <span class="ns-uplift">+{{ n.weighted_uplift }}</span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p style="margin-top: 56px; font-size: 11px; color: var(--ink-faint); text-align: center;">
+    Generated by TweakIdea v{{ version.tweakidea_version }} · Schema v{{ version.schema_version }} · {{ timestamp }}
+  </p>
+
+</main>
+
+<script>
+  {
+    // Wire summary dim-rows → matching <details> in the Dimensions section.
+    const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const nameOf = el => (el.firstChild && el.firstChild.nodeValue || el.textContent).trim();
+    const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const rowTarget = new WeakMap();
+    const targets = new Map();
+    document.querySelectorAll('details.dim-item').forEach(d => {
+      const nameEl = d.querySelector('.dim-row-name');
+      if (!nameEl) return;
+      const name = nameOf(nameEl);
+      targets.set(name, d);
+    });
+
+    document.querySelectorAll('.dim-grid .dim-row').forEach(row => {
+      const nameEl = row.querySelector('.dim-name');
+      if (!nameEl) return;
+      const name = nameOf(nameEl);
+      const target = targets.get(name);
+      if (!target) return;
+      rowTarget.set(row, target);
+      row.setAttribute('role', 'link');
+      row.setAttribute('tabindex', '0');
+      row.setAttribute('aria-label', 'Jump to ' + name + ' details');
+    });
+
+    const jumpTo = row => {
+      const target = rowTarget.get(row);
+      if (!target) return;
+      target.open = true;
+      try { history.replaceState(null, '', '#' + target.id); } catch (_) {}
+      target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      if (reduceMotion) return;
+      target.animate(
+        [{ background: 'var(--blue-bg)' }, { background: 'transparent' }],
+        { duration: 1200, easing: 'ease-out' }
+      );
+    };
+
+    const grid = document.querySelector('.dim-grid');
+    if (grid) {
+      grid.addEventListener('click', e => {
+        const row = e.target.closest('.dim-row');
+        if (row) jumpTo(row);
+      });
+      grid.addEventListener('keydown', e => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const row = e.target.closest('.dim-row');
+        if (!row) return;
+        e.preventDefault();
+        jumpTo(row);
+      });
+    }
+  }
+</script>
+
 </body>
 </html>

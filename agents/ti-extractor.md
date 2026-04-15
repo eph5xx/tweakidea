@@ -80,7 +80,7 @@ The JSON must validate against `.claude/schemas/hypotheses.json` and MUST be an 
 ```
 
 Rules:
-- Every hypothesis has `status: "PENDING"` — the orchestrator and founder update statuses to CONFIRMED / UNCONFIRMED / MODIFIED / REJECTED later at Stage 1 Lane B. You always emit PENDING.
+- Every hypothesis has `status: "PENDING"` — the orchestrator and founder update statuses to CONFIRMED / UNCONFIRMED / REJECTED later at Stage 1 Lane B. You always emit PENDING.
 - `primary_dimension` is the exact dimension name from the Registry (Name column), e.g., "Pain Intensity", "Willingness to Pay", "Founder-Market Fit". Not the slug.
 - 0-12 entries total. If you extract zero hypotheses, write `[]` — the orchestrator handles the empty case gracefully.
 - After writing the file successfully, return the single-line acknowledgment: `WROTE {RUN_DIR}/hypotheses.json`

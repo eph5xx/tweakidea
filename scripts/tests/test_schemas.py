@@ -10,14 +10,14 @@ FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 class TestSchemaPresence(unittest.TestCase):
     EXPECTED_SCHEMAS = [
         "idea", "hypotheses", "assumptions", "research",
-        "dimension-evaluation", "numbers", "verdict",
-        "strengths-weaknesses", "next-steps", "dealbreakers",
+        "dimension-evaluation", "numbers",
+        "strengths-weaknesses", "next-steps",
         "potential", "version",
     ]
 
-    def test_twelve_schemas_exist(self):
+    def test_ten_schemas_exist(self):
         files = sorted(p.stem for p in SCHEMAS_DIR.glob("*.json"))
-        self.assertEqual(len(files), 12, f"expected 12 schemas, got {len(files)}: {files}")
+        self.assertEqual(len(files), 10, f"expected 10 schemas, got {len(files)}: {files}")
         self.assertEqual(sorted(self.EXPECTED_SCHEMAS), files)
 
     def test_config_json_deferred(self):

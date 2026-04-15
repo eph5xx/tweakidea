@@ -102,14 +102,11 @@ def build_context(run_dir, timestamp):
         "assumptions": load(run_dir, "assumptions.json", "assumptions", required=False),
         "research": load(run_dir, "research.json", "research", required=False),
         "numbers": numbers,
-        "verdict": load(run_dir, "verdict.json", "verdict"),
         "strengths_weaknesses": load(run_dir, "strengths-weaknesses.json", "strengths-weaknesses"),
         "next_steps": load(run_dir, "next-steps.json", "next-steps"),
-        "dealbreakers": load(run_dir, "dealbreakers.json", "dealbreakers"),
         "potential": load(run_dir, "potential.json", "potential"),
         "version": load(run_dir, "version.json", "version"),
         "dimensions": load_dimensions(run_dir),
-        "radar_svg": numbers["radar_svg"],
     }
 
 

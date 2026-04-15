@@ -157,15 +157,28 @@ Problem: [PROBLEM]
 Solution: [SOLUTION]
 ```
 
+Before writing `idea.json`, also derive three optional display fields used by the report's doc header:
+
+- **`codename`**: a short one-word codename for the idea (e.g. "Airlock", "Ledger", "Swift"). Pick something evocative that maps to the problem domain. Omit the field entirely if nothing fits.
+- **`icon`**: a single emoji that represents the idea's domain (e.g. 🔒 for security, 📊 for analytics, 🧾 for accounting). Default is 📋 — omit the field if no better fit.
+- **`subtitle`**: a one-sentence framing of the idea (≤ 140 chars) suitable for a document subtitle. If the problem statement already reads like a good subtitle, reuse its first sentence; otherwise author a fresh one.
+
+These three fields are ornamental — the report renders sensible fallbacks when they are absent, so do not block the pipeline on them.
+
 Use the Write tool to create `{RUN_DIR}/idea.json` with the parsed IDEA_TEXT:
 
 ```json
 {
   "text": "{full recombined text}",
   "problem": "{problem statement}",
-  "solution": "{solution statement}"
+  "solution": "{solution statement}",
+  "codename": "{optional short codename}",
+  "icon": "{optional single emoji}",
+  "subtitle": "{optional one-sentence framing}"
 }
 ```
+
+Omit `codename`, `icon`, or `subtitle` from the JSON object if you cannot produce a good value — the schema marks them optional.
 
 ---
 
@@ -200,11 +213,21 @@ After the agent returns:
 
 #### Lane B Step 2: Founder hypothesis confirmation
 
-For each hypothesis entry, use AskUserQuestion (or a single list prompt) to ask the founder:
+**Strict per-hypothesis loop.** Iterate over the hypotheses array in order. For each entry, make a **separate** `AskUserQuestion` call — one call per hypothesis. Do NOT batch. Do NOT invent a checklist or multi-select UI. Do NOT collapse multiple hypotheses into a single prompt. Do NOT re-order, skip, or merge entries. `AskUserQuestion` is single-select per question; the strict loop is the only correct shape.
 
-> "I extracted the following hypotheses from your idea. For each, please mark it CONFIRMED (you have evidence), UNCONFIRMED (you don't have evidence yet), MODIFIED (you want to restate it), or REJECTED (not a real claim)."
+For each hypothesis at index `i` (0-based) in an array of length `N`, the question text has this exact form:
 
-Collect the founder's status for each hypothesis.
+> Hypothesis {i+1} of {N} — *{primary_dimension}*: "{text}"
+>
+> How should this be marked?
+
+Options (exactly three, in this order):
+
+- **CONFIRMED** — I have evidence this is true
+- **UNCONFIRMED** — I don't have evidence yet
+- **REJECTED** — This is not a real claim / doesn't apply
+
+Collect the founder's choice for each hypothesis and carry it into Lane B Step 3.
 
 **Concurrency note:** `ti-researcher` was spawned with `run_in_background: true` at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
@@ -216,11 +239,11 @@ Use the Write tool to create `{RUN_DIR}/assumptions.json` with the founder-updat
 [
   {"text": "...", "primary_dimension": "...", "status": "CONFIRMED"},
   {"text": "...", "primary_dimension": "...", "status": "UNCONFIRMED"},
-  {"text": "...", "primary_dimension": "...", "status": "MODIFIED", "note": "Founder's clarification"}
+  {"text": "...", "primary_dimension": "...", "status": "REJECTED"}
 ]
 ```
 
-Preserve every entry from hypotheses.json; only the `status` field changes (and optionally an extra `note` field for MODIFIED entries).
+Preserve every entry from hypotheses.json in the same order; only the `status` field changes. REJECTED entries remain in `assumptions.json` for audit — the report templates already filter them out of both the Unconfirmed and Confirmed sections.
 
 Zero-hypothesis case: write `[]` to assumptions.json. Proceed to Stage 2.
 
@@ -424,26 +447,18 @@ After this step, `{RUN_DIR}/numbers.json` exists and is schema-valid.
 
 ## Stage 3b: Narrative
 
-Spawn ti-narrative to author the 5 prose JSON files:
+Spawn ti-narrative to author the 3 prose JSON files:
 
 - **agent_type:** `ti-narrative`
-- **prompt:** `Author the cross-dimensional narrative for this evaluation. RUN_DIR={RUN_DIR}. Read numbers.json, dimensions/*.json, assumptions.json, research.json (if available), then write the 5 JSON files per your system instructions.`
+- **prompt:** `Author the cross-dimensional narrative for this evaluation. RUN_DIR={RUN_DIR}. Read numbers.json, dimensions/*.json, assumptions.json, research.json (if available), then write the 3 JSON files per your system instructions.`
 - **run_in_background:** false
 
-After the agent returns, verify that all 5 files exist at `{RUN_DIR}/`:
-- `verdict.json`
+After the agent returns, verify that all 3 files exist at `{RUN_DIR}/`:
 - `strengths-weaknesses.json`
 - `next-steps.json`
-- `dealbreakers.json`
 - `potential.json`
 
-If any are missing, retry the ti-narrative spawn ONCE with a note about the missing files. If the retry also fails, write minimal fallback files:
-
-```json
-{"rationale": "Narrative generation failed; see dimensions/ for raw analysis."}
-```
-
-and similar minimal-shape placeholders for the other 4 files so Stage 4 can still render a report.
+If any are missing, retry the ti-narrative spawn ONCE with a note about the missing files. If the retry also fails, write minimal-shape placeholder files for the missing ones so Stage 4 can still render a report.
 
 ---
 
@@ -470,7 +485,7 @@ ls "{RUN_DIR}/" && ls "{RUN_DIR}/dimensions/"
 ```
 
 Expected manifest (>= 20 files for a full run):
-- version.json, idea.json, hypotheses.json, assumptions.json, research.json, numbers.json, verdict.json, strengths-weaknesses.json, next-steps.json, dealbreakers.json, potential.json, report.md, report.html
+- version.json, idea.json, hypotheses.json, assumptions.json, research.json, numbers.json, strengths-weaknesses.json, next-steps.json, potential.json, report.md, report.html
 - dimensions/*.json (14 files if all evaluators succeeded; fewer or with failed placeholders if partial)
 
 Read `{RUN_DIR}/numbers.json` via the Read tool. Extract `weighted_total`, `verdict_bucket`, and `verdict_label`.

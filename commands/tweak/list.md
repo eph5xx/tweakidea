@@ -23,7 +23,7 @@ Arguments are a free-form hint, not a strict grammar. Extract what you can and i
 
 - Category words (`runs`/`run`/`evaluations`, `hn`/`hacker-news`, `founder`/`founders`/`profile`/`me`, `all`) set CATEGORY.
 - A bare integer sets LIMIT.
-- Anything else (`best`, `top`, `GO`, `dealbreakers`, `pain intensity 5`, `potential > 4`, etc.) is a filter or sort hint — apply it against `numbers.json` on the runs section.
+- Anything else (`best`, `top`, `GO`, `pain intensity 5`, `potential > 4`, etc.) is a filter or sort hint — apply it against `numbers.json` on the runs section.
 
 Defaults: CATEGORY = `all`, LIMIT = `5`. Never reject an argument. If you had to guess at intent, add a single `_Interpreted as: …_` line at the very bottom of the output.
 

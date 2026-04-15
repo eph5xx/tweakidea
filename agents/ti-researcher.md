@@ -55,7 +55,7 @@ Also build a structured competitive landscape with up to 6 named competitors.
 
 **Output quality rules:**
 - Be factual — report what you found, not what you think
-- Cite sources (URLs) for key claims as part of the finding strings
+- Every cluster item carries its source URL in a dedicated field (not inlined in the text) so the report can render a clickable source chip
 - If a research area yields nothing, use an empty array for that cluster
 - Do not fabricate or hallucinate data
 - Competitor pricing: use actual data if found; use "—" if not publicly available
@@ -72,9 +72,27 @@ Your output is a single file write. Use the `Write` tool exactly once to create:
 {
   "available": true,
   "clusters": {
-    "user": ["1-line user evidence citation", "..."],
-    "competitive": ["1-line competitive finding", "..."],
-    "market": ["1-line market data citation", "..."]
+    "user": [
+      {
+        "text": "1-line user evidence finding (no URL inline)",
+        "source_url": "https://example.com/full-article-url",
+        "source_title": "example.com"
+      }
+    ],
+    "competitive": [
+      {
+        "text": "1-line competitive finding",
+        "source_url": "https://competitor-review.com/article",
+        "source_title": "competitor-review.com"
+      }
+    ],
+    "market": [
+      {
+        "text": "1-line market data citation",
+        "source_url": "https://market-report.com/2025",
+        "source_title": "market-report.com"
+      }
+    ]
   },
   "competitive_landscape": [
     {
@@ -90,7 +108,8 @@ Your output is a single file write. Use the `Write` tool exactly once to create:
 Rules:
 - `available: true` when research succeeded; write the full object above.
 - `available: false` when research is intentionally disabled or all searches failed — write `{"available": false, "reason": "..."}` with nothing else. Orchestrator handles this case downstream.
-- Each cluster array holds 3-8 one-line findings with optional URL citations. Keep each line ≤ 120 chars.
+- Each cluster array holds 3-8 items. Each item is an object with `text` (≤ 120 chars, no inline URLs), `source_url` (full URL you fetched), and `source_title` (the hostname, e.g. `venturebeat.com`).
+- For pure **synthesis** rows that aggregate across multiple sources (rare), you MAY omit `source_url` and `source_title`. Prefer to cite one concrete source when possible.
 - `competitive_landscape` is 0-6 entries. May be empty array.
 - After writing successfully, return the single-line acknowledgment: `WROTE {RUN_DIR}/research.json`
 - Do NOT return any other prose. The file write IS your output.

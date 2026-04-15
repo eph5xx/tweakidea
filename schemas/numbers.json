@@ -10,10 +10,10 @@
     "verdict_bucket",
     "verdict_label",
     "rankings",
-    "dealbreaker_dims",
     "overall_grade",
     "assumption_impact_math",
-    "radar_svg"
+    "evidence_totals",
+    "reach_potential_blocks"
   ],
   "properties": {
     "weighted_total": {
@@ -44,10 +44,16 @@
       "description": "Per-dimension scores in registry index order.",
       "items": {
         "type": "object",
-        "required": ["dim", "slug", "score", "potential", "weighted_score", "evidence_strength"],
+        "required": ["dim", "slug", "weight", "score", "potential", "weighted_score", "evidence_strength"],
         "properties": {
           "dim": {"type": "string"},
           "slug": {"type": "string"},
+          "weight": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "Registry weight as a fraction (e.g. 0.12 for 12%)."
+          },
           "score": {
             "type": ["integer", "null"],
             "minimum": 1,
@@ -82,11 +88,6 @@
         "additionalProperties": false
       }
     },
-    "dealbreaker_dims": {
-      "type": "array",
-      "description": "List of dimension slugs where score == 1.",
-      "items": {"type": "string"}
-    },
     "overall_grade": {
       "type": "string",
       "enum": ["A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"],
@@ -107,10 +108,37 @@
         "additionalProperties": false
       }
     },
-    "radar_svg": {
-      "type": "string",
-      "minLength": 100,
-      "description": "Complete SVG polygon string for the radar chart — must start with <svg."
+    "evidence_totals": {
+      "type": "object",
+      "required": ["both_confirmed", "research_only", "founder_only", "assumed"],
+      "description": "Aggregate evidence tier counts across all valid dimensions. Drives the hero-stats evidence breakdown.",
+      "properties": {
+        "both_confirmed": {"type": "integer", "minimum": 0},
+        "research_only": {"type": "integer", "minimum": 0},
+        "founder_only": {"type": "integer", "minimum": 0},
+        "assumed": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "reach_potential_blocks": {
+      "type": "array",
+      "description": "Per-dimension grouping of unconfirmed assumptions, showing the score uplift if confirmed.",
+      "items": {
+        "type": "object",
+        "required": ["dim", "slug", "from", "to", "weighted_uplift", "assumption_texts"],
+        "properties": {
+          "dim": {"type": "string"},
+          "slug": {"type": "string"},
+          "from": {"type": "integer", "minimum": 1, "maximum": 5},
+          "to": {"type": "integer", "minimum": 1, "maximum": 5},
+          "weighted_uplift": {"type": "number"},
+          "assumption_texts": {
+            "type": "array",
+            "items": {"type": "string"}
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false

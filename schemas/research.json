@@ -12,19 +12,19 @@
     },
     "clusters": {
       "type": "object",
-      "description": "Research grouped by USER, COMPETITIVE, and MARKET clusters.",
+      "description": "Research grouped by USER, COMPETITIVE, and MARKET clusters. Each item is an object with a finding text and an optional source link.",
       "properties": {
         "user": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": {"$ref": "#/$defs/researchItem"}
         },
         "competitive": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": {"$ref": "#/$defs/researchItem"}
         },
         "market": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": {"$ref": "#/$defs/researchItem"}
         }
       },
       "additionalProperties": false
@@ -49,5 +49,27 @@
       "description": "Explanation when available is false."
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "$defs": {
+    "researchItem": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The research finding or claim text."
+        },
+        "source_url": {
+          "type": "string",
+          "description": "Optional URL linking to the source of this finding. Omit for synthesis rows that aggregate across sources."
+        },
+        "source_title": {
+          "type": "string",
+          "description": "Optional display label for the source chip (typically the hostname, e.g. 'venturebeat.com'). Omit for synthesis rows."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
 }

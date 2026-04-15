@@ -20,7 +20,7 @@
       },
       "status": {
         "type": "string",
-        "enum": ["PENDING", "CONFIRMED", "UNCONFIRMED", "MODIFIED", "REJECTED"],
+        "enum": ["PENDING", "CONFIRMED", "UNCONFIRMED", "REJECTED"],
         "description": "Current confirmation status of the hypothesis."
       }
     },

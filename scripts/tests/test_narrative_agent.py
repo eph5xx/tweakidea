@@ -81,23 +81,24 @@ class TestNarrativeAgentBody(unittest.TestCase):
     def setUpClass(cls):
         cls.body = AGENT_FILE.read_text().split("---", 2)[2]
 
-    def test_references_all_five_schemas(self):
+    def test_references_all_three_schemas(self):
         for name in (
-            "schemas/verdict.json",
             "schemas/strengths-weaknesses.json",
             "schemas/next-steps.json",
-            "schemas/dealbreakers.json",
             "schemas/potential.json",
         ):
             with self.subTest(schema=name):
                 self.assertIn(name, self.body)
 
-    def test_references_all_five_output_paths(self):
+    def test_does_not_reference_dropped_schemas(self):
+        for name in ("schemas/verdict.json", "schemas/dealbreakers.json"):
+            with self.subTest(schema=name):
+                self.assertNotIn(name, self.body)
+
+    def test_references_all_three_output_paths(self):
         for path in (
-            "{RUN_DIR}/verdict.json",
             "{RUN_DIR}/strengths-weaknesses.json",
             "{RUN_DIR}/next-steps.json",
-            "{RUN_DIR}/dealbreakers.json",
             "{RUN_DIR}/potential.json",
         ):
             with self.subTest(path=path):

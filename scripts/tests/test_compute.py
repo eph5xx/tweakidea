@@ -62,9 +62,6 @@ class TestComputeGolden(unittest.TestCase):
             self.assertIn("grade", es)
             self.assertIn(es["grade"], VALID_GRADES)
 
-        # No dealbreakers in golden fixture (no dim scores 1)
-        self.assertEqual(out["dealbreaker_dims"], [])
-
         # Overall grade present and valid
         self.assertIn("overall_grade", out)
         self.assertIn(out["overall_grade"], VALID_GRADES)
@@ -74,9 +71,30 @@ class TestComputeGolden(unittest.TestCase):
                        if a["dim"] == "Willingness to Pay"]
         self.assertGreaterEqual(len(wtp_impacts), 1)
 
-        # Radar SVG valid
-        self.assertTrue(out["radar_svg"].startswith('<svg viewBox="0 0 500 440"'))
-        self.assertIn("</svg>", out["radar_svg"])
+        # Every ranking exposes its registry weight (drives the dim-grid percentage)
+        for r in out["rankings"]:
+            self.assertIn("weight", r)
+            self.assertGreater(r["weight"], 0)
+            self.assertLessEqual(r["weight"], 1)
+
+        # Evidence totals aggregate per-dim counts
+        self.assertIn("evidence_totals", out)
+        totals = out["evidence_totals"]
+        for t in TIER_KEYS:
+            self.assertIn(t, totals)
+            self.assertEqual(
+                totals[t],
+                sum(r["evidence_strength"][t] for r in out["rankings"] if not r.get("failed")),
+            )
+
+        # Reach-potential blocks grouped per dimension where potential > score
+        self.assertIn("reach_potential_blocks", out)
+        for block in out["reach_potential_blocks"]:
+            self.assertGreater(block["to"], block["from"])
+            self.assertGreater(len(block["assumption_texts"]), 0)
+        # Willingness to Pay should appear in the blocks (score=3, potential=4)
+        wtp_blocks = [b for b in out["reach_potential_blocks"] if b["dim"] == "Willingness to Pay"]
+        self.assertEqual(len(wtp_blocks), 1)
 
 
 def c(bc=0, ro=0, fo=0, a=0):

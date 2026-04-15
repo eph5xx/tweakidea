@@ -28,7 +28,7 @@ If `$ARGUMENTS` is empty, ask with `AskUserQuestion` what to open. If the query 
 
 **Exactly one target resolved.** Render a compact summary, then open the artifact:
 
-- **Run** — print problem, solution, verdict label + weighted/potential, top 3 strengths, bottom 3 weaknesses, and dealbreakers if any (sourced from `idea.json`, `numbers.json`, `strengths-weaknesses.json`, `dealbreakers.json` — skip any missing section). Then `open "{run}/report.html" 2>/dev/null || xdg-open "{run}/report.html" 2>/dev/null`. Older runs without `numbers.json`: print the head of `scorecard.md` and note `_Pre-JSON run._`.
+- **Run** — print problem, solution, verdict label + weighted/potential, top 3 strengths, and bottom 3 weaknesses (sourced from `idea.json`, `numbers.json`, `strengths-weaknesses.json` — skip any missing section). Then `open "{run}/report.html" 2>/dev/null || xdg-open "{run}/report.html" 2>/dev/null`. Older runs without `numbers.json`: print the head of `scorecard.md` and note `_Pre-JSON run._`.
 - **HN** — print title (first line of `content.md`) and path, then inline `ideas.md` in full (or `shifts.md` if no ideas file, or note that only `content.md` exists).
 - **Founder** — print the resolved profile file inline in full.
 

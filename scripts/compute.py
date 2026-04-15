@@ -22,7 +22,7 @@ import json
 import pathlib
 import sys
 
-from lib import errors, registry, radar, schema
+from lib import errors, registry, schema
 from jsonschema import ValidationError
 
 # Verdict bucket thresholds (from EVALUATION.md lines 58-63)
@@ -169,6 +169,7 @@ def main() -> int:
     weighted_total = 0.0
     potential_total = 0.0
     total_points = 0
+    evidence_totals = {k: 0 for k in TIER_KEYS}
     rankings = []
     for d in dims:
         result = dim_results.get(d.slug)
@@ -177,6 +178,7 @@ def main() -> int:
             rankings.append({
                 "dim": d.name,
                 "slug": d.slug,
+                "weight": d.weight,
                 "score": None,
                 "potential": None,
                 "weighted_score": 0.0,
@@ -192,9 +194,12 @@ def main() -> int:
         counts = count_tiers(result.get("criteria", []))
         points = points_from_counts(counts)
         total_points += points
+        for k in TIER_KEYS:
+            evidence_totals[k] += counts[k]
         rankings.append({
             "dim": d.name,
             "slug": d.slug,
+            "weight": d.weight,
             "score": score,
             "potential": potential,
             "weighted_score": round(score * norm_w, 3),
@@ -206,42 +211,44 @@ def main() -> int:
 
     bucket, label = verdict_for(weighted_total)
 
-    # Dealbreakers: any valid dim with score == 1
-    dealbreaker_dims = [
-        d.slug for d in dims
-        if dim_results.get(d.slug) is not None
-        and dim_results[d.slug]["score"] == 1
-    ]
-
     # Overall grade: average weighted-points across valid dims, then grade.
     avg_points = round(total_points / len(valid_slugs))
     overall_grade = grade_from_points(avg_points)
 
-    # Assumption impact math
+    # Assumption impact math + reach-potential blocks (grouped by dimension)
     assumption_impact_math = []
+    reach_potential_blocks = []
     for d in dims:
         result = dim_results.get(d.slug)
         if result is None or result["potential"] <= result["score"]:
             continue
         norm_w = d.weight / total_valid_weight
+        score_delta = result["potential"] - result["score"]
+        uplift = round(score_delta * norm_w, 2)
+        unconfirmed = [
+            a["text"] for a in result.get("assumptions_relied_on", [])
+            if a.get("status") == "UNCONFIRMED"
+        ]
         for a in result.get("assumptions_relied_on", []):
             if a.get("status") == "UNCONFIRMED":
                 assumption_impact_math.append({
                     "assumption_text": a["text"],
                     "dim": d.name,
-                    "score_delta": result["potential"] - result["score"],
-                    "weighted_uplift": round(
-                        (result["potential"] - result["score"]) * norm_w, 2
-                    ),
+                    "score_delta": score_delta,
+                    "weighted_uplift": uplift,
                 })
+        if unconfirmed:
+            reach_potential_blocks.append({
+                "dim": d.name,
+                "slug": d.slug,
+                "from": result["score"],
+                "to": result["potential"],
+                "weighted_uplift": uplift,
+                "assumption_texts": unconfirmed,
+            })
 
-    # Radar SVG — use raw scores (0 for failed dims) in registry index order
-    scores_in_order = [
-        (dim_results[d.slug]["score"] if dim_results.get(d.slug) else 0)
-        for d in dims
-    ]
-    labels = [d.name for d in dims]
-    radar_svg = radar.build_svg(scores_in_order, labels)
+    # Sort reach-potential blocks by uplift descending so the biggest wins land first
+    reach_potential_blocks.sort(key=lambda b: b["weighted_uplift"], reverse=True)
 
     numbers = {
         "weighted_total": weighted_total,
@@ -249,10 +256,10 @@ def main() -> int:
         "verdict_bucket": bucket,
         "verdict_label": label,
         "rankings": rankings,
-        "dealbreaker_dims": dealbreaker_dims,
         "overall_grade": overall_grade,
         "assumption_impact_math": assumption_impact_math,
-        "radar_svg": radar_svg,
+        "evidence_totals": evidence_totals,
+        "reach_potential_blocks": reach_potential_blocks,
     }
 
     # Validate before write
