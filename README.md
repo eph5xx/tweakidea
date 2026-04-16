@@ -1,6 +1,6 @@
 # TweakIdea
 
-A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Six commands: **browse** HN for idea candidates, **suggest** new ideas from a Hacker News discussion, **evaluate** an idea across 14 weighted dimensions, **diff** two runs to see what changed, **list** your accumulated runs and profiles, or **show** any saved artifact.
+A Claude Code skillset that helps founders evaluate startup problems and discover product opportunities. Seven commands: **browse** HN for idea candidates, **suggest** new ideas from a Hacker News discussion, **evaluate** an idea across 14 weighted dimensions, **improve** a scored idea with three concrete tweaks at different scales, **diff** two runs to see what changed, **list** your accumulated runs and profiles, or **show** any saved artifact.
 
 ## Browse: `/tweak:browse-hn`
 
@@ -61,6 +61,15 @@ Opens any artifact under `~/.tweakidea/` by timestamp, keyword, HN id, founder n
 
 Run reports open in the browser; HN and founder artifacts are inlined.
 
+## Improve: `/tweak:improve`
+
+Reads a completed evaluation run and generates three concrete idea rewrites at escalating scales of change — each targeting the weakest dimensions with rubric-grounded rationale. Read-only.
+
+- `/tweak:improve latest` — improve the most recent run
+- `/tweak:improve 20260416` — improve a specific run by timestamp prefix
+
+Output includes three independent tweaks (Small reframe, Medium reshape, Big reimagine), each with a rewritten problem + solution statement ready to paste into `/tweak:evaluate`, a directional impact table showing which dimensions should move and why, and mandatory trade-off acknowledgments.
+
 ## Diff: `/tweak:diff`
 
 Compares two evaluation runs side-by-side — score changes, potential shifts, verdict movement, and a per-dimension breakdown of what got better or worse. Read-only.
@@ -110,7 +119,7 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `list`, `show`, and `suggest-from-hn` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `show`, and `suggest-from-hn` in the autocomplete.
 
 For better article extraction from JS-heavy sites, optionally run `uv run playwright install chromium` once. Without it, the script falls back to plain HTTP which works fine for most sites.
 
