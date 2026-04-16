@@ -401,6 +401,7 @@ function install(isGlobal) {
   console.log(`  ${bold}/tweak:diff${reset} ${dim}<run1> <run2> or latest${reset}`);
   console.log(`  ${bold}/tweak:suggest-from-hn${reset} ${dim}<hn-url-or-id>${reset}`);
   console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);
+  console.log(`  ${bold}/tweak:improve${reset} ${dim}latest${reset}`);
   console.log(`  ${bold}/tweak:list${reset} ${dim}runs 20${reset}`);
   console.log(`  ${bold}/tweak:show${reset} ${dim}latest${reset}`);
   console.log('');

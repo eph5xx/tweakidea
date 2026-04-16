@@ -18,6 +18,7 @@ const COMMAND_FILES = [
   'commands/tweak/browse-hn.md',
   'commands/tweak/diff.md',
   'commands/tweak/evaluate.md',
+  'commands/tweak/improve.md',
   'commands/tweak/list.md',
   'commands/tweak/show.md',
   'commands/tweak/suggest-from-hn.md',
