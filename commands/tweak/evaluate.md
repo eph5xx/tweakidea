@@ -213,21 +213,21 @@ After the agent returns:
 
 #### Lane B Step 2: Founder hypothesis confirmation
 
-**Strict per-hypothesis loop.** Iterate over the hypotheses array in order. For each entry, make a **separate** `AskUserQuestion` call — one call per hypothesis. Do NOT batch. Do NOT invent a checklist or multi-select UI. Do NOT collapse multiple hypotheses into a single prompt. Do NOT re-order, skip, or merge entries. `AskUserQuestion` is single-select per question; the strict loop is the only correct shape.
+**Batched confirmation.** Split the hypotheses array into chunks of up to 4 (preserving original order). For each chunk, make one `AskUserQuestion` call containing 1–4 questions. Do NOT re-order, skip, or merge hypotheses across chunks.
 
-For each hypothesis at index `i` (0-based) in an array of length `N`, the question text has this exact form:
+For each hypothesis at global index `i` (0-based) in an array of length `N`, build a question object:
 
-> Hypothesis {i+1} of {N} — *{primary_dimension}*: "{text}"
->
-> How should this be marked?
+- **question:** `Hypothesis {i+1} of {N} — *{primary_dimension}*: "{text}"\n\nHow should this be marked?`
+- **header:** `{primary_dimension}` truncated to 12 characters at the nearest word boundary
+- **multiSelect:** false
+- **options** (exactly three, in this order):
+  1. label: **CONFIRMED** — description: I have evidence this is true
+  2. label: **UNCONFIRMED** — description: I don't have evidence yet
+  3. label: **REJECTED** — description: This is not a real claim / doesn't apply
 
-Options (exactly three, in this order):
+Pack up to 4 question objects into a single `AskUserQuestion` call. After each call returns, map answers back to their hypothesis indices before issuing the next batch.
 
-- **CONFIRMED** — I have evidence this is true
-- **UNCONFIRMED** — I don't have evidence yet
-- **REJECTED** — This is not a real claim / doesn't apply
-
-Collect the founder's choice for each hypothesis and carry it into Lane B Step 3.
+Collect the founder's choice for every hypothesis and carry them into Lane B Step 3.
 
 **Concurrency note:** `ti-researcher` was spawned with `run_in_background: true` at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
