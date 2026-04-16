@@ -10,6 +10,7 @@ tweakidea/
     install.js            # Installer: copies source into .claude/ for Claude Code
   commands/tweak/
     browse-hn.md          # HN candidate browser (read-only, no subagents)
+    diff.md               # Compare two evaluation runs side-by-side (read-only)
     evaluate.md           # Evaluation pipeline (6 stages)
     suggest-from-hn.md    # HN opportunity discovery (7 phases)
     list.md               # List runs, HN analyses, and founder profiles (read-only)
@@ -40,7 +41,7 @@ tweakidea/
 
 Source files live in the root-level directories above. The installer (`bin/install.js`) copies them into `.claude/` where Claude Code discovers them. **Edit the root-level files, not the `.claude/` copies.**
 
-- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline). `browse-hn.md` is a read-only HN candidate browser that shells out to `hnsearch.py` and ranks results for `/tweak:suggest-from-hn` — no subagents, no writes. `list.md` and `show.md` are read-only browsers over artifacts under `~/.tweakidea/` — no subagents, no writes.
+- **Commands** (`commands/tweak/`): Slash command entry points invoked by users. `evaluate.md` is the evaluation orchestrator (6-stage pipeline). `suggest-from-hn.md` is the HN opportunity discovery orchestrator (7-phase pipeline). `browse-hn.md` is a read-only HN candidate browser that shells out to `hnsearch.py` and ranks results for `/tweak:suggest-from-hn` — no subagents, no writes. `diff.md` compares two evaluation runs side-by-side (score deltas, potential shifts, per-dimension movers) — read-only, no subagents. `list.md` and `show.md` are read-only browsers over artifacts under `~/.tweakidea/` — no subagents, no writes.
 
 - **Agents** (`agents/`): Subagent definitions spawned by the evaluate orchestrator. Each runs in an independent context window. `ti-extractor.md` extracts testable hypotheses from idea text. `ti-evaluator.md` is spawned 14 times (once per dimension) on Sonnet. `ti-narrative.md` authors the cross-dimensional narrative prose on Opus. `ti-researcher.md` gathers web research on Sonnet.
 
@@ -101,6 +102,7 @@ To modify a dimension's scoring behavior, edit its dimension file. To add a new 
 | Browse-HN pipeline behavior | `commands/tweak/browse-hn.md` |
 | HN fetch/parse logic | `skills/ti-hnparse/hnparse.py` |
 | HN search logic | `skills/ti-hnparse/hnsearch.py` |
+| Diff comparison behavior | `commands/tweak/diff.md` |
 | List/Show browser behavior | `commands/tweak/list.md`, `commands/tweak/show.md` |
 
 ### PR conventions
