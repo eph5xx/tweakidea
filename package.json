@@ -1,6 +1,5 @@
 {
   "name": "tweakidea",
-  "version": "0.0.0",
   "description": "14-dimension startup idea evaluator for Claude Code",
   "bin": {
     "tweakidea": "bin/install.js"
