@@ -69,9 +69,9 @@ class TestLoadRegistry(unittest.TestCase):
 class TestMalformedRegistry(unittest.TestCase):
     def test_missing_rows_raises(self):
         bad = tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False)
-        bad.write("| # | Name | Weight | File Slug | Output Filename | Research Cluster | Context Variant |\n")
-        bad.write("|---|------|--------|-----------|-----------------|------------------|-----------------|\n")
-        bad.write("| 01 | Pain Intensity | 12% | pain-intensity | 01-pain-intensity.md | USER_CLUSTER | EVALUATION_CONTEXT |\n")
+        bad.write("| # | Name | Weight | File Slug | Research Cluster | Context Variant |\n")
+        bad.write("|---|------|--------|-----------|------------------|-----------------|\n")
+        bad.write("| 01 | Pain Intensity | 12% | pain-intensity | USER_CLUSTER | EVALUATION_CONTEXT |\n")
         bad.close()
         with self.assertRaises(ValueError):
             registry.load_registry(pathlib.Path(bad.name))

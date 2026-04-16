@@ -33,6 +33,7 @@ FORBIDDEN_STRINGS = [
     "## RESEARCH COMPLETE",
     "EVALUATION_RESULTS",
     "Evaluator Output Trimming",
+    "## NARRATIVE COMPLETE",
 ]
 
 

@@ -1,9 +1,7 @@
 """Parse the Dimension Registry table from skills/ti-scoring/EVALUATION.md.
 
-Reads the 7-column pipe-delimited table and returns a list of Dimension
-NamedTuples in registry index order (1..14). This is a stability contract —
-the 7-column format is the canonical source of truth for dimension metadata
-in the Phase 1 pipeline (D-26).
+Reads the 6-column pipe-delimited table and returns a list of Dimension
+NamedTuples in registry index order (1..14).
 """
 import pathlib
 from typing import List, NamedTuple, Optional
@@ -14,7 +12,6 @@ class Dimension(NamedTuple):
     name: str
     weight: float
     slug: str
-    output_filename: str  # Dead metadata in Phase 1 — preserved per D-26 stability contract
     research_cluster: Optional[str]
     context_variant: str
 
@@ -44,22 +41,21 @@ def load_registry(path: Optional[pathlib.Path] = None) -> List[Dimension]:
                 break  # exited the table
             continue
         parts = [c.strip() for c in line.strip("|").split("|")]
-        if len(parts) != 7:
+        if len(parts) != 6:
             continue  # tolerate blank rows
         try:
             idx = int(parts[0])
         except ValueError:
             break  # first non-int row = end of data rows
         weight = float(parts[2].rstrip("%")) / 100
-        cluster = None if parts[5] in ("—", "-", "") else parts[5]
+        cluster = None if parts[4] in ("—", "-", "") else parts[4]
         dims.append(Dimension(
             index=idx,
             name=parts[1],
             weight=weight,
             slug=parts[3],
-            output_filename=parts[4],
             research_cluster=cluster,
-            context_variant=parts[6],
+            context_variant=parts[5],
         ))
     if len(dims) != 14:
         raise ValueError(

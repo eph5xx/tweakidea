@@ -76,21 +76,21 @@ class TestOrchestratorBody(unittest.TestCase):
 
     def test_version_json_written_in_stage_0(self):
         # Stage 0 section should contain the version.json write
-        stage_0_start = self.body.find("Stage 0")
-        stage_1_start = self.body.find("Stage 1")
+        stage_0_start = self.body.find("## Stage 0")
+        stage_1_start = self.body.find("## Stage 1")
         stage_0_body = self.body[stage_0_start:stage_1_start]
         self.assertIn("version.json", stage_0_body)
         self.assertIn("idea.json", stage_0_body)
 
     def test_assumptions_json_in_stage_1_lane_b(self):
-        stage_1_start = self.body.find("Stage 1")
-        stage_2_start = self.body.find("Stage 2")
+        stage_1_start = self.body.find("## Stage 1")
+        stage_2_start = self.body.find("## Stage 2")
         stage_1_body = self.body[stage_1_start:stage_2_start]
         self.assertIn("assumptions.json", stage_1_body)
 
     def test_tweakidea_scripts_root_in_stage_0(self):
-        stage_0_start = self.body.find("Stage 0")
-        stage_1_start = self.body.find("Stage 1")
+        stage_0_start = self.body.find("## Stage 0")
+        stage_1_start = self.body.find("## Stage 1")
         stage_0_body = self.body[stage_0_start:stage_1_start]
         self.assertIn("TWEAKIDEA_SCRIPTS_ROOT", stage_0_body)
 

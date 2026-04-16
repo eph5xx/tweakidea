@@ -44,7 +44,7 @@ You MUST use the `Write` tool exactly three times, in the order listed below, to
 
 Do NOT batch these into a single combined JSON object. Each file is written separately via its own Write tool call. After all three writes succeed, return the single-line acknowledgment:
 
-`## NARRATIVE COMPLETE`
+`WROTE {RUN_DIR}/strengths-weaknesses.json, {RUN_DIR}/next-steps.json, {RUN_DIR}/potential.json`
 
 Do NOT return any other prose. Do NOT return the JSON content inline in your chat response. Your file writes ARE your output.
 
@@ -116,4 +116,4 @@ In all cases above, the 3-file write sequence and the schemas are unchanged. Mis
    If your draft contains any of these phrases, rewrite the sentence to state the observation directly. The ban list is the floor, not the ceiling — if you find yourself writing equivalent soft constructions ("it may be the case that", "there is some question whether"), rewrite those too.
 7. **Single spawn** — do not retry any step. The orchestrator handles retries.
 
-After all three writes, return `## NARRATIVE COMPLETE` and nothing else.
+After all three writes, return `WROTE {RUN_DIR}/strengths-weaknesses.json, {RUN_DIR}/next-steps.json, {RUN_DIR}/potential.json` and nothing else.

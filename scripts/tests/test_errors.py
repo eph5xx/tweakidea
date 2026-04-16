@@ -7,6 +7,8 @@ import unittest
 from contextlib import redirect_stderr
 from unittest.mock import patch
 
+from scripts.tests import _SKIP_MSG
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from lib import errors  # noqa: E402
@@ -50,7 +52,10 @@ class TestDie(unittest.TestCase):
 
 class TestFromValidationError(unittest.TestCase):
     def test_deque_absolute_path_serializes(self):
-        from jsonschema import Draft202012Validator
+        try:
+            from jsonschema import Draft202012Validator
+        except ImportError:
+            self.skipTest(_SKIP_MSG)
         v = Draft202012Validator({"type": "object", "required": ["x"]})
         errs = list(v.iter_errors({}))
         self.assertTrue(errs)

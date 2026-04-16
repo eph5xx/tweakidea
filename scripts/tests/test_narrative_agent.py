@@ -121,17 +121,17 @@ class TestNarrativeAgentBody(unittest.TestCase):
         )
 
     def test_completion_marker(self):
-        self.assertIn("## NARRATIVE COMPLETE", self.body)
+        self.assertIn("WROTE {RUN_DIR}/strengths-weaknesses.json", self.body)
 
     def test_no_evaluator_markers(self):
         # Narrative is NOT an evaluator; must not have these markers
         self.assertNotIn("## EVALUATION COMPLETE", self.body)
         self.assertNotIn("## EVALUATION FAILED", self.body)
+        self.assertNotIn("## NARRATIVE COMPLETE", self.body)
 
     def test_files_to_read_block(self):
         self.assertIn("<files_to_read>", self.body)
         self.assertIn("</files_to_read>", self.body)
 
-    def test_partial_failure_section(self):
-        # Should mention partial failure handling even if brief
-        self.assertIn("Partial Failure", self.body)
+    def test_missing_input_handling_section(self):
+        self.assertIn("Missing Input Handling", self.body)
