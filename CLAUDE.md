@@ -2,7 +2,7 @@
 
 **TweakIdea**
 
-A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Five commands: `/tweak:browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweak:suggest-from-hn`; `/tweak:suggest-from-hn` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`.
+A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Six commands: `/tweak:browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweak:suggest-from-hn`; `/tweak:suggest-from-hn` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`.
 
 **Core Value:** Help founders make better decisions -- evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
@@ -36,7 +36,7 @@ Source content lives in root-level directories (`agents/`, `commands/`, `skills/
 
 **TweakIdea**
 
-TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. The evaluate pipeline spawns 14 independent dimension agents to produce a weighted scorecard with assumption tracking; a second command (`suggest-from-hn`) analyzes Hacker News discussions for emerging opportunities. Users are solo and small-team founders making go/pivot/stop decisions on ideas.
+TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. The evaluate pipeline spawns 14 independent dimension agents to produce a weighted scorecard with assumption tracking; `suggest-from-hn` analyzes Hacker News discussions for emerging opportunities; `diff` compares two evaluation runs side-by-side to show what got better or worse. Users are solo and small-team founders making go/pivot/stop decisions on ideas.
 
 **Core Value:** Help founders make better decisions — evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
@@ -49,7 +49,6 @@ TweakIdea is a Claude Code skillset (slash commands + subagent definitions) that
 - **Node.js:** Installer/scripts stay on Node 18+ built-ins only (no external npm deps introduced)
 - **Founder data:** Persistent data lives under `~/.tweakidea/` — do not relocate
 - **Backwards compatibility:** Existing `FOUNDER.md` single-file installs must migrate cleanly to `founders/` folder (or keep working until founder runs a migration)
-- **Scope:** This milestone touches `/tweak:evaluate` surface only; `/tweak:suggest-from-hn` is off-limits
 <!-- GSD:project-end -->
 
 <!-- GSD:stack-start source:codebase/STACK.md -->
