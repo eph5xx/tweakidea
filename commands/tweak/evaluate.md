@@ -191,7 +191,7 @@ Issue the two background agent spawns in a SINGLE message for concurrent executi
 Spawn ti-researcher:
 
 - **agent_type:** `ti-researcher`
-- **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
+- **prompt:** `<files_to_read>\n- .claude/schemas/research.json\n</files_to_read>\n\nResearch this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
 - **run_in_background:** true
 
 The orchestrator does NOT await this spawn. It proceeds immediately to Lane B (hypothesis extraction + founder confirmation). `ti-researcher` writes `{RUN_DIR}/research.json` on its own schedule — successful output uses `{"available": true, ...}` and intentional failure uses `{"available": false, "reason": "..."}` per the agent's contract in `agents/ti-researcher.md`. The orchestrator synchronizes on this file at Stage 2 Step 4a (Research sync gate), NOT here.
@@ -343,7 +343,7 @@ Use AskUserQuestion with these three options:
 
 - **"Retry research"** — Re-spawn `ti-researcher` once with the same prompt shape used at Stage 1 Lane A:
   - **agent_type:** `ti-researcher`
-  - **prompt:** `Research this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
+  - **prompt:** `<files_to_read>\n- .claude/schemas/research.json\n</files_to_read>\n\nResearch this startup idea and write your output to {RUN_DIR}/research.json (absolute path). Use the Write tool.\n\nIDEA:\n\n{IDEA_TEXT}`
   - **run_in_background:** false (this retry is synchronous — wait in-line for the result)
 
   After the retry agent returns, re-run the Step 4a Bash probe. If the result is `ready` AND `available` is `true`, proceed to the Pre-Spawn Context Isolation Check. If the result is `ready` AND `available` is `false`, OR the result is `invalid`, return to Step 4a-fail with the new reason — BUT on this SECOND failure, present only the "Continue without research" and "Abort run" options. Do NOT offer "Retry research" a second time. Single retry only per D-06.
