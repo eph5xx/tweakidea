@@ -509,20 +509,6 @@ Use AskUserQuestion: "Open the HTML report in your browser?"
 - "Yes" -- `open "{RUN_DIR}/report.html"` (macOS) or `xdg-open "{RUN_DIR}/report.html"` (Linux)
 - "No" -- Continue to exit
 
-### Step 3: Shadow comparison reminder (Phase 1 only)
-
-If at least one historical v1.0 run exists in `~/.tweakidea/runs/*/scorecard.md`, display:
-
-```
-Shadow comparison reminder (Phase 1 cutover verification):
-  Compare {RUN_DIR}/report.md against any prior ~/.tweakidea/runs/*/scorecard.md
-  - Weighted score delta <= 0.2
-  - Verdict bucket unchanged (GO/PIVOT/STOP prefix)
-  - Top 3 strengths AND top 3 weaknesses: at least 2 of 3 overlap
-```
-
-This is informational only. This block will be removed in a future milestone after the cutover is stable.
-
 After the run directory confirmation, add the closing line:
 
 > Run `/tweak:evaluate` again with a modified idea to re-evaluate, or ask follow-up questions about any dimension.

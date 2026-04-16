@@ -4,16 +4,23 @@ import pathlib
 import sys
 import unittest
 
+from scripts.tests import requires_jsonschema
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(ROOT / "scripts"))
-from lib import schema  # noqa: E402
-from jsonschema import ValidationError  # noqa: E402
+
+try:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from lib import schema  # noqa: E402
+    from jsonschema import ValidationError  # noqa: E402
+except ImportError:
+    pass
 
 FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 GOLDEN = FIXTURES / "golden-run"
 FAIL = FIXTURES / "schema_fail"
 
 
+@requires_jsonschema
 class TestValidatePass(unittest.TestCase):
     """Every golden-run fixture should pass its schema."""
     CASES = [
@@ -39,6 +46,7 @@ class TestValidatePass(unittest.TestCase):
                 schema.validate_file(p, "dimension-evaluation")
 
 
+@requires_jsonschema
 class TestValidateFail(unittest.TestCase):
     """Every schema_fail fixture should raise ValidationError."""
     CASES = [
@@ -63,6 +71,7 @@ class TestValidateFail(unittest.TestCase):
                     schema.validate_file(FAIL / file_name, schema_name)
 
 
+@requires_jsonschema
 class TestPathTraversalGuard(unittest.TestCase):
     def test_rejects_parent_traversal(self):
         with self.assertRaises(ValueError):

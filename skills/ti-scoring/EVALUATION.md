@@ -40,22 +40,22 @@ Categorize problems by intensity vs. breadth:
 
 > **Canonical source of truth.** All dimension metadata lives in this table. Agents receive registry values via orchestrator prompt injection at spawn time (D-06). Do not duplicate this data elsewhere.
 
-| # | Name | Weight | File Slug | Output Filename | Research Cluster | Context Variant |
-|---|------|--------|-----------|-----------------|------------------|-----------------|
-| 01 | Pain Intensity | 12% | pain-intensity | 01-pain-intensity.md | USER_CLUSTER | EVALUATION_CONTEXT |
-| 02 | Willingness to Pay | 12% | willingness-to-pay | 02-willingness-to-pay.md | USER_CLUSTER | EVALUATION_CONTEXT |
-| 03 | Solution Gap | 12% | solution-gap | 03-solution-gap.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
-| 04 | Founder-Market Fit | 12% | founder-market-fit | 04-founder-market-fit.md | — | FOUNDER_EVALUATION_CONTEXT |
-| 05 | Urgency | 8% | urgency | 05-urgency.md | USER_CLUSTER | EVALUATION_CONTEXT |
-| 06 | Frequency | 8% | frequency | 06-frequency.md | — | EVALUATION_CONTEXT |
-| 07 | Market Size | 8% | market-size | 07-market-size.md | MARKET_CLUSTER | EVALUATION_CONTEXT |
-| 08 | Defensibility | 8% | defensibility | 08-defensibility.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
-| 09 | Market Growth | 4% | market-growth | 09-market-growth.md | MARKET_CLUSTER | EVALUATION_CONTEXT |
-| 10 | Scalability | 4% | scalability | 10-scalability.md | — | EVALUATION_CONTEXT |
-| 11 | Clarity of Target Customer | 4% | clarity-of-target-customer | 11-clarity-of-target-customer.md | — | EVALUATION_CONTEXT |
-| 12 | Behavior Change Required | 4% | behavior-change-required | 12-behavior-change-required.md | — | EVALUATION_CONTEXT |
-| 13 | Mandatory Nature | 2% | mandatory-nature | 13-mandatory-nature.md | — | EVALUATION_CONTEXT |
-| 14 | Incumbent Indifference | 2% | incumbent-indifference | 14-incumbent-indifference.md | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
+| # | Name | Weight | File Slug | Research Cluster | Context Variant |
+|---|------|--------|-----------|------------------|-----------------|
+| 01 | Pain Intensity | 12% | pain-intensity | USER_CLUSTER | EVALUATION_CONTEXT |
+| 02 | Willingness to Pay | 12% | willingness-to-pay | USER_CLUSTER | EVALUATION_CONTEXT |
+| 03 | Solution Gap | 12% | solution-gap | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
+| 04 | Founder-Market Fit | 12% | founder-market-fit | — | FOUNDER_EVALUATION_CONTEXT |
+| 05 | Urgency | 8% | urgency | USER_CLUSTER | EVALUATION_CONTEXT |
+| 06 | Frequency | 8% | frequency | — | EVALUATION_CONTEXT |
+| 07 | Market Size | 8% | market-size | MARKET_CLUSTER | EVALUATION_CONTEXT |
+| 08 | Defensibility | 8% | defensibility | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
+| 09 | Market Growth | 4% | market-growth | MARKET_CLUSTER | EVALUATION_CONTEXT |
+| 10 | Scalability | 4% | scalability | — | EVALUATION_CONTEXT |
+| 11 | Clarity of Target Customer | 4% | clarity-of-target-customer | — | EVALUATION_CONTEXT |
+| 12 | Behavior Change Required | 4% | behavior-change-required | — | EVALUATION_CONTEXT |
+| 13 | Mandatory Nature | 2% | mandatory-nature | — | EVALUATION_CONTEXT |
+| 14 | Incumbent Indifference | 2% | incumbent-indifference | COMPETITIVE_CLUSTER | EVALUATION_CONTEXT |
 
 ## Interpretation
 

@@ -7,17 +7,23 @@ import sys
 import tempfile
 import unittest
 
+from scripts.tests import requires_jsonschema
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 FIXTURES = pathlib.Path(__file__).resolve().parent / "fixtures"
 GOLDEN = FIXTURES / "golden-run"
 
-sys.path.insert(0, str(ROOT / "scripts"))
-from compute import grade_from_counts, grade_from_points, points_from_counts  # noqa: E402
+try:
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from compute import grade_from_counts, grade_from_points, points_from_counts  # noqa: E402
+except ImportError:
+    pass
 
 VALID_GRADES = {"A+", "A", "A-", "B+", "B", "B-", "C", "D", "F"}
 TIER_KEYS = ("both_confirmed", "research_only", "founder_only", "assumed")
 
 
+@requires_jsonschema
 class TestComputeGolden(unittest.TestCase):
     """Run compute.py on the golden fixture and assert math."""
 
@@ -101,6 +107,7 @@ def c(bc=0, ro=0, fo=0, a=0):
     return {"both_confirmed": bc, "research_only": ro, "founder_only": fo, "assumed": a}
 
 
+@requires_jsonschema
 class TestGradeFormula(unittest.TestCase):
     """Unit tests for the points→grade formula."""
 

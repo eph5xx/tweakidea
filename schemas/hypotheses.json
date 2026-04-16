@@ -20,8 +20,8 @@
       },
       "status": {
         "type": "string",
-        "enum": ["PENDING", "CONFIRMED", "UNCONFIRMED", "REJECTED"],
-        "description": "Current confirmation status of the hypothesis."
+        "const": "PENDING",
+        "description": "Always PENDING at extraction time. Statuses move to CONFIRMED/UNCONFIRMED/REJECTED in assumptions.json after founder review."
       }
     },
     "additionalProperties": false
