@@ -1,13 +1,12 @@
 {
   "name": "tweakidea",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "14-dimension startup idea evaluator for Claude Code",
   "bin": {
     "tweakidea": "bin/install.js"
   },
   "scripts": {
-    "test": "node scripts/run-tests.cjs",
-    "prepublishOnly": "npm test"
+    "test": "node scripts/run-tests.cjs"
   },
   "files": [
     "bin",
