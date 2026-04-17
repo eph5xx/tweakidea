@@ -82,6 +82,8 @@ For each hit, assign SCORE 1–5 answering: **"how likely is this thread to yiel
 
 **5. `num_comments` is a tiebreaker only.** It does not decide the bucket. A 5 with 30 comments beats a 4 with 500; a political thread with 500 comments is still a 1. Aim for visible spread across the table — if every row lands on 3, tighten the gate.
 
+**6. Reason.** Alongside the score, write a REASON ≤60 chars naming which signal drove the bucket — e.g. `Show HN + benchmarks`, `shift signal, low builder density`, `news coverage, no shift`, `off-topic (politics)`, `fails topic gate`. Keep it concrete; don't restate the score.
+
 ### Sort
 
 `score` desc → `num_comments` desc → `points` desc.
@@ -92,12 +94,13 @@ Header: `Found {N} HN candidates{query_phrase} over {window label}. Sorted by us
 
 Table (post-sort order):
 
-| # | ID | Title | Score | Pts | Cmts | Age |
-|---|----|-------|-------|-----|------|-----|
+| # | ID | Title | Score | Reason | Pts | Cmts | Age |
+|---|----|-------|-------|--------|-----|------|-----|
 
 - `ID` — markdown link `[{id}]({hn_url})`.
 - `Title` — trim to ~70 chars with trailing `…`; escape `|` as `\|`.
 - `Score` — `{n}/5`; wrap the cell in `**…**` when `n ≥ 4`.
+- `Reason` — the short justification from Score step 6; escape `|` as `\|`.
 
 After the table:
 
