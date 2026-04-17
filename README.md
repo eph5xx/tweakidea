@@ -21,10 +21,10 @@ Runs 14 independent subagents in parallel — one per problem dimension — then
 2. **Prepare** — Two parallel tracks: extract hypotheses + web research in background; interactive founder profile + fit questions
 3. **Assemble** — Display research brief, confirm hypotheses, build evaluation context
 4. **Evaluate** — 14 independent evaluators (Sonnet) score your idea on separate dimensions, each with targeted web searches
-5. **Merge** — A synthesis agent (Opus) produces a weighted scorecard with verdict, strengths, weaknesses, and next steps
+5. **Merge** — Deterministic scoring plus a narrative agent (Opus) that authors strengths, weaknesses, and next steps
 6. **Confirm** — Report displayed inline and saved to `~/.tweakidea/runs/`
 
-The pipeline optionally asks if you want an HTML report alongside the markdown scorecard.
+The pipeline produces both a markdown scorecard and an HTML report; at the end it offers to open the HTML in your browser.
 
 ## Suggest: `/tweak:suggest-from-hn`
 
@@ -102,7 +102,7 @@ Output includes a summary table (weighted score, potential, verdict, evidence gr
 ## Prerequisites
 
 - [Claude Code](https://claude.ai/download) installed
-- Model access: **Claude Sonnet** (evaluators + researcher) and **Claude Opus** (merge agent)
+- Model access: **Claude Sonnet** (evaluators + researcher) and **Claude Opus** (narrative agent)
 - [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:suggest-from-hn` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
 
 ## Installation
