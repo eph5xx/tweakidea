@@ -22,20 +22,31 @@ Longer background: [TweakIdea — the origin story](https://ephx.dev/a/tweak-ide
 You:    /tweak:evaluate "A mobile app that lets restaurants sell unsold
         food at a discount 30 minutes before closing"
 
-Claude: [researcher — 90s web search on market, competitors, pricing]
-        [returns research brief: incumbents, TAM estimate, price ranges]
-        [6 founder-fit questions — restaurant ops? distribution? capital?]
+Claude: [researcher kicks off in background — web search on market,
+         competitors, pricing]
+        [extracts hypotheses from your idea — e.g. "restaurants have
+         unsold food at close", "30-min window is enough to sell it"]
+
+        Mark each hypothesis: CONFIRMED / UNCONFIRMED / REJECTED?
+
+You:    [confirms what you already know; leaves the rest unconfirmed]
+
+Claude: [2-4 founder-fit questions on your connection to THIS idea —
+         restaurant ops? distribution? capital?]
 
 You:    [answers inline]
 
 Claude: [launches 14 parallel evaluators, one per dimension]
         [each runs its own targeted web searches for evidence]
-        [compute.py merges scores, weights, grades evidence A+ through F]
-        [Opus synthesizes strengths, weaknesses, next steps]
+        [compute.py aggregates per-dim scores, weights them, grades
+         evidence A+ through F]
+        [Opus synthesizes strengths/weaknesses, next steps, and a
+         potential-uplift narrative driven by your unconfirmed
+         hypotheses]
 
-        PIVOT — 3.4/5.0 weighted | 4.0/5.0 potential | Evidence: C+
-        Weakest: Solution Gap 2/5, Defensibility 2/5, Incumbents 2/5
-        [report.html opens in browser]
+        PIVOT — Promising, address weak areas | Weighted 3.4/5.0
+        | Potential 4.0/5.0 | Evidence C+
+        [14-dim scorecard; report.html opens in browser]
 
 You:    /tweak:improve latest
 
