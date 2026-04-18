@@ -158,7 +158,7 @@ npx tweakidea
 The installer prompts for global (`~/.claude`) or local (`./.claude`) placement. After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `show`, and `analyze-hn-post` in the autocomplete.
 
 > [!NOTE]
-> First `/tweak:evaluate` run takes 30-40 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
+> First `/tweak:evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
 
 <details>
 <summary>Uninstall</summary>
