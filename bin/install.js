@@ -113,12 +113,13 @@ function rmrf(target) {
 
 // ── Cleanup ─────────────────────────────────────────────────────────────────────
 
-// ── Legacy cleanup (v1.0 → v1.1 upgrade) ────────────────────────────────────────
+// ── Legacy cleanup (past-version upgrades) ──────────────────────────────────────
 
-// Items removed between v1.0 and v1.1. This block cleans them from existing
-// .claude/ installs even though they're no longer in AGENT_FILES / SKILL_DIRS.
+// Items removed or renamed in past releases. Cleans them from existing .claude/
+// installs even though they're no longer in AGENT_FILES / SKILL_DIRS / COMMAND_FILES.
 const LEGACY_AGENTS = ['ti-merger.md'];
 const LEGACY_SKILL_DIRS = ['ti-html-report'];
+const LEGACY_COMMAND_FILES = ['commands/tweak/suggest-from-hn.md'];
 
 function legacyCleanup(targetDir) {
   let removed = 0;
@@ -136,8 +137,20 @@ function legacyCleanup(targetDir) {
       removed++;
     }
   }
+  for (const cmdSrc of LEGACY_COMMAND_FILES) {
+    const cmdPath = path.join(targetDir, cmdSrc);
+    if (fs.existsSync(cmdPath)) {
+      fs.unlinkSync(cmdPath);
+      removed++;
+    }
+    const skillPath = path.join(targetDir, 'skills', cmdSrcToSkillName(cmdSrc));
+    if (fs.existsSync(skillPath)) {
+      rmrf(skillPath);
+      removed++;
+    }
+  }
   if (removed > 0) {
-    console.log(`${dim}Removed ${removed} legacy v1.0 file(s) during upgrade.${reset}`);
+    console.log(`${dim}Removed ${removed} legacy file(s) during upgrade.${reset}`);
   }
 }
 
@@ -399,7 +412,7 @@ function install(isGlobal) {
   console.log(`${cyan}Get started:${reset}`);
   console.log(`  ${bold}/tweak:browse-hn${reset} ${dim}[topic] [today|week|month|all]${reset}`);
   console.log(`  ${bold}/tweak:diff${reset} ${dim}<run1> <run2> or latest${reset}`);
-  console.log(`  ${bold}/tweak:suggest-from-hn${reset} ${dim}<hn-url-or-id>${reset}`);
+  console.log(`  ${bold}/tweak:analyze-hn-post${reset} ${dim}<hn-url-or-id>${reset}`);
   console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);
   console.log(`  ${bold}/tweak:improve${reset} ${dim}latest${reset}`);
   console.log(`  ${bold}/tweak:list${reset} ${dim}runs 20${reset}`);

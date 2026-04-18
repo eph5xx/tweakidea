@@ -9,7 +9,7 @@ allowed-tools:
 
 ## Purpose
 
-List what the founder has accumulated under `~/.tweakidea/`: evaluation runs from `/tweak:evaluate`, HN analyses from `/tweak:suggest-from-hn`, and founder profiles. Read-only.
+List what the founder has accumulated under `~/.tweakidea/`: evaluation runs from `/tweak:evaluate`, HN analyses from `/tweak:analyze-hn-post`, and founder profiles. Read-only.
 
 $ARGUMENTS
 

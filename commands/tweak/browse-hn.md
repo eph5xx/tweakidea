@@ -1,6 +1,6 @@
 ---
 name: tweak:browse-hn
-description: Browse HN posts via Algolia search to find candidates for /tweak:suggest-from-hn
+description: Browse HN posts via Algolia search to find candidates for /tweak:analyze-hn-post
 argument-hint: "[topic] [today|week|month|all]"
 allowed-tools:
   - Bash
@@ -12,7 +12,7 @@ skills:
 
 ## Purpose
 
-Discover HN posts worth feeding into `/tweak:suggest-from-hn`. Takes an optional topic + time window from `$ARGUMENTS` (or one follow-up question), searches HN via `hnsearch.py`, scores each result as an idea seed, and prints a ranked table inline. Read-only.
+Discover HN posts worth feeding into `/tweak:analyze-hn-post`. Takes an optional topic + time window from `$ARGUMENTS` (or one follow-up question), searches HN via `hnsearch.py`, scores each result as an idea seed, and prints a ranked table inline. Read-only.
 
 $ARGUMENTS
 
@@ -63,7 +63,7 @@ If the array is empty, tell the user nothing matched{query_phrase} in the select
 
 ### Score
 
-For each hit, assign SCORE 1–5 answering: **"how likely is this thread to yield a real startup-idea seed when `/tweak:suggest-from-hn` reads its article and comments?"** Use only the JSON fields — this is a triage signal, not a verdict. Apply these steps in order; later steps cannot override earlier ones.
+For each hit, assign SCORE 1–5 answering: **"how likely is this thread to yield a real startup-idea seed when `/tweak:analyze-hn-post` reads its article and comments?"** Use only the JSON fields — this is a triage signal, not a verdict. Apply these steps in order; later steps cannot override earlier ones.
 
 **1. Topic gate (hard filter).** Is this thread about technology, tools, products, workflows, or practices a founder can build on? If no — politics, legal drama, consumer outrage, celebrity news, obituaries, memes, sports, culture-war, corporate gossip, non-tech finance — the score is **1**, regardless of points or comments. If QUERY is non-empty, also collapse clearly off-query hits to 1.
 
@@ -104,6 +104,6 @@ Table (post-sort order):
 
 After the table:
 
-> Run `/tweak:suggest-from-hn <id>` on any candidate to analyze tech shifts and product opportunities.
+> Run `/tweak:analyze-hn-post <id>` on any candidate to analyze tech shifts and product opportunities.
 
-Never write under `~/.tweakidea/`. Never spawn agents. Never call `/tweak:suggest-from-hn` on the user's behalf.
+Never write under `~/.tweakidea/`. Never spawn agents. Never call `/tweak:analyze-hn-post` on the user's behalf.

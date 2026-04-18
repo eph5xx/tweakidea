@@ -1,5 +1,5 @@
 ---
-name: tweak:suggest-from-hn
+name: tweak:analyze-hn-post
 description: Fetch a HN post, identify technology shifts and product opportunities
 argument-hint: <hn-url-or-id>
 allowed-tools:
@@ -54,7 +54,7 @@ which uv
 
 If this fails (exit code non-zero), tell the user:
 
-> The `/tweak:suggest-from-hn` command requires `uv` (Python package runner).
+> The `/tweak:analyze-hn-post` command requires `uv` (Python package runner).
 >
 > Install it:
 > - `curl -LsSf https://astral.sh/uv/install.sh | sh`
@@ -120,16 +120,24 @@ Each opportunity must name: the specific product, who it serves, and why the tim
 Good: "Vulnerability triage platform for OSS maintainers -- curl's Daniel Stenberg is spending hours/day on incoming reports, Linux kernel list went from 3/week to 10/day. No tooling exists for this new volume."
 Bad: "A platform for security stuff"
 
+### What counts as a topical opportunity
+
+Same test as a product opportunity, but "why now" comes from the topic or discussion (pain points, workflows, requests, domain dynamics) rather than a recent capability, cost, or access change.
+
+Good (topical): "Peer-support platform for parents of kids with rare conditions -- commenters describe spending months finding each other on scattered Facebook groups and Reddit threads; no domain-specific hub exists."
+
 ### Analysis steps
 
-1. Identify 3-6 technology shifts evidenced by the article and comments. Each shift must satisfy ALL of:
+1. Identify **up to 3** technology shifts evidenced by the article and comments. Each shift must satisfy ALL of:
    - It describes a specific capability, cost reduction, or access change (not a vague trend)
    - There is evidence from the article or comments that this shift is real and recent
    - It creates at least one concrete product opportunity that did not exist before
 
-2. For each shift, identify 1-3 product opportunities. Every opportunity must pass this test: would a competent engineer reading this know what to build and for whom?
+2. For each shift, identify **up to 3** product opportunities. Every opportunity must pass this test: would a competent engineer reading this know what to build and for whom?
 
-3. Do NOT pad with weak opportunities. Three strong shifts with two opportunities each is far better than six shifts with filler.
+3. Separately, identify 0 or 1 topical opportunities section with **up to 3** topical opportunities. Include it only when the discussion surfaces genuinely interesting product ideas not explained by any tech shift.
+
+4. Do NOT pad with weak opportunities. Omit a shift or the topical section entirely if nothing qualifies.
 
 ---
 
@@ -150,7 +158,7 @@ Source: https://news.ycombinator.com/item?id={item_id}
 
 **Why now, not earlier?** [What specific technical threshold was crossed that makes this viable now, not 2 years ago?]
 
-**Product opportunities:**
+**Product opportunities:** (max 3 bullets)
 - **[Opportunity name].** [Description: what it is, who it serves, why the timing is right. Ground this in evidence from the discussion -- quote or cite specific commenters where relevant.]
 - **[Another opportunity].** [...]
 
@@ -160,28 +168,47 @@ Source: https://news.ycombinator.com/item?id={item_id}
 
 ---
 
+## Topical opportunities
+
+[One short paragraph on why this topic is an interesting product space. Ground in the discussion.]
+
+**Opportunities:** (max 3 bullets)
+- **[Opportunity name].** [Description: what it is, who it serves, why it is interesting now. Cite commenters where relevant.]
+- **[Another opportunity].** [...]
+
+---
+
 ## Meta-pattern
 
-[One paragraph tying all the shifts together. What common dynamic connects them? What does this suggest about where value is migrating? This should be a genuine insight, not a generic summary.]
+[One paragraph tying the shifts (and topical opportunities, if any) together. What common dynamic connects them? What does this suggest about where value is migrating? This should be a genuine insight, not a generic summary.]
 ```
+
+Omit the `## Topical opportunities` section entirely if Phase 4 identified none.
+
+### Show the report in chat
+
+After writing `shifts.md`, print to the user:
+
+1. A clickable markdown link to the file: `[shifts.md]({OUT_DIR}/shifts.md)`
+2. The full contents of `shifts.md` pasted directly into chat (verbatim, no summarization).
+
+This gives the user the context they need before answering the Phase 6 confirmation questions.
 
 ---
 
 ## Phase 6: Confirm Opportunities
 
-Use AskUserQuestion to present product opportunities for user confirmation. Create one question per shift with `multiSelect: true`, where each product opportunity is an option.
+Use AskUserQuestion to present product opportunities for user confirmation. Create one question per shift (and one for the topical section, if present) with `multiSelect: true`, where each product opportunity is an option.
 
 For each question:
-- `question`: "Which opportunities from '[Shift Title]' do you want to develop into full ideas?"
-- `header`: Short shift label (max 12 chars)
+- `question`: "Which opportunities from '[Shift Title]' do you want to develop into full ideas?" — for the topical section: "Which topical opportunities do you want to develop into full ideas?"
+- `header`: short label for the shift or section (e.g. `Topical`)
 - `multiSelect`: true
-- `options`: One option per opportunity, with:
-  - `label`: The opportunity name
-  - `description`: One-sentence summary of what it is and who it serves
+- `options`: one per opportunity (`label` = opportunity name, `description` = one-sentence summary), plus a final sentinel `label: "Nothing here"` / `description: "None of these are worth developing."`
 
-Since AskUserQuestion supports 1-4 questions per call, batch shifts into groups of up to 4. If there are more than 4 shifts, make additional AskUserQuestion calls for the remaining shifts.
+If `Nothing here` is selected, ignore all other selections for that question.
 
-Collect all confirmed opportunities from the user's responses. If the user selected nothing across all shifts, skip to Phase 7 (closing).
+Batch shifts + optional topical into a single AskUserQuestion call. Collect confirmed opportunities; if nothing was confirmed, skip to Phase 7.
 
 ---
 
@@ -200,22 +227,22 @@ Source: https://news.ycombinator.com/item?id={item_id}
 
 ## 1. [Idea Title]
 
-**Problem:** [Detailed problem statement grounded in evidence from the article and comments. Cite specific commenters, data points, and quotes. Explain the pain point, who experiences it, and what the current alternatives are. This should be 1-2 substantial paragraphs.]
+**Problem:** [Problem statement grounded in evidence from the article and comments. Cite specific commenters, data points, and quotes. Explain the pain point, who experiences it, and what the current alternatives are. Soft limit: 6-10 sentences.]
 
-**Solution:** [Detailed solution: what the product is, who it serves, how it works, pricing model, go-to-market angle, and why the timing is right given the shift. Include competitive positioning and evidence from the discussion. This should be 1-2 substantial paragraphs.]
+**Solution:** [Solution: what the product is, who it serves, how it works, pricing model, go-to-market angle, and why the timing is right. Include competitive positioning and evidence from the discussion. Soft limit: 6-10 sentences.]
 
 ---
 ```
 
-Number ideas sequentially starting from 1, regardless of which original shift or opportunity number they came from. Each idea gets a thorough Problem and Solution treatment -- more detailed than the bullet-point format in shifts.md.
+Number ideas sequentially starting from 1, regardless of which shift, topical section, or opportunity position they came from.
 
 ### Close
 
-Tell the user:
-- The file path for `shifts.md`
-- The file path for `ideas.md` (if created)
-- Counts: shifts identified, total opportunities, confirmed ideas
-- Do NOT summarize or repeat the report contents -- the user will read the files
+Tell the user, using clickable markdown links:
+- `[shifts.md]({OUT_DIR}/shifts.md)`
+- `[ideas.md]({OUT_DIR}/ideas.md)` (if created)
+- Counts: shifts identified, topical opportunities (if any), total opportunities presented, confirmed ideas
+- Do NOT summarize or repeat the report contents -- the user has already seen shifts.md in chat and can open ideas.md.
 
 Then suggest:
 
