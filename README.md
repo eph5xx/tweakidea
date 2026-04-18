@@ -4,14 +4,14 @@ A Claude Code skillset that helps founders evaluate startup problems and discove
 
 ## Browse: `/tweak:browse-hn`
 
-Searches Hacker News via Algolia and prints a ranked table of threads worth feeding into `/tweak:suggest-from-hn`. Each hit is scored 1–5 on how likely it is to yield a real startup-idea seed. Read-only — nothing is saved to `~/.tweakidea/`.
+Searches Hacker News via Algolia and prints a ranked table of threads worth feeding into `/tweak:analyze-hn-post`. Each hit is scored 1–5 on how likely it is to yield a real startup-idea seed. Read-only — nothing is saved to `~/.tweakidea/`.
 
 - `/tweak:browse-hn llm agents week` — topic `llm agents`, last 7 days
 - `/tweak:browse-hn robotics` — topic only; command asks for a time window
 - `/tweak:browse-hn today` — window only; browses everything recent
 - `/tweak:browse-hn` — fully interactive
 
-Pick any `id` from the table and run `/tweak:suggest-from-hn <id>` to analyze tech shifts and surface product opportunities.
+Pick any `id` from the table and run `/tweak:analyze-hn-post <id>` to analyze tech shifts and surface product opportunities.
 
 ## Evaluate: `/tweak:evaluate`
 
@@ -26,7 +26,7 @@ Runs 14 independent subagents in parallel — one per problem dimension — then
 
 The pipeline produces both a markdown scorecard and an HTML report; at the end it offers to open the HTML in your browser.
 
-## Suggest: `/tweak:suggest-from-hn`
+## Suggest: `/tweak:analyze-hn-post`
 
 Fetches a Hacker News post (article + full comment tree), identifies technology shifts, and surfaces product opportunities grounded in evidence from the discussion.
 
@@ -103,7 +103,7 @@ Output includes a summary table (weighted score, potential, verdict, evidence gr
 
 - [Claude Code](https://claude.ai/download) installed
 - Model access: **Claude Sonnet** (evaluators + researcher) and **Claude Opus** (narrative agent)
-- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:suggest-from-hn` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
+- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:analyze-hn-post` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
 
 ## Installation
 
@@ -119,7 +119,7 @@ To uninstall:
 npx tweakidea -u
 ```
 
-After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `show`, and `suggest-from-hn` in the autocomplete.
+After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `show`, and `analyze-hn-post` in the autocomplete.
 
 For better article extraction from JS-heavy sites, optionally run `uv run playwright install chromium` once. Without it, the script falls back to plain HTTP which works fine for most sites.
 
@@ -136,7 +136,7 @@ Pick an `id` from the ranked table, then:
 **Discover opportunities from HN:**
 
 ```
-/tweak:suggest-from-hn https://news.ycombinator.com/item?id=43374458
+/tweak:analyze-hn-post https://news.ycombinator.com/item?id=43374458
 ```
 
 **Evaluate an idea:**

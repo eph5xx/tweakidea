@@ -21,7 +21,7 @@ const COMMAND_FILES = [
   'commands/tweak/improve.md',
   'commands/tweak/list.md',
   'commands/tweak/show.md',
-  'commands/tweak/suggest-from-hn.md',
+  'commands/tweak/analyze-hn-post.md',
 ];
 
 function cmdSrcToSkillName(cmdSrc) {

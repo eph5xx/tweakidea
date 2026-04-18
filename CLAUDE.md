@@ -2,13 +2,13 @@
 
 **TweakIdea**
 
-A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Seven commands: `/tweak:browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweak:suggest-from-hn`; `/tweak:suggest-from-hn` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweak:diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`.
+A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Seven commands: `/tweak:browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweak:analyze-hn-post`; `/tweak:analyze-hn-post` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweak:diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`.
 
 **Core Value:** Help founders make better decisions -- evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
 ### Constraints
 
-- **Platform**: Claude Code CLI -- slash commands + agent definitions only. Exceptions: `suggest-from-hn` and `browse-hn` both shell out to `uv` + Python (`hnparse.py` and `hnsearch.py`) for HN fetching
+- **Platform**: Claude Code CLI -- slash commands + agent definitions only. Exceptions: `analyze-hn-post` and `browse-hn` both shell out to `uv` + Python (`hnparse.py` and `hnsearch.py`) for HN fetching
 - **Evaluation model**: All 14 dimensions from EVALUATION.md must be covered, no skipping
 - **Independence**: Each subagent evaluates its dimension without seeing other dimensions' results
 - **Clean context**: Each evaluation run should be independent -- no cross-contamination between runs
