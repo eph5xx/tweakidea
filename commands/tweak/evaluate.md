@@ -104,13 +104,13 @@ python3 --version | awk '{print $2}'
 uname -s | tr '[:upper:]' '[:lower:]'
 ```
 
-Read the `tweakidea_version` from `package.json` (use the Read tool on `.claude/package.json` or the installed location; if not found, use `"unknown"`).
+Read the `tweakidea_version` from `.claude/tweakidea/VERSION` (plain text file written by the installer). If not found, use `"unknown"`.
 
 Use the Write tool to create `{RUN_DIR}/version.json` with this exact content (substitute real values; schema_version = 1 for Phase 1):
 
 ```json
 {
-  "tweakidea_version": "{from package.json}",
+  "tweakidea_version": "{from .claude/tweakidea/VERSION}",
   "schema_version": 1,
   "node_version": "{from node --version}",
   "python_version": "{from python3 --version}",
