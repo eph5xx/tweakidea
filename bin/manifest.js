@@ -20,6 +20,7 @@ const COMMAND_FILES = [
   'commands/tweak/evaluate.md',
   'commands/tweak/improve.md',
   'commands/tweak/list.md',
+  'commands/tweak/share.md',
   'commands/tweak/show.md',
   'commands/tweak/analyze-hn-post.md',
 ];
