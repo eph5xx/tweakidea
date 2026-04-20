@@ -141,6 +141,15 @@ Opens any artifact under `~/.tweakidea/` by timestamp, keyword, HN id, founder n
 - `/tweak:show hn 43374458` — an HN analysis by id
 - `/tweak:show best ideas` — ranked query over saved runs
 
+### `/tweak:share`
+
+Uploads a run's `report.html` to a secret GitHub gist and prints two links — the gist itself and an `htmlpreview.github.io` rendered URL you can paste into Slack or email. Requires the [GitHub CLI](https://cli.github.com) (`gh auth login`).
+
+- `/tweak:share` — share the most recent run
+- `/tweak:share latest` — same, explicit
+- `/tweak:share 20260412-143022` — a specific run by timestamp
+- `/tweak:share restaurant food waste` — keyword match on idea text
+
 ## Prerequisites
 
 > [!IMPORTANT]
@@ -155,7 +164,7 @@ Opens any artifact under `~/.tweakidea/` by timestamp, keyword, HN id, founder n
 npx tweakidea
 ```
 
-The installer prompts for global (`~/.claude`) or local (`./.claude`) placement. After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `show`, and `analyze-hn-post` in the autocomplete.
+The installer prompts for global (`~/.claude`) or local (`./.claude`) placement. After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `share`, `show`, and `analyze-hn-post` in the autocomplete.
 
 > [!NOTE]
 > First `/tweak:evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
