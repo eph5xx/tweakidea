@@ -24,7 +24,7 @@ $ARGUMENTS
 Everything lives under `$HOME/.tweakidea/runs/<YYYYMMDD-HHMMSS>/`. Files needed:
 
 - `idea.json` — `problem`, `solution`, `codename`, `icon`, `subtitle`
-- `numbers.json` — `weighted_total`, `potential_total`, `verdict_bucket`, `verdict_label`, `overall_grade`, `rankings[]` (per-dimension `dim`, `slug`, `weight`, `score`, `potential`, `evidence_strength.grade`), `dealbreaker_dims[]`, `assumption_impact_math[]`
+- `numbers.json` — `weighted_total`, `potential_total`, `verdict_bucket`, `verdict_label`, `overall_grade`, `rankings[]` (per-dimension `dim`, `slug`, `weight`, `score`, `potential`, `evidence_strength.grade`), `assumption_impact_math[]`
 - `strengths-weaknesses.json` — 6 entries: `[{kind, dim, score, why}]`
 - `potential.json` — `{dimensions[], assumptions[], narrative}`
 - `next-steps.json` — `[{task, dim, from, to, weighted_uplift, rationale}]`
@@ -67,7 +67,7 @@ The other files are optional — degrade gracefully if missing.
 For each dimension in `numbers.json → rankings[]`:
 
 - `weighted_gap = weight × (5 − score)`
-- `is_dealbreaker = slug in dealbreaker_dims`
+- `is_dealbreaker = score == 1`
 
 Sort by: dealbreakers first, then `weighted_gap` descending, then `evidence_strength.grade` ascending (F before D before C).
 
@@ -138,7 +138,7 @@ Then the original idea summary:
 **Weakest dimensions:** {bottom 5 with scores, e.g. "Urgency (2), Defensibility (2), Mandatory Nature (2), WTP (3), Founder-Market Fit (3)"}
 ```
 
-If `dealbreaker_dims` is non-empty, add: `**Dealbreakers:** {list of dimension names scoring 1}`
+If any dimension in `rankings[]` has `score == 1`, add: `**Dealbreakers:** {list of those dimension names}`
 
 Then a horizontal rule `---`.
 
