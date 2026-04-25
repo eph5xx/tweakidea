@@ -37,7 +37,7 @@ Source content lives in root-level directories (`agents/`, `commands/`, `skills/
 **Do:**
 
 - Re-run `node bin/install.js --local` after editing any file in `agents/`, `commands/`, or `skills/`
-- Run `npm test` before committing — exercises both Node and Python test suites
+- Run `npm test` and `uv run scripts/tests/run_tests.py` before committing — Node and Python suites run independently
 - Validate JSON changes against the matching schema in `schemas/` when modifying agent output formats
 - Keep all 14 dimensions — never skip, merge, or remove a dimension
 
