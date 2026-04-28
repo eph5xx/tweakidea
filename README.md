@@ -4,11 +4,29 @@
 [![npm downloads](https://img.shields.io/npm/dm/tweakidea.svg)](https://www.npmjs.com/package/tweakidea)
 [![license](https://img.shields.io/npm/l/tweakidea.svg)](LICENSE)
 
-Stress-test a startup idea across 14 weighted dimensions — with evidence grades, assumption tracking, and three rewrites targeting your weakest scores.
+An independent second opinion on your startup idea. Free, evidence-backed, ready in 10 minutes.
 
 ```bash
 npx tweakidea
 ```
+
+**What you get:**
+
+- **A scorecard** — verdict (PIVOT / GO / KILL), weighted score, letter-graded evidence
+- **A 14-dimension breakdown** — per-dim scores with what's strong, what's weak, what's untested
+- **An assumption ledger** — every untested claim in your idea, surfaced so you know what to validate next
+- **A shareable HTML report** — opens in your browser, easy to revisit
+
+**Why not just ask ChatGPT?**
+
+- 14 evaluators run in parallel — one per dimension
+- Each runs its own independent targeted web search and cites sources
+- Every untested assumption in your idea is surfaced
+- Output is a structured beautiful scorecard you can revisit and share, not a one-shot paragraph
+
+Browse full interactive reports: [Airlock](https://ephx.dev/reports/airlock) · [Mirror](https://ephx.dev/reports/mirror) · [Giftwrap](https://ephx.dev/reports/giftwrap)
+
+[![TweakIdea HTML report — Mirror](assets/report.png)](https://ephx.dev/reports/mirror)
 
 ## Why I built this
 
@@ -54,12 +72,6 @@ Claude: [three rewrites — small reframe, medium reshape, big reimagine]
         [each targets the weakest dimensions with rubric-grounded rationale]
         [paste any rewrite into /tweak:evaluate to re-score]
 ```
-
-## Example reports
-
-Browse full interactive reports: [Airlock](https://ephx.dev/reports/airlock) · [Mirror](https://ephx.dev/reports/mirror) · [Giftwrap](https://ephx.dev/reports/giftwrap)
-
-[![TweakIdea HTML report — Mirror](assets/report.png)](https://ephx.dev/reports/mirror)
 
 ## The 14 Dimensions
 
