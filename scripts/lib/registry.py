@@ -24,7 +24,7 @@ def load_registry(path: Optional[pathlib.Path] = None) -> List[Dimension]:
     """Parse EVALUATION.md and return 14 Dimension NamedTuples in index order.
 
     Raises ValueError if the registry doesn't contain exactly 14 rows or if
-    any row doesn't have 7 pipe-delimited columns.
+    any row doesn't have 6 pipe-delimited columns.
     """
     src_path = path or _EVALUATION_MD
     lines = src_path.read_text().splitlines()
