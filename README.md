@@ -165,7 +165,7 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 ## Prerequisites
 
 > [!IMPORTANT]
-> Requires access to both **Claude Sonnet** (14 evaluators + researcher) and **Claude Opus** (narrative synthesis). Without both, the pipeline won't complete.
+> Requires access to both **Claude Sonnet** (14 evaluators + researcher + extractor) and **Claude Opus** (narrative synthesis). Without both, the pipeline won't complete.
 
 - [Claude Code](https://claude.ai/download) installed
 - [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:analyze-hn-post` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
