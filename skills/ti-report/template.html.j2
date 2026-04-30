@@ -34,7 +34,7 @@
 {% set verdict_pill = "red" %}
 {% endif %}
 {% macro grade_class(g) -%}
-{{ g | lower | replace('+', '') | replace('-', '') | replace('a', 'a') | replace('b', 'b') | replace('c', 'c') | replace('d', 'd') | replace('f', 'f') }}
+{{ g | lower | replace('+', '') | replace('-', '') }}
 {%- endmacro %}
 {% set eg = numbers.overall_grade %}
 {% if eg.startswith('A') %}{% set eg_class = 'a' %}
