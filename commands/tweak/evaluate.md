@@ -253,7 +253,7 @@ Zero-hypothesis case: write `[]` to assumptions.json. Proceed to Stage 2.
 
 ### Step 1: Load dimension registry
 
-Read `.claude/skills/ti-scoring/EVALUATION.md` via the Read tool. Parse the Dimension Registry table to obtain the 14 dimension entries (name, slug, research cluster, context variant). The 7-column format is a stability contract -- if parsing fails, abort with a clear error.
+Read `.claude/skills/ti-scoring/EVALUATION.md` via the Read tool. Parse the Dimension Registry table to obtain the 14 dimension entries (name, slug, research cluster, context variant). The 6-column format is a stability contract -- if parsing fails, abort with a clear error.
 
 ### Step 2: Founder-fit opt-in gate
 

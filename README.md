@@ -12,7 +12,7 @@ npx tweakidea
 
 **What you get:**
 
-- **A scorecard** — verdict (PIVOT / GO / KILL), weighted score, letter-graded evidence
+- **A scorecard** — verdict (PIVOT / GO / STOP), weighted score, letter-graded evidence
 - **A 14-dimension breakdown** — per-dim scores with what's strong, what's weak, what's untested
 - **An assumption ledger** — every untested claim in your idea, surfaced so you know what to validate next
 - **A shareable HTML report** — opens in your browser, easy to revisit
