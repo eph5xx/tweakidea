@@ -175,7 +175,7 @@ Direction values:
 - `steady` — no expected change
 - `risk: down` — the tweak may weaken this dimension
 
-Always output **Target User:** for every tweak. For runs without `target_user` in `idea.json`, infer the original target user from the problem statement and rewrite from there.
+Always output **Target User:** for every tweak. For runs without `target_user` in `idea.json`, infer the original target user from the problem and solution and rewrite from there. Write the target user as plain text, the same as Problem and Solution, with no note that it was inferred.
 
 Only include dimensions where the direction is NOT steady. Focus the table on what moves.
 
