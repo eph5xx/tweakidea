@@ -8,6 +8,10 @@
 
 **Solution:** {{ idea.solution | linkify }}
 
+{% if idea.target_user %}
+**Target User:** {{ idea.target_user | linkify }}
+
+{% endif %}
 ## Summary
 
 - **Weighted score:** {{ numbers.weighted_total }}/5.0

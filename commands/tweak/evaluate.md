@@ -120,12 +120,13 @@ Use the Write tool to create `{RUN_DIR}/version.json` with this exact content (s
 }
 ```
 
-### Step 5: Problem/Solution Split and Write idea.json
+### Step 5: Problem/Solution/Target User Split and Write idea.json
 
-After IDEA_TEXT is captured, parse it into two components:
+After IDEA_TEXT is captured, parse it into three components:
 
 1. **PROBLEM**: The pain, need, or opportunity the founder describes
 2. **SOLUTION**: The proposed product, service, or approach to address the problem
+3. **TARGET_USER**: The specific person or organization who has the problem and who the product is for
 
 Display the split to the founder for confirmation:
 
@@ -133,11 +134,12 @@ Display the split to the founder for confirmation:
 >
 > **Problem:** [extracted problem statement]
 > **Solution:** [extracted solution approach]
+> **Target User:** [extracted target user]
 >
 > Does this capture your idea correctly?
 
 Use AskUserQuestion with options:
-- "Yes, that's right" -- proceed with PROBLEM and SOLUTION as parsed
+- "Yes, that's right" -- proceed with PROBLEM, SOLUTION, and TARGET_USER as parsed
 - "Let me clarify" -- allow the founder to provide corrections, then re-split
 
 **If IDEA_TEXT describes only a problem with no clear solution:**
@@ -149,12 +151,22 @@ Use AskUserQuestion: "What solution or approach are you considering for this pro
 
 Store the response as SOLUTION. Keep the original IDEA_TEXT description as PROBLEM.
 
+**If IDEA_TEXT has no clear target user:**
+
+Use AskUserQuestion: "Who is the target user for this?"
+
+Store the response as TARGET_USER.
+
+**If both SOLUTION and TARGET_USER are missing:** ask both questions in a single AskUserQuestion call rather than two separate prompts.
+
 After confirmation, recombine into structured IDEA_TEXT for all downstream stages:
 
 ```
 Problem: [PROBLEM]
 
 Solution: [SOLUTION]
+
+Target User: [TARGET_USER]
 ```
 
 Before writing `idea.json`, also derive three optional display fields used by the report's doc header:
@@ -172,6 +184,7 @@ Use the Write tool to create `{RUN_DIR}/idea.json` with the parsed IDEA_TEXT:
   "text": "{full recombined text}",
   "problem": "{problem statement}",
   "solution": "{solution statement}",
+  "target_user": "{target user statement}",
   "codename": "{optional short codename}",
   "icon": "{optional single emoji}",
   "subtitle": "{optional one-sentence framing}"

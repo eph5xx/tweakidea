@@ -164,6 +164,12 @@
       <div class="idea-field-label">Solution</div>
       <p class="idea-field-body">{{ idea.solution | linkify }}</p>
     </div>
+    {% if idea.target_user %}
+    <div class="idea-field">
+      <div class="idea-field-label">Target User</div>
+      <p class="idea-field-body">{{ idea.target_user | linkify }}</p>
+    </div>
+    {% endif %}
   </div>
 
   <h2 class="section-heading" id="summary">Summary</h2>

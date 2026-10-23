@@ -18,7 +18,7 @@ $ARGUMENTS
 
 Everything lives under `$HOME/.tweakidea/runs/<YYYYMMDD-HHMMSS>/`. Files needed per run:
 
-- `idea.json` — `problem`, `solution`, `codename`, `icon`, `subtitle`
+- `idea.json` — `problem`, `solution`, `target_user` (absent in runs before v3.0.0), `codename`, `icon`, `subtitle`
 - `numbers.json` — `weighted_total`, `potential_total`, `verdict_bucket`, `verdict_label`, `overall_grade` (may be absent in older runs), `rankings[]` with per-dimension `dim`, `slug`, `weight`, `score`, `potential`, `weighted_score`, `evidence_strength.grade`
 - `dimensions/<slug>.json` — `key_finding` (read only for movers, not all 14)
 
@@ -84,7 +84,7 @@ Then two intro lines — one sentence per idea. Use `subtitle` from `idea.json` 
 **Run B** (Mon DD): [one-sentence summary of Run B's idea]
 ```
 
-Then a *Difference* line. Compare the two `problem` + `solution` texts:
+Then a *Difference* line. Compare the two `problem` + `solution` + `target_user` texts:
 - If both are identical: `*Same idea text — differences come from updated evidence or profile.*`
 - If the same core idea but rewritten: synthesize a one-liner about what changed, e.g. `*Run B sharpens the target customer and repositions as sidecar middleware.*`
 - If entirely different ideas: `*Different ideas — this is a cross-idea comparison.*`
@@ -143,7 +143,7 @@ One bullet per mover. Keep each to one sentence. If the dimension file was missi
 | {dim} | {weight as %} | {score} | {potential} |
 ```
 
-### Problem + Solution
+### Problem + Solution + Target User
 
 ```
 ### Problem
@@ -157,7 +157,15 @@ One bullet per mover. Keep each to one sentence. If the dimension file was missi
 **Run A:** {A.solution}
 
 **Run B:** {B.solution}
+
+### Target User
+
+**Run A:** {A.target_user}
+
+**Run B:** {B.target_user}
 ```
+
+If a run has no `target_user` (runs before v3.0.0), print `(not recorded)` in its place.
 
 ## Edge cases
 
@@ -167,6 +175,7 @@ One bullet per mover. Keep each to one sentence. If the dimension file was missi
 - **All 14 moved** → skip Unchanged section.
 - **Missing dimension files** → still show the mover row (scores come from `numbers.json`); note "(detail unavailable)" in the why-they-moved bullet.
 - **Missing `overall_grade`** → omit Evidence row from summary table.
+- **Missing `target_user`** → print `(not recorded)` for that run in the Target User section.
 - **Missing `codename`/`icon`/`subtitle`** → degrade gracefully (no icon, no codename, use first sentence of problem).
 
 Never write under `~/.tweakidea/`. Never spawn agents.
