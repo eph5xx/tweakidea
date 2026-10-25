@@ -47,7 +47,7 @@ Reference data for all founder profile operations. The orchestrator (`evaluate.m
 
 ## Profile Creation Questions
 
-Ask in chat (see `references/runtime.md`): send one message with the preamble below and these 5 questions as a numbered list, then wait for the reply. The founder can answer all of them in one reply. If an answer is missing or unclear, ask only about that question in a short follow-up message.
+Ask in chat: the preamble, then these 5 questions as a numbered list.
 
 | # | Question | Maps to Section |
 |---|----------|-----------------|
@@ -57,7 +57,7 @@ Ask in chat (see `references/runtime.md`): send one message with the preamble be
 | 4 | "What can you or your team build? (Technical strengths, capabilities)" | Build Capabilities |
 | 5 | "What drives you to work on hard problems? (Personal motivation, what keeps you going)" | Drive & Commitment |
 
-Preamble before asking: "I don't have a founder profile yet. I'll ask a few quick questions to understand your background -- this helps evaluate founder-market fit and only needs to happen once."
+Preamble: "I don't have a founder profile yet. I'll ask a few quick questions to understand your background -- this helps evaluate founder-market fit and only needs to happen once."
 
 If during the questioning flow the user volunteers additional relevant information beyond what was asked, capture it in the appropriate section. Do not add new sections.
 
@@ -96,7 +96,7 @@ Adapt to the specific idea -- do not use these verbatim if they don't fit:
 
 ### Presentation
 
-Ask in chat (see `references/runtime.md`): send one message with the 2-4 fit questions as a numbered list of open questions, then wait for the reply. Do NOT ask them one at a time and do NOT offer answer options. Use this format:
+Ask in chat with this message, without answer options:
 
 ```
 A few questions about how your background fits this idea. Answer in one reply, numbered to match:
@@ -107,7 +107,7 @@ A few questions about how your background fits this idea. Answer in one reply, n
 Short answers are fine. Skip any that don't apply.
 ```
 
-Map each part of the reply to its question number. A skipped question gets the answer "(no answer)".
+A skipped question gets the answer "(no answer)".
 
 ### Storage
 
@@ -132,20 +132,18 @@ After fit Q&A, review answers for NEW persistent attributes about the founder --
 
 ### Update mechanics
 
-1. If no answers qualify, skip entirely.
-2. Otherwise ask in chat (see `references/runtime.md`) with one message listing the items worth saving, numbered, each with a one-line summary and its target FOUNDER.md section:
+If no answers qualify, skip this. Otherwise ask in chat:
 
-   ```
-   Some of your answers could be saved to your founder profile for future runs:
+```
+Some of your answers could be saved to your founder profile for future runs:
 
-   1. [summary] -> [Section name]
-   2. [summary] -> [Section name]
+1. [summary] -> [Section name]
+2. [summary] -> [Section name]
 
-   Reply with the numbers to save (like "1, 3"), or "none".
-   ```
+Reply with the numbers to save (like "1, 3"), or "none".
+```
 
-3. If the founder picks items: read current FOUNDER.md, **append** each to its section (never replace), write the updated file, and update the "Last updated" date in the footer.
-4. If the founder replies "none", change nothing.
+Append each picked item to its section in FOUNDER.md (never replace) and update the "Last updated" date in the footer.
 
 ### Old-Format Section Name Mapping
 

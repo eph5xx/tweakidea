@@ -17,7 +17,7 @@ If no time keyword is present, leave DAYS unset — Phase 2 will ask.
 
 **QUERY** is whatever remains after stripping the time phrase (trimmed). An empty QUERY is a valid "browse everything" search and must proceed silently.
 
-**Unintelligible-query guard.** Only if the residual QUERY is obvious nonsense (random characters, contradictory, clearly off-HN like "make me a coffee"), ask once in chat (see `runtime.md`): `"I couldn't parse '{ARGS}' as an HN topic. What should I search for? (reply "all" to browse all recent stories)"`, then wait for the reply. A reply of "all" or a blank reply means QUERY = "". When in doubt, pass the query through.
+**Unintelligible-query guard.** Only if the residual QUERY is obvious nonsense (random characters, contradictory, clearly off-HN like "make me a coffee"), ask once in chat: `"I couldn't parse '{ARGS}' as an HN topic. What should I search for? (reply "all" to browse all recent stories)"`. A reply of "all" or a blank reply means QUERY = "". When in doubt, pass the query through.
 
 ## Phase 2 — Time range (only if DAYS unset)
 

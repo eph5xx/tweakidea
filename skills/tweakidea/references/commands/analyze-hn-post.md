@@ -11,7 +11,7 @@ You analyze Hacker News discussions to identify technology shifts and product op
 1. Extract the numeric item ID from `ARGS`:
    - If it contains `id=`, extract the number after it
    - If it is purely numeric, use it directly
-   - If `ARGS` is empty, ask in chat (see `runtime.md`): "Paste a Hacker News URL or item ID to analyze."
+   - If `ARGS` is empty, ask in chat: "Paste a Hacker News URL or item ID to analyze."
 
 2. Resolve the home directory:
    ```bash
@@ -178,7 +178,7 @@ This gives the user the context they need before answering the Phase 6 confirmat
 
 ## Phase 6: Confirm Opportunities
 
-Ask in chat (see `runtime.md`) with one message that lists every product opportunity, grouped under a heading per shift (and a `Topical` heading, if present) and numbered continuously across groups. Use this format:
+Ask in chat with every product opportunity, grouped under a heading per shift (plus `Topical`, if present) and numbered continuously across groups:
 
 ```
 Which opportunities do you want to develop into full ideas?
@@ -196,7 +196,7 @@ Topical
 Reply with the numbers to develop (like "1, 3"), or "none".
 ```
 
-Then end the turn and wait for the reply. Accept loose formats (commas, spaces, ranges like `2-4`). If a number is out of range, re-ask about it only. The picked numbers are the confirmed opportunities; if the reply is "none", skip to Phase 7.
+The picked numbers are the confirmed opportunities. If none, skip to Phase 7.
 
 ---
 
