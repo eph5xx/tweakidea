@@ -327,6 +327,8 @@ function install(isGlobal) {
   console.log(`  ${bold}/tweakidea share${reset} ${dim}latest${reset}`);
   console.log(`  ${bold}/tweakidea show${reset} ${dim}latest${reset}`);
   console.log('');
+  console.log(`${dim}Legacy installer. Recommended: npx skills add eph5xx/tweakidea${reset}`);
+  console.log('');
 }
 
 // ── Uninstall ───────────────────────────────────────────────────────────────────
@@ -384,6 +386,7 @@ function printHelp() {
   console.log(`
 ${bold}TweakIdea v${pkg.version}${reset}
 14-dimension startup idea evaluator for Claude Code
+${dim}Legacy installer. Recommended: npx skills add eph5xx/tweakidea${reset}
 
 ${bold}Usage:${reset}
   npx tweakidea [options]

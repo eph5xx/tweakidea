@@ -13,7 +13,7 @@ node bin/install.js --local      # refresh ./.claude/
 npm test                          # Node smoke tests
 ```
 
-The installer is the only build step. Always re-run it after changing source files — Claude Code reads from `.claude/`, not from the root-level source directories.
+The legacy installer (`npx tweakidea`) is still the local dev build step. Always re-run it after changing source files — Claude Code reads from `.claude/`, not from the root-level source directories. To check that the `skills` CLI discovers the skill, run `npx skills add . --list`.
 
 ## Project structure
 
@@ -24,8 +24,11 @@ tweakidea/
   CONTRIBUTING.md           # This file
   LICENSE                   # MIT
   package.json              # npm metadata; no runtime deps
+  .claude-plugin/           # Claude Code plugin + marketplace manifests
+  .codex-plugin/            # Codex plugin + marketplace manifests
+  .cursor-plugin/           # Cursor plugin + marketplace manifests
   bin/
-    install.js              # Installer (also handles --uninstall and legacy cleanup)
+    install.js              # Legacy installer, used for local dev (also handles --uninstall and legacy cleanup)
     manifest.js             # Skill name, command list, agent list
   skills/tweakidea/         # The skill (everything here is installed)
     SKILL.md                # Frontmatter, setup, routing, command + reference tables
@@ -91,13 +94,16 @@ All paths below are relative to `skills/tweakidea/`.
 | Improve tweak generation | `references/commands/improve.md` |
 | List / Show browser behavior | `references/commands/list.md`, `references/commands/show.md` |
 | Share / upload behavior | `references/commands/share.md` |
-| Installer behavior | `bin/install.js`, `bin/manifest.js` (repo root) |
+| Legacy installer behavior (also used for local dev) | `bin/install.js`, `bin/manifest.js` (repo root) |
+| Plugin metadata | `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/` (repo root) |
+
+When releasing, bump `version` in `package.json` and in all 3 `plugin.json` files together. `tests/node/plugin.test.cjs` and the release workflow fail if they drift.
 
 ## Testing
 
 Two test suites. CI runs both on every PR via `.github/workflows/test.yml`.
 
-**Node suite** — skill layout, install, upgrade, and pack smoke tests:
+**Node suite** — skill layout, plugin manifests, install, upgrade, and pack smoke tests:
 
 ```bash
 npm test

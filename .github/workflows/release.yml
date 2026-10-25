@@ -33,4 +33,18 @@ jobs:
           fi
           VERSION="${TAG#v}"
           npm version "$VERSION" --no-git-tag-version --allow-same-version
+      - name: Check plugin manifest versions match release tag
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          VERSION="${TAG#v}"
+          status=0
+          for f in .claude-plugin/plugin.json .codex-plugin/plugin.json .cursor-plugin/plugin.json; do
+            got=$(node -p "require('./$f').version")
+            if [ "$got" != "$VERSION" ]; then
+              echo "::error file=$f::version is $got, release tag is $VERSION"
+              status=1
+            fi
+          done
+          exit $status
       - run: npm publish --provenance --access public

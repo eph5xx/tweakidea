@@ -1,0 +1,23 @@
+{
+  "name": "tweakidea",
+  "displayName": "TweakIdea",
+  "description": "14-dimension startup idea evaluator: weighted scorecards with assumption tracking, idea tweaks, run diffs, and Hacker News opportunity discovery.",
+  "version": "3.0.0",
+  "author": {
+    "name": "Aleksandr Sarantsev",
+    "url": "https://github.com/eph5xx"
+  },
+  "homepage": "https://github.com/eph5xx/tweakidea",
+  "repository": "https://github.com/eph5xx/tweakidea",
+  "license": "MIT",
+  "keywords": [
+    "startup",
+    "idea-evaluation",
+    "founder",
+    "hacker-news",
+    "agent-skills"
+  ],
+  "skills": [
+    "./skills/tweakidea"
+  ]
+}

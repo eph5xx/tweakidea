@@ -1,0 +1,13 @@
+{
+  "name": "tweakidea",
+  "owner": {
+    "name": "Aleksandr Sarantsev"
+  },
+  "plugins": [
+    {
+      "name": "tweakidea",
+      "source": "./",
+      "description": "14-dimension startup idea evaluator: weighted scorecards with assumption tracking, idea tweaks, run diffs, and Hacker News opportunity discovery."
+    }
+  ]
+}
