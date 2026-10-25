@@ -163,20 +163,16 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 - `/tweakidea share 20260412-143022` — a specific run by timestamp
 - `/tweakidea share restaurant food waste` — keyword match on idea text
 
-## Prerequisites
-
-> [!IMPORTANT]
-> TweakIdea is tuned and tested on [Claude Code](https://claude.ai/download) with **Claude Sonnet** (14 evaluators + researcher + extractor) and **Claude Opus** (narrative synthesis). Other agents run every subagent on the session's model, and the summary says so.
-
-- An [Agent Skills](https://agentskills.io)-compatible agent. Claude Code is the tested path. `/tweakidea evaluate` needs an agent that can spawn subagents and search and fetch the web; without them it stops with a message, and the other commands still work.
-- [`uv`](https://docs.astral.sh/uv/) — runs the bundled Python scripts. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
-- Network access, and the [GitHub CLI](https://cli.github.com) for `/tweakidea share`
-
 ## Installation
 
 ```bash
+# uv runs the bundled Python scripts (or: brew install uv)
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
 npx skills add eph5xx/tweakidea
 ```
+
+Works in any [Agent Skills](https://agentskills.io) agent; tuned and tested on Claude Code. `/tweakidea evaluate` also needs subagents and web search.
 
 This uses the [`skills` CLI](https://github.com/vercel-labs/skills), which detects your installed agents and installs one skill, `tweakidea`. Useful flags:
 
@@ -202,7 +198,28 @@ Update with `npx skills update tweakidea`. Remove with `npx skills remove tweaki
 
 Plugin skills are namespaced, so commands become `/tweakidea:tweakidea <command>`.
 
-**Codex and Cursor:** the repo ships plugin manifests in [`.codex-plugin/`](.codex-plugin) and [`.cursor-plugin/`](.cursor-plugin).
+**Codex:**
+
+```bash
+codex plugin marketplace add eph5xx/tweakidea
+codex plugin add tweakidea@tweakidea
+```
+
+Start a new session afterwards. You can also install it from `/plugins` inside Codex. Update with `codex plugin marketplace upgrade tweakidea`.
+
+**Cursor:** TweakIdea isn't in the Cursor Marketplace, so add the repo as a marketplace:
+
+```bash
+cursor-agent plugin marketplace add https://github.com/eph5xx/tweakidea
+```
+
+Then run `cursor-agent`, type `/plugin`, open the Marketplace tab, and select `tweakidea`.
+
+Or clone it into Cursor's local plugin folder and run **Developer: Reload Window**:
+
+```bash
+git clone https://github.com/eph5xx/tweakidea ~/.cursor/plugins/local/tweakidea
+```
 
 <details>
 <summary>Legacy installer (<code>npx tweakidea</code>)</summary>
