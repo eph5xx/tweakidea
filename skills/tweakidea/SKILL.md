@@ -1,25 +1,19 @@
 ---
 name: tweakidea
 description: "Use when a founder wants to evaluate a startup idea or problem, improve or compare idea evaluations, or mine Hacker News for product opportunities. Runs a 14-dimension weighted scorecard with assumption tracking, generates small/medium/big idea tweaks, diffs runs, browses and analyzes HN threads, and lists, opens, or shares artifacts saved under ~/.tweakidea/."
-user-invocable: true
-argument-hint: "[evaluate|improve|diff|browse-hn|analyze-hn-post|list|show|share] [args]"
-allowed-tools:
-  - Read
-  - Write
-  - Bash
-  - Glob
-  - Agent
-  - AskUserQuestion
 license: MIT
+compatibility: "Works in any Agent Skills client. evaluate needs subagents plus web search and web fetch; the other commands run inline. Requires uv and network access; share also needs the GitHub CLI (gh). Tuned and tested on Claude Code with Sonnet and Opus."
+allowed-tools: Read Write Bash Glob Agent AskUserQuestion
 ---
 
 TweakIdea helps founders make better decisions: evaluate whether a problem is worth solving, or discover which problems are emerging from technology shifts. Be an honest second opinion, not a cheerleader.
 
 ## Setup
 
-1. **SKILL_DIR** is the directory that contains this SKILL.md (the runtime reports it as the skill's base directory). If no base directory is reported, use the first of `$(pwd)/.claude/skills/tweakidea` or `$HOME/.claude/skills/tweakidea` that contains `SKILL.md`. Every `{SKILL_DIR}` path in this skill and its references resolves against it.
-2. **HOME_DIR** is the output of `echo "$HOME"`. All user data lives under `{HOME_DIR}/.tweakidea/`.
-3. Python helpers in `{SKILL_DIR}/scripts/` run through `uv run`. If a command needs them and `uv` is missing, tell the user to install it (`brew install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`) and stop.
+1. **SKILL_DIR** is the directory that contains this SKILL.md (the runtime reports it as the skill's base directory). If no base directory is reported, use the first of `$(pwd)/.claude/skills/tweakidea`, `$HOME/.claude/skills/tweakidea`, `$(pwd)/.agents/skills/tweakidea`, or `$HOME/.agents/skills/tweakidea` that contains `SKILL.md`. Every `{SKILL_DIR}` path in this skill and its references resolves against it.
+2. **Runtime:** read [references/runtime.md](references/runtime.md) and map each capability it lists (`ask-user`, `spawn-subagent`, `web-search`, `read-file`, and the rest) and each model tier to what your runtime provides. The references name capabilities, not tools.
+3. **HOME_DIR** is the output of `echo "$HOME"`. All user data lives under `{HOME_DIR}/.tweakidea/`.
+4. Python helpers in `{SKILL_DIR}/scripts/` run through `uv run`. If a command needs them and `uv` is missing, tell the user to install it (`brew install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`) and stop.
 
 ## Routing
 
@@ -27,9 +21,11 @@ The invocation arguments are:
 
 $ARGUMENTS
 
+If the line above is still an unsubstituted placeholder (a dollar sign followed by the word ARGUMENTS), your runtime does not substitute arguments: use the text after the skill name in the user's invoking message instead.
+
 Split them into **COMMAND** (the first word) and **ARGS** (everything after it). Command references use `ARGS` wherever they need the user's input.
 
-- **No arguments:** show the Commands table below and ask which command to run (AskUserQuestion with `evaluate`, `improve`, `browse-hn`, `list`; "Other" covers the rest). Never auto-run a command.
+- **No arguments:** show the Commands table below and ask which command to run (`ask-user` with `evaluate`, `improve`, `browse-hn`, `list`; free text covers the rest). Never auto-run a command.
 - **First word is a command name:** read that command's reference and follow it exactly, with ARGS as its input.
 - **Anything else:** treat the full argument text as an idea and run `evaluate` with it as ARGS.
 
@@ -52,6 +48,7 @@ Loaded by the commands above when needed; not invoked directly.
 
 | Reference | Used by | Contents |
 |---|---|---|
+| [references/runtime.md](references/runtime.md) | all commands, setup | Capability names, their Claude Code tools, fallbacks, and model tiers |
 | [references/agents/ti-researcher.md](references/agents/ti-researcher.md) | `evaluate` | Web research subagent (competitive, market, user clusters) |
 | [references/agents/ti-extractor.md](references/agents/ti-extractor.md) | `evaluate` | Hypothesis extraction subagent |
 | [references/agents/ti-evaluator.md](references/agents/ti-evaluator.md) | `evaluate` | Single-dimension evaluator subagent, spawned 14 times |

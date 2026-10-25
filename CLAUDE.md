@@ -2,13 +2,13 @@
 
 **TweakIdea**
 
-A single Claude Code skill, `/tweakidea`, in the agent-skills format, that helps founders evaluate startup problems and discover product opportunities. Eight commands, invoked as `/tweakidea <command>`: `/tweakidea browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweakidea analyze-hn-post`; `/tweakidea analyze-hn-post` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweakidea evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweakidea improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweakidea diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweakidea list` and `/tweakidea show` browse and open artifacts accumulated under `~/.tweakidea/`; `/tweakidea share` uploads a run's HTML report to a secret GitHub gist and returns a shareable rendered preview URL.
+A single skill, `/tweakidea`, in the Agent Skills format (tested on Claude Code, portable to other Agent Skills agents), that helps founders evaluate startup problems and discover product opportunities. Eight commands, invoked as `/tweakidea <command>`: `/tweakidea browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweakidea analyze-hn-post`; `/tweakidea analyze-hn-post` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweakidea evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweakidea improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweakidea diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweakidea list` and `/tweakidea show` browse and open artifacts accumulated under `~/.tweakidea/`; `/tweakidea share` uploads a run's HTML report to a secret GitHub gist and returns a shareable rendered preview URL.
 
 **Core Value:** Help founders make better decisions — evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
 ### Constraints
 
-- **Platform**: Claude Code CLI — one skill (`skills/tweakidea/`). Subagents are spawned as `general-purpose` agents that read their instructions from `references/agents/`. Python helpers in `scripts/` run through `uv`
+- **Platform**: Any Agent Skills-compatible agent, with Claude Code as the tested path — one skill (`skills/tweakidea/`). Subagents are spawned as fresh-context agents (named by capability and model tier, mapped to Claude Code tools in `references/runtime.md`) that read their instructions from `references/agents/`. `evaluate` stops on agents without subagents or web search/fetch. Python helpers in `scripts/` run through `uv`
 - **Evaluation model**: All 14 dimensions from EVALUATION.md must be covered, no skipping
 - **Independence**: Each subagent evaluates its dimension without seeing other dimensions' results
 - **Clean context**: Each evaluation run should be independent — no cross-contamination between runs
@@ -48,3 +48,4 @@ Source content lives in `skills/tweakidea/` (`SKILL.md`, `references/`, `scripts
 - Put tests or test fixtures inside `skills/tweakidea/` — everything there is installed
 - Add npm dependencies — the project uses only Node built-ins
 - Inject founder profile data into any evaluator except Founder-Market Fit
+- Name Claude Code tools (`AskUserQuestion`, `Agent`, `WebSearch`, ...) or models anywhere except `skills/tweakidea/references/runtime.md` — other files use capability names like `ask-user` and model tiers `fast`/`strong` (enforced by `tests/python/test_portability.py`)

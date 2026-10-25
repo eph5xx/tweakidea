@@ -1,7 +1,7 @@
 """Tests for ti-evaluator agent spawn contract + body contracts.
 
 Validates that references/agents/ti-evaluator.md:
-- Has Write in its tools list (EVAL-01)
+- Has write-file in its tools list (EVAL-01)
 - References the dimension-evaluation.json schema (EVAL-02)
 - Has structured tier fields on criteria (EVAL-03)
 - Does NOT contain legacy markdown output markers
@@ -15,7 +15,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 AGENT_FILE = ROOT / "skills" / "tweakidea" / "references" / "agents" / "ti-evaluator.md"
 
 
-from tests.python._fm import parse_spawn_contract  # noqa: E402
+from tests.python._fm import claude_model_for_tier, parse_spawn_contract  # noqa: E402
 
 
 class TestEvaluatorAgent(unittest.TestCase):
@@ -26,12 +26,12 @@ class TestEvaluatorAgent(unittest.TestCase):
         cls.body = cls.text
 
     def test_write_in_tools(self):
-        """EVAL-01: ti-evaluator must have Write tool to write dimension JSON files."""
-        self.assertIn("Write", self.fm.get("tools", []))
+        """EVAL-01: ti-evaluator must have write-file to write dimension JSON files."""
+        self.assertIn("write-file", self.fm.get("tools", []))
 
     def test_preserves_existing_tools(self):
-        """No tools should be removed — Read, Grep, Glob, WebSearch, WebFetch must remain."""
-        for t in ("Read", "Grep", "Glob", "WebSearch", "WebFetch"):
+        """No capabilities should be removed from the spawn contract."""
+        for t in ("read-file", "search-text", "find-files", "web-search", "web-fetch"):
             self.assertIn(t, self.fm.get("tools", []), f"Tool {t!r} was removed from the spawn contract")
 
     def test_schema_reference(self):
@@ -58,12 +58,13 @@ class TestEvaluatorAgent(unittest.TestCase):
         self.assertNotIn("## Research Context", self.body)
 
     def test_two_round_research_minimum(self):
-        self.assertIn("at least 4 WebSearch calls and at least 2 WebFetch calls", self.body)
+        self.assertIn("at least 4 web searches and at least 2 page fetches", self.body)
         self.assertIn("Round 2", self.body)
 
     def test_model_still_sonnet(self):
-        """Evaluator model must remain sonnet per project key decisions."""
-        self.assertEqual(self.fm.get("model"), "sonnet")
+        """Evaluator runs on the fast tier, which maps to sonnet per project key decisions."""
+        self.assertEqual(self.fm.get("tier"), "fast")
+        self.assertEqual(claude_model_for_tier("fast"), "sonnet")
 
     def test_evidence_tier_classification_heading(self):
         """EVAL-03: Structured tier field requires Evidence Tier Classification section."""

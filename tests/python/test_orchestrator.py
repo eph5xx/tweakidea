@@ -9,6 +9,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 SKILL = ROOT / "skills" / "tweakidea"
 EVALUATE_MD = SKILL / "references" / "commands" / "evaluate.md"
 AGENTS_DIR = SKILL / "references" / "agents"
+RUNTIME_MD = SKILL / "references" / "runtime.md"
 MANIFEST_JS = ROOT / "bin" / "manifest.js"
 
 AGENTS = ("ti-researcher", "ti-extractor", "ti-evaluator", "ti-narrative")
@@ -24,15 +25,23 @@ class TestOrchestratorSpawns(unittest.TestCase):
 
     def test_no_named_agent_types(self):
         self.assertNotRegex(self.text, r"agent_type:\*\*\s*`ti-")
+        self.assertNotIn("agent_type", self.text)
 
-    def test_all_spawns_are_general_purpose_with_model(self):
-        spawns = re.findall(r"\*\*agent_type:\*\* `([^`]+)`\n\s*- \*\*model:\*\* `(\w+)`", self.text)
-        # researcher, retry researcher, extractor, evaluator, narrative
+    def test_all_spawns_name_a_model_tier(self):
+        spawns = re.findall(r"- \*\*model tier:\*\* `(\w+)`\n\s*- \*\*prompt:\*\*", self.text)
+        # researcher, extractor, retry researcher, evaluator, narrative
         self.assertEqual(len(spawns), 5, spawns)
-        for agent_type, _ in spawns:
-            self.assertEqual(agent_type, "general-purpose")
+        self.assertEqual(spawns.count("strong"), 1, spawns)
+        for tier in spawns:
+            self.assertIn(tier, ("fast", "strong"))
+
+    def test_spawns_declare_background(self):
+        flags = re.findall(r"- \*\*background:\*\* (yes|no)\b", self.text)
+        self.assertEqual(len(flags), 5, flags)
+        self.assertEqual(flags.count("yes"), 1, flags)
 
     def test_spawn_table_matches_agent_contracts(self):
+        self.assertIn("| Agent | Model tier | Capabilities | Turn budget |", self.text)
         for agent in AGENTS:
             with self.subTest(agent=agent):
                 contract = parse_spawn_contract((AGENTS_DIR / f"{agent}.md").read_text())
@@ -40,7 +49,7 @@ class TestOrchestratorSpawns(unittest.TestCase):
                     rf"^\| `{agent}` \| `(\w+)` \| ([^|]+) \| (\d+) \|$", self.text, re.MULTILINE
                 )
                 self.assertIsNotNone(row, f"no spawn table row for {agent}")
-                self.assertEqual(row.group(1), contract["model"])
+                self.assertEqual(row.group(1), contract["tier"])
                 self.assertEqual([t.strip() for t in row.group(2).split(",")], contract["tools"])
                 self.assertEqual(row.group(3), contract["maxTurns"])
 
@@ -52,9 +61,29 @@ class TestOrchestratorSpawns(unittest.TestCase):
     def test_preamble_points_at_agent_references(self):
         self.assertIn("Read {SKILL_DIR}/references/agents/{agent}.md first", self.text)
 
-    def test_preamble_preloads_deferred_web_tools(self):
-        self.assertIn('ToolSearch query "select:WebSearch,WebFetch"', self.text)
+    def test_preamble_has_web_preload_slot(self):
+        self.assertIn("every file in <files_to_read>{web_preload}.", self.text)
 
+    def test_runtime_md_holds_claude_code_web_preload(self):
+        self.assertIn(
+            ', and if WebSearch/WebFetch are in your tool list, load them with ToolSearch query "select:WebSearch,WebFetch"',
+            RUNTIME_MD.read_text(),
+        )
+
+    def test_runtime_check_stops_before_questions(self):
+        stage_0 = self.text[self.text.find("## Stage 0"):self.text.find("## Stage 1")]
+        start = stage_0.find("### Step 0: Runtime check")
+        self.assertGreaterEqual(start, 0, "Stage 0 must start with a runtime check")
+        self.assertLess(start, stage_0.find("### Step 1"))
+        section = stage_0[start:stage_0.find("### Step 1")]
+        for capability in ("spawn-subagent", "web-search", "web-fetch"):
+            with self.subTest(capability=capability):
+                self.assertIn(capability, section)
+        self.assertIn("can't run in this agent", section)
+        self.assertIn("clean context", section)
+        for cmd in ("improve", "diff", "browse-hn", "analyze-hn-post", "list", "show", "share"):
+            with self.subTest(cmd=cmd):
+                self.assertIn(f"`{cmd}`", section)
     def test_evaluator_prompt_reads_inputs_from_run_dir(self):
         start = self.text.find("#### Evaluator Prompt Construction")
         end = self.text.find("#### Context Routing Rule")

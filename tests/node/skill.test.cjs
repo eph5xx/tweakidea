@@ -19,22 +19,31 @@ test('skills/ contains only the tweakidea skill', () => {
   assert.deepEqual(dirs, [SKILL_NAME]);
 });
 
-test('SKILL.md has canonical frontmatter', () => {
+const STANDARD_FIELDS = ['name', 'description', 'license', 'compatibility', 'metadata', 'allowed-tools'];
+
+test('SKILL.md frontmatter uses only Agent Skills standard fields', () => {
   const fm = parseFrontmatter(fs.readFileSync(skillMdPath, 'utf8'));
+  for (const key of Object.keys(fm)) {
+    assert.ok(STANDARD_FIELDS.includes(key), `non-standard frontmatter field: ${key}`);
+  }
   assert.equal(fm.name, SKILL_NAME, 'name must match directory name');
   assert.equal(typeof fm.description, 'string');
   assert.ok(fm.description.length > 0, 'description must not be empty');
-  assert.equal(fm['user-invocable'], true, 'user-invocable must be true');
-  assert.equal(typeof fm['argument-hint'], 'string');
-  for (const cmd of COMMANDS) {
-    assert.ok(fm['argument-hint'].includes(cmd), `argument-hint must list ${cmd}`);
-  }
-  assert.ok(Array.isArray(fm['allowed-tools']), 'allowed-tools must be an array');
-  for (const tool of ['Read', 'Write', 'Bash', 'Glob', 'Agent', 'AskUserQuestion']) {
-    assert.ok(fm['allowed-tools'].includes(tool), `allowed-tools must include ${tool}`);
-  }
+  assert.ok(fm.description.length <= 1024, 'description must be at most 1024 characters');
+  assert.equal(typeof fm.compatibility, 'string');
+  assert.ok(fm.compatibility.length > 0, 'compatibility must not be empty');
+  assert.ok(fm.compatibility.length <= 500, 'compatibility must be at most 500 characters');
+  assert.equal(typeof fm['allowed-tools'], 'string', 'allowed-tools must be a space-separated string');
+  assert.deepEqual(
+    fm['allowed-tools'].split(/\s+/).sort(),
+    ['Agent', 'AskUserQuestion', 'Bash', 'Glob', 'Read', 'Write'],
+  );
 });
 
+test('SKILL.md links the runtime capability map', () => {
+  const body = fs.readFileSync(skillMdPath, 'utf8');
+  assert.ok(body.includes('](references/runtime.md)'), 'SKILL.md must link references/runtime.md');
+});
 test('skill root holds only SKILL.md, scripts, references, assets', () => {
   const entries = fs.readdirSync(skillDir).filter((e) => e !== '.DS_Store').sort();
   assert.deepEqual(entries, ['SKILL.md', 'assets', 'references', 'scripts']);

@@ -17,11 +17,11 @@ If no time keyword is present, leave DAYS unset — Phase 2 will ask.
 
 **QUERY** is whatever remains after stripping the time phrase (trimmed). An empty QUERY is a valid "browse everything" search and must proceed silently.
 
-**Unintelligible-query guard.** Only if the residual QUERY is obvious nonsense (random characters, contradictory, clearly off-HN like "make me a coffee"), ask once via AskUserQuestion: `"I couldn't parse '{ARGUMENTS}' as an HN topic. What should I search for? (leave blank to browse all recent stories)"` (header `HN query`, single option `Enter topic`). A blank answer means QUERY = "". When in doubt, pass the query through.
+**Unintelligible-query guard.** Only if the residual QUERY is obvious nonsense (random characters, contradictory, clearly off-HN like "make me a coffee"), ask once with `ask-user`: `"I couldn't parse '{ARGS}' as an HN topic. What should I search for? (leave blank to browse all recent stories)"` (header `HN query`, single option `Enter topic`). A blank answer means QUERY = "". When in doubt, pass the query through.
 
 ## Phase 2 — Time range (only if DAYS unset)
 
-Skip this phase if Phase 1 set DAYS. Otherwise ask once via AskUserQuestion:
+Skip this phase if Phase 1 set DAYS. Otherwise ask once with `ask-user`:
 
 - question: `"Over what time window should I browse HN{for_query_phrase}?"` where `for_query_phrase` is ` for "{QUERY}"` when QUERY is non-empty, otherwise blank.
 - header: `Time window`
@@ -31,7 +31,7 @@ Skip this phase if Phase 1 set DAYS. Otherwise ask once via AskUserQuestion:
 
 Verify `uv` is on PATH (`which uv`). If missing, tell the user to install it (`brew install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`) and stop.
 
-Find `hnsearch.py` at `{SKILL_DIR}/scripts/hnsearch.py` (usage notes in `{SKILL_DIR}/references/hn.md`) and store it as SCRIPT_PATH. If it does not exist, tell the user to run `npx tweakidea` and stop.
+Find `hnsearch.py` at `{SKILL_DIR}/scripts/hnsearch.py` (usage notes in `{SKILL_DIR}/references/hn.md`) and store it as SCRIPT_PATH. If it does not exist, tell the user to reinstall the tweakidea skill and stop.
 
 Run:
 
