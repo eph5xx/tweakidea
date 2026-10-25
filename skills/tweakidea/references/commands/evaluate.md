@@ -163,15 +163,17 @@ Omit `codename`, `icon`, or `subtitle` from the JSON object if you cannot produc
 Every subagent in this pipeline is a `general-purpose` agent that loads its instructions from a reference file. Each spawn passes an explicit `model`, and its prompt MUST begin with this preamble (substitute the agent's row from the table below and the absolute `{SKILL_DIR}`):
 
 ```
-Read {SKILL_DIR}/references/agents/{agent}.md first and follow it as your instructions. SKILL_DIR={SKILL_DIR}. Use only these tools: {tools}. Finish within {turn_budget} turns.
+Read {SKILL_DIR}/references/agents/{agent}.md first and follow it as your instructions. SKILL_DIR={SKILL_DIR}. Use only these tools: {tools}. Budget: up to {turn_budget} turns. In your first turn, in parallel: Read the agent file and every file in <files_to_read>, and if WebSearch/WebFetch are in your tool list, load them with ToolSearch query "select:WebSearch,WebFetch". Batch independent tool calls (searches, fetches, reads) into the same turn.
 ```
 
 | Agent | Model | Tools | Turn budget |
 |-------|-------|-------|-------------|
-| `ti-researcher` | `sonnet` | WebSearch, WebFetch, Read, Write | 15 |
-| `ti-extractor` | `sonnet` | Read, Write | 3 |
-| `ti-evaluator` | `sonnet` | Read, Grep, Glob, WebSearch, WebFetch, Write | 18 |
+| `ti-researcher` | `sonnet` | WebSearch, WebFetch, Read, Write | 25 |
+| `ti-extractor` | `sonnet` | Read, Write | 5 |
+| `ti-evaluator` | `sonnet` | Read, Grep, Glob, WebSearch, WebFetch, Write | 25 |
 | `ti-narrative` | `opus` | Read, Write | 15 |
+
+The turn budget is a ceiling, not a target, but it is sized so agents can complete their full research protocol. Agents should not cut research short to save turns.
 
 In the spawn specs below, `{PREAMBLE:agent}` stands for that preamble filled in for the named agent.
 
@@ -375,31 +377,39 @@ Before launching evaluators, validate the Dimension Registry's context routing:
 
 #### Evaluator Prompt Construction
 
-For each dimension, construct the evaluator prompt with this exact structure:
+Keep evaluator prompts short. The idea, the founder-confirmed hypotheses, and the research are already on disk, so evaluators read them as files. Do NOT paste IDEA_TEXT, hypotheses, or research content into the prompts. For each dimension, construct the evaluator prompt with this exact structure (EVALUATION_CONTEXT):
 
 ```
 <files_to_read>
 - {SKILL_DIR}/references/scoring/dimensions/{slug}.md
 - {SKILL_DIR}/assets/schemas/dimension-evaluation.json
+- {RUN_DIR}/idea.json
+- {RUN_DIR}/assumptions.json
+- {RUN_DIR}/research.json
 </files_to_read>
 
-Your absolute output path: {RUN_DIR}/dimensions/{slug}.json
-Your assigned dimension: {Name}
+Output: {RUN_DIR}/dimensions/{slug}.json
+Dimension: {Name}
+Research cluster: {research cluster from the Dimension Registry}
+```
 
-{EVALUATION_CONTEXT or FOUNDER_EVALUATION_CONTEXT, built from:}
-- The full structured IDEA_TEXT
-- The hypotheses from {RUN_DIR}/hypotheses.json (by reference -- the evaluator reads the file)
-- The research context from {RUN_DIR}/research.json for dimensions whose research_cluster matches (the evaluator reads the file and filters to its assigned cluster)
-- (For Founder-Market Fit only:) The founder profile from {HOME_DIR}/.tweakidea/FOUNDER.md and FOUNDER_FIT_ANSWERS
+**FOUNDER_EVALUATION_CONTEXT (Founder-Market Fit only):** the same prompt, followed by:
 
-After completing your analysis, use the Write tool to save your structured result as JSON at the exact path above. The JSON must validate against {SKILL_DIR}/assets/schemas/dimension-evaluation.json.
+```
+## Founder Profile
+
+{FOUNDER_CONTEXT}
+
+## Founder-Idea Fit Answers
+
+{FOUNDER_FIT_ANSWERS as question/answer pairs}
 ```
 
 #### Context Routing Rule (CRITICAL)
 
 - **Founder-Market Fit** dimension: inject FOUNDER_CONTEXT and FOUNDER_FIT_ANSWERS into the prompt
 - **All other 13 dimensions**: do NOT inject founder profile data
-- **If FOUNDER_SESSION_SKIPPED is true**: send EVALUATION_CONTEXT for all 14 dimensions (idea + hypotheses only)
+- **If FOUNDER_SESSION_SKIPPED is true**: send EVALUATION_CONTEXT for all 14 dimensions (no Founder Profile or Fit Answers sections)
 
 #### Agent Calls
 
@@ -407,7 +417,7 @@ Issue all 14 Agent() spawns in a SINGLE message for parallel execution. Each spa
 
 - **agent_type:** `general-purpose`
 - **model:** `sonnet`
-- **prompt:** `{PREAMBLE:ti-evaluator}` followed by a blank line and the prompt constructed above (with RUN_DIR, SKILL_DIR, and slug interpolated)
+- **prompt:** `{PREAMBLE:ti-evaluator}` followed by a blank line and the prompt constructed above (with RUN_DIR, SKILL_DIR, slug, Name, and research cluster interpolated)
 - **run_in_background:** false (the orchestrator needs the collection to complete before Stage 3a)
 
 ### Step 3: Wait for all 14 evaluators to return

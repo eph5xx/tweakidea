@@ -49,6 +49,10 @@ class TestResearcherAgent(unittest.TestCase):
         """Legacy ## RESEARCH COMPLETE marker must be deleted."""
         self.assertNotIn("## RESEARCH COMPLETE", self.body)
 
+    def test_per_cluster_research_minimum(self):
+        self.assertIn("at least 3 targeted search queries per cluster", self.body)
+        self.assertIn("WebFetch at least 3", self.body)
+
     def test_model_still_sonnet(self):
         """Researcher model must remain sonnet per project key decisions."""
         self.assertEqual(self.fm.get("model"), "sonnet")
