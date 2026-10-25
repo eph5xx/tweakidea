@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tweakidea",
+  "metadata": {
+    "description": "TweakIdea startup idea evaluation skill for Claude Code"
+  },
+  "owner": {
+    "name": "Aleksandr Sarantsev"
+  },
+  "plugins": [
+    {
+      "name": "tweakidea",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

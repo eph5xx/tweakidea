@@ -7,7 +7,7 @@
 An independent second opinion on your startup idea. Free, evidence-backed, ready in 10 minutes.
 
 ```bash
-npx tweakidea
+npx skills add eph5xx/tweakidea
 ```
 
 **What you get:**
@@ -175,25 +175,46 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 ## Installation
 
 ```bash
-npx tweakidea
+npx skills add eph5xx/tweakidea
 ```
 
-The installer prompts for global (`~/.claude`) or local (`./.claude`) placement and installs one skill, `tweakidea`. After install, open Claude Code and type `/tweakidea` followed by a command: `evaluate`, `improve`, `diff`, `browse-hn`, `analyze-hn-post`, `list`, `show`, or `share`. Run `/tweakidea` on its own to see the command menu.
+This uses the [`skills` CLI](https://github.com/vercel-labs/skills), which detects your installed agents and installs one skill, `tweakidea`. Useful flags:
 
-For another Agent Skills-compatible agent, copy `skills/tweakidea/` from this repo (or from the npm package) into that agent's skills folder, for example `~/.agents/skills/tweakidea/`.
+- `-g` installs for all projects instead of just the current one
+- `-a claude-code` targets a specific agent
+- `-y` skips the prompts, for example `npx skills add eph5xx/tweakidea -g -a claude-code -y`
+
+After install, open your agent and type `/tweakidea` followed by a command: `evaluate`, `improve`, `diff`, `browse-hn`, `analyze-hn-post`, `list`, `show`, or `share`. Run `/tweakidea` on its own to see the command menu.
+
+Update with `npx skills update tweakidea`. Remove with `npx skills remove tweakidea` (add `-g` for a global install).
 
 > [!NOTE]
 > First `/tweakidea evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
 
+### As a plugin
+
+**Claude Code:**
+
+```
+/plugin marketplace add eph5xx/tweakidea
+/plugin install tweakidea@tweakidea
+```
+
+Plugin skills are namespaced, so commands become `/tweakidea:tweakidea <command>`.
+
+**Codex and Cursor:** the repo ships plugin manifests in [`.codex-plugin/`](.codex-plugin) and [`.cursor-plugin/`](.cursor-plugin).
+
 <details>
-<summary>Uninstall</summary>
+<summary>Legacy installer (<code>npx tweakidea</code>)</summary>
+
+The original npm installer still works for Claude Code. It prompts for global (`~/.claude`) or local (`./.claude`) placement and copies the skill there.
 
 ```bash
-npx tweakidea -u
+npx tweakidea       # install
+npx tweakidea -u    # uninstall
 ```
 
 </details>
-
 <details>
 <summary>Better article extraction (optional)</summary>
 

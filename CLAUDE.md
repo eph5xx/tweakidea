@@ -31,6 +31,8 @@ Source content lives in `skills/tweakidea/` (`SKILL.md`, `references/`, `scripts
 - **Local dev setup:** `node bin/install.js --local` populates `.claude/skills/tweakidea/` from `skills/tweakidea/`
 - **Test npx flow:** `npx .` from repo root
 - **After editing source files:** Re-run `node bin/install.js --local` to refresh `.claude/`
+- **Plugin manifests:** `.claude-plugin/`, `.codex-plugin/`, and `.cursor-plugin/` hold `plugin.json` and `marketplace.json` for each platform. The documented install path is `npx skills add eph5xx/tweakidea`; `npx tweakidea` is the legacy installer
+- **Check skills CLI discovery:** `npx skills add . --list` should list exactly one skill, `tweakidea`
 
 ## Rules
 
@@ -40,6 +42,7 @@ Source content lives in `skills/tweakidea/` (`SKILL.md`, `references/`, `scripts
 - Run `npm test` and `uv run tests/python/run_tests.py` before committing — Node and Python suites run independently
 - Validate JSON changes against the matching schema in `skills/tweakidea/assets/schemas/` when modifying agent output formats
 - Keep all 14 dimensions — never skip, merge, or remove a dimension
+- Keep `version` in all 3 `plugin.json` files in sync with `package.json`
 
 **Don't:**
 
