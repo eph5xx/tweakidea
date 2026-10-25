@@ -52,6 +52,19 @@ class TestOrchestratorSpawns(unittest.TestCase):
     def test_preamble_points_at_agent_references(self):
         self.assertIn("Read {SKILL_DIR}/references/agents/{agent}.md first", self.text)
 
+    def test_preamble_preloads_deferred_web_tools(self):
+        self.assertIn('ToolSearch query "select:WebSearch,WebFetch"', self.text)
+
+    def test_evaluator_prompt_reads_inputs_from_run_dir(self):
+        start = self.text.find("#### Evaluator Prompt Construction")
+        end = self.text.find("#### Context Routing Rule")
+        section = self.text[start:end]
+        for path in ("{RUN_DIR}/idea.json", "{RUN_DIR}/assumptions.json", "{RUN_DIR}/research.json"):
+            with self.subTest(path=path):
+                self.assertIn(path, section)
+        self.assertNotIn("The full structured IDEA_TEXT", section)
+        self.assertNotIn("hypotheses.json", section)
+
 
 class TestOrchestratorBody(unittest.TestCase):
     @classmethod

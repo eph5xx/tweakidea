@@ -53,6 +53,14 @@ class TestEvaluatorAgent(unittest.TestCase):
         self.assertIn("key_finding", self.body)
         self.assertIn("score_explanation", self.body)
 
+    def test_no_research_context_section(self):
+        """Research is read from research.json, not injected as a prompt section."""
+        self.assertNotIn("## Research Context", self.body)
+
+    def test_two_round_research_minimum(self):
+        self.assertIn("at least 4 WebSearch calls and at least 2 WebFetch calls", self.body)
+        self.assertIn("Round 2", self.body)
+
     def test_model_still_sonnet(self):
         """Evaluator model must remain sonnet per project key decisions."""
         self.assertEqual(self.fm.get("model"), "sonnet")
