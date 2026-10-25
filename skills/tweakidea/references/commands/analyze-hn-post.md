@@ -11,7 +11,7 @@ You analyze Hacker News discussions to identify technology shifts and product op
 1. Extract the numeric item ID from `ARGS`:
    - If it contains `id=`, extract the number after it
    - If it is purely numeric, use it directly
-   - If `ARGS` is empty, use `ask-user` to ask: "Paste a Hacker News URL or item ID to analyze."
+   - If `ARGS` is empty, ask in chat (see `runtime.md`): "Paste a Hacker News URL or item ID to analyze."
 
 2. Resolve the home directory:
    ```bash
@@ -178,17 +178,25 @@ This gives the user the context they need before answering the Phase 6 confirmat
 
 ## Phase 6: Confirm Opportunities
 
-Use `ask-user` to present product opportunities for user confirmation. Create one question per shift (and one for the topical section, if present) with `multiSelect: true`, where each product opportunity is an option.
+Ask in chat (see `runtime.md`) with one message that lists every product opportunity, grouped under a heading per shift (and a `Topical` heading, if present) and numbered continuously across groups. Use this format:
 
-For each question:
-- `question`: "Which opportunities from '[Shift Title]' do you want to develop into full ideas?" — for the topical section: "Which topical opportunities do you want to develop into full ideas?"
-- `header`: short label for the shift or section (e.g. `Topical`)
-- `multiSelect`: true
-- `options`: one per opportunity (`label` = opportunity name, `description` = one-sentence summary), plus a final sentinel `label: "Nothing here"` / `description: "None of these are worth developing."`
+```
+Which opportunities do you want to develop into full ideas?
 
-If `Nothing here` is selected, ignore all other selections for that question.
+[Shift 1 Title]
+1. [Opportunity name]: [one-sentence summary]
+2. [Opportunity name]: [one-sentence summary]
 
-Batch shifts + optional topical into `ask-user` calls of up to 4 questions each. Collect confirmed opportunities; if nothing was confirmed, skip to Phase 7.
+[Shift 2 Title]
+3. [Opportunity name]: [one-sentence summary]
+
+Topical
+4. [Opportunity name]: [one-sentence summary]
+
+Reply with the numbers to develop (like "1, 3"), or "none".
+```
+
+Then end the turn and wait for the reply. Accept loose formats (commas, spaces, ranges like `2-4`). If a number is out of range, re-ask about it only. The picked numbers are the confirmed opportunities; if the reply is "none", skip to Phase 7.
 
 ---
 

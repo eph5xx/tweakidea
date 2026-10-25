@@ -77,3 +77,4 @@ Loaded by the commands above when needed; not invoked directly.
 - Each evaluator works without seeing other dimensions' results, and each run starts from a clean context.
 - Pass founder profile data (`~/.tweakidea/FOUNDER.md` and fit answers) only to the Founder-Market Fit evaluator.
 - Pipeline artifacts are typed JSON validated against `assets/schemas/`. Do not parse agent output in the orchestrator; `scripts/compute.py` does all aggregation.
+- Ask about one decision per question. Open questions and lists go in a single chat message (see "Asking questions" in `references/runtime.md`).

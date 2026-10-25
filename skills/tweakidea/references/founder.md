@@ -47,7 +47,7 @@ Reference data for all founder profile operations. The orchestrator (`evaluate.m
 
 ## Profile Creation Questions
 
-Ask these 5 questions one at a time with `ask-user`, waiting for each answer before proceeding to the next:
+Ask in chat (see `references/runtime.md`): send one message with the preamble below and these 5 questions as a numbered list, then wait for the reply. The founder can answer all of them in one reply. If an answer is missing or unclear, ask only about that question in a short follow-up message.
 
 | # | Question | Maps to Section |
 |---|----------|-----------------|
@@ -96,9 +96,18 @@ Adapt to the specific idea -- do not use these verbatim if they don't fit:
 
 ### Presentation
 
-Present all 2-4 fit questions in a **single `ask-user` call** so the founder sees and answers all questions together in one interaction. Do NOT preview questions first, do NOT ask them one at a time. One call, all questions.
+Ask in chat (see `references/runtime.md`): send one message with the 2-4 fit questions as a numbered list of open questions, then wait for the reply. Do NOT ask them one at a time and do NOT offer answer options. Use this format:
 
-For each question, provide 2-4 answer options relevant to the question type (e.g., depth-of-experience options, yes/no with elaboration, etc.). Do NOT include "Other" as an explicit option; free-text answers are always accepted (see `references/runtime.md`).
+```
+A few questions about how your background fits this idea. Answer in one reply, numbered to match:
+
+1. [fit question]
+2. [fit question]
+
+Short answers are fine. Skip any that don't apply.
+```
+
+Map each part of the reply to its question number. A skipped question gets the answer "(no answer)".
 
 ### Storage
 
@@ -123,12 +132,20 @@ After fit Q&A, review answers for NEW persistent attributes about the founder --
 
 ### Update mechanics
 
-1. Present relevant answers to the founder with `ask-user`, using `multiSelect`
-2. Each option shows a summary and which FOUNDER.md section it would update
-3. Use 2-4 options per question; chunk if more than 4 qualify
-4. If founder selects answers to persist: read current FOUNDER.md, **append** to relevant section (never replace), write updated file
-5. Update the "Last updated" date in the footer
-6. If founder selects nothing or no answers qualify, skip entirely
+1. If no answers qualify, skip entirely.
+2. Otherwise ask in chat (see `references/runtime.md`) with one message listing the items worth saving, numbered, each with a one-line summary and its target FOUNDER.md section:
+
+   ```
+   Some of your answers could be saved to your founder profile for future runs:
+
+   1. [summary] -> [Section name]
+   2. [summary] -> [Section name]
+
+   Reply with the numbers to save (like "1, 3"), or "none".
+   ```
+
+3. If the founder picks items: read current FOUNDER.md, **append** each to its section (never replace), write the updated file, and update the "Last updated" date in the footer.
+4. If the founder replies "none", change nothing.
 
 ### Old-Format Section Name Mapping
 
@@ -143,38 +160,3 @@ If an existing FOUNDER.md uses old-format section headers, map them:
 | Passion & Motivation | Drive & Commitment |
 
 If headers are unrecognized, try keyword proximity matching. If completely unparseable, display raw content to the user with a warning.
-
----
-
-## Section Picker Flow
-
-For standalone profile editing (outside of an evaluation run), use a two-call section picker:
-
-### First `ask-user` call (multiSelect: true)
-
-Question: "Which sections of your founder profile would you like to update?"
-
-Options (4 items):
-1. label: "No changes needed", description: "Looks good — exit without editing"
-2. label: "Expertise & Domain Knowledge", description: "Your domain expertise, industry knowledge, and unique insights"
-3. label: "Relevant Experience", description: "Professional background, roles, and achievements"
-4. label: "Network & Market Access", description: "Connections, customer access, and resources"
-
-If "No changes needed" is selected: exit without editing.
-
-### Second `ask-user` call (multiSelect: true)
-
-Question: "Any other sections to update?"
-
-Options (2 items):
-1. label: "Build Capabilities", description: "Technical skills, team, and ability to ship"
-2. label: "Drive & Commitment", description: "Motivation, personal connection, and commitment level"
-
-### Conversational Editing
-
-For each selected section, in selection order:
-1. Show current entries from that section (or "This section is currently empty" if new)
-2. Ask: "Here are your current entries for [section name]. What would you like to add, change, or remove?"
-3. Process response conversationally -- add, change, or remove tagged list entries using natural language understanding
-
-After all sections processed, write updated FOUNDER.md and update the "Last updated" date.

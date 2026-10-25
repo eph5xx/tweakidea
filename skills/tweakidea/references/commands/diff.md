@@ -17,7 +17,7 @@ Parse `ARGS` for two run identifiers. Accept any of:
 - **Two timestamps or prefixes** → resolve both
 - **One timestamp + `latest`** → resolve the timestamp + the most recent run
 - **Just `latest`** → the two most recent runs (latest = Run B, second-latest = Run A)
-- **Empty** → use `ask-user` to ask which runs to compare
+- **Empty** → ask in chat (see `runtime.md`): list the 5 newest runs, numbered newest first, each with its timestamp and codename or problem from `idea.json`, and ask the user to reply with two numbers, or "latest" to compare the two newest. Wait for the reply.
 
 If a prefix matches multiple runs, use `ask-user` to disambiguate. Resolve run directories via `ls $HOME/.tweakidea/runs/` and prefix-match.
 

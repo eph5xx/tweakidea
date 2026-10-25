@@ -80,10 +80,30 @@ class TestPortability(unittest.TestCase):
                 self.assertIn(tool, row.group(0))
 
     def test_references_use_ask_user(self):
-        for name in ("evaluate", "analyze-hn-post", "browse-hn", "diff", "improve", "show", "share"):
+        for name in ("evaluate", "browse-hn", "diff", "improve", "show", "share"):
             with self.subTest(command=name):
                 self.assertIn("`ask-user`", (SKILL / "references" / "commands" / f"{name}.md").read_text())
-        self.assertIn("`ask-user`", (SKILL / "references" / "founder.md").read_text())
+        for path in (SKILL / "references" / "commands" / "analyze-hn-post.md", SKILL / "references" / "founder.md"):
+            with self.subTest(path=path.name):
+                self.assertIn("ask in chat", path.read_text().lower())
+
+    def test_no_batched_questions_outside_runtime_md(self):
+        forbidden = ("multiSelect", "up to 4 questions", "chunks of up to 4", "single `ask-user` call", "Pack up to")
+        hits = []
+        for p in iter_text_files():
+            if p == RUNTIME_MD:
+                continue
+            for lineno, line in enumerate(p.read_text().splitlines(), 1):
+                for phrase in forbidden:
+                    if phrase in line:
+                        hits.append(f"{p.relative_to(ROOT)}:{lineno}: {phrase}")
+        self.assertEqual(hits, [], "Batched question wording outside runtime.md:\n" + "\n".join(hits))
+
+    def test_runtime_md_defines_question_protocol(self):
+        section = RUNTIME_MD.read_text().split("## Asking questions", 1)[1]
+        self.assertIn("exactly one question per call", section)
+        self.assertIn("Ask in chat", section)
+        self.assertIn("Never put several items that each need their own answer into one question", section)
 
     def test_no_installer_specific_reinstall_hint(self):
         for p in iter_text_files():

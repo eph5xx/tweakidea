@@ -30,12 +30,12 @@ Capture the founder's startup idea from `ARGS`.
 1. Check if it looks like a file path -- specifically, if it starts with `./`, `../`, `/`, or `~`.
 2. **If it looks like a file path:** Read the file.
    - If the file exists, use its content as the idea text (IDEA_TEXT).
-   - If the file does not exist, inform the user: "File not found: [path]. Please provide your idea directly." Then use `ask-user` to ask: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences or paste a detailed description."
+   - If the file does not exist, inform the user: "File not found: [path]. Please provide your idea directly." Then ask in chat (see `runtime.md`): "What startup problem or idea would you like to evaluate? You can describe it in a few sentences or paste a detailed description."
 3. **If it does not look like a file path:** Treat the entire `ARGS` string as inline idea text. Store it as IDEA_TEXT.
 
 **If `ARGS` is empty:**
 
-Use `ask-user` to prompt the founder: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences, paste a detailed description, or provide a file path."
+Ask the founder in chat (see `runtime.md`): "What startup problem or idea would you like to evaluate? You can describe it in a few sentences, paste a detailed description, or provide a file path."
 
 Store the response as IDEA_TEXT.
 
@@ -225,21 +225,30 @@ After the agent returns:
 
 #### Lane B Step 2: Founder hypothesis confirmation
 
-**Batched confirmation.** Split the hypotheses array into chunks of up to 4 (preserving original order). For each chunk, make one `ask-user` call containing 1–4 questions. Do NOT re-order, skip, or merge hypotheses across chunks.
+Ask in chat (see `runtime.md`) with one message that lists every hypothesis, numbered from 1 in the original order of `hypotheses.json`. Do NOT re-order, skip, or merge hypotheses. Use exactly this format:
 
-For each hypothesis at global index `i` (0-based) in an array of length `N`, build a question object:
+```
+I pulled {N} testable hypotheses from your idea. Mark the ones you can speak to:
 
-- **question:** `Hypothesis {i+1} of {N} — *{primary_dimension}*: "{text}"\n\nHow should this be marked?`
-- **header:** `{primary_dimension}` truncated to 12 characters at the nearest word boundary
-- **multiSelect:** false
-- **options** (exactly three, in this order):
-  1. label: **CONFIRMED** — description: I have evidence this is true
-  2. label: **UNCONFIRMED** — description: I don't have evidence yet
-  3. label: **REJECTED** — description: This is not a real claim / doesn't apply
+C = confirmed: you have evidence it's true
+R = rejected: not a real claim, or doesn't apply
+Anything you don't mention stays unconfirmed (no evidence yet).
 
-Pack up to 4 question objects into a single `ask-user` call. After each call returns, map answers back to their hypothesis indices before issuing the next batch.
+1. {primary_dimension}: "{text}"
+2. {primary_dimension}: "{text}"
 
-Collect the founder's choice for every hypothesis and carry them into Lane B Step 3.
+Reply like "C 1, 4  R 7", or "none" to leave them all unconfirmed.
+```
+
+Then end the turn and wait for the founder's reply. A background spawn finishing (such as `ti-researcher`) is not a reply; keep waiting.
+
+Map the reply onto the hypotheses:
+
+- Numbers after `C` are CONFIRMED; numbers after `R` are REJECTED. Accept loose formats (commas, spaces, ranges like `2-4`, lowercase letters, words like "confirm").
+- Every hypothesis the reply does not mention is UNCONFIRMED. `none` marks them all UNCONFIRMED.
+- If a number is marked both C and R, or is out of range, re-ask about only those numbers in one short chat message and keep the rest as given.
+
+Carry the status of every hypothesis into Lane B Step 3.
 
 **Concurrency note:** `ti-researcher` was started as a background spawn at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
@@ -288,16 +297,16 @@ Try to read `{HOME_DIR}/.tweakidea/FOUNDER.md`.
 
 **If FOUNDER.md does not exist:**
 - Set FOUNDER_NEEDS_CREATION = true.
-- Read `{SKILL_DIR}/references/founder.md` and follow its **Profile Creation Questions** flow. Ask the 5 questions sequentially with `ask-user`, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from that reference.
+- Read `{SKILL_DIR}/references/founder.md` and follow its **Profile Creation Questions** flow. Ask the 5 questions in one chat message, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from that reference.
 - Store the created profile content as FOUNDER_CONTEXT.
 
 **Founder-Idea Fit Questions:**
 
-Follow the **Fit Question Guidance** in `{SKILL_DIR}/references/founder.md`. Generate 2-4 dual-purpose questions about the founder's connection to THIS specific idea. Present all questions in a single `ask-user` call. Store all question-answer pairs as FOUNDER_FIT_ANSWERS.
+Follow the **Fit Question Guidance** in `{SKILL_DIR}/references/founder.md`. Generate 2-4 dual-purpose questions about the founder's connection to THIS specific idea. Ask them in one chat message, worded as that reference describes. Store all question-answer pairs as FOUNDER_FIT_ANSWERS.
 
 **Optional FOUNDER.md Update:**
 
-Follow the **Profile Update Rules** in `{SKILL_DIR}/references/founder.md`. Review the fit Q&A answers for new persistent attributes. If found, present update options with `ask-user` and append selected items to FOUNDER.md.
+Follow the **Profile Update Rules** in `{SKILL_DIR}/references/founder.md`. Review the fit Q&A answers for new persistent attributes. If found, list them in one chat message as that reference describes and append the items the founder picks to FOUNDER.md.
 
 ### Step 4: Spawn 14 evaluators in parallel
 
@@ -345,13 +354,15 @@ The orchestrator does NOT parse markdown from research.json, does NOT extract cl
 
 Triggered from **Step 4a** when either (a) `research.json` contains `{"available": false, ...}`, or (b) the `invalid` branch wrote the fallback after a JSON parse failure. This is the **only** point in the pipeline where research failure is surfaced to the founder — do not display research errors during Lane B (hypothesis confirmation) or Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). Failure detection is buffered to this gate per D-07/D-08.
 
-Read `{RUN_DIR}/research.json` and capture the `reason` string. Display to the founder:
+Read `{RUN_DIR}/research.json` and capture the `reason` string. Put the failure reason inside the `ask-user` question text itself, because text written between tool calls is often not shown to the founder (see `runtime.md`). Use plain text in this format:
 
-> **Research did not complete:** `{reason from research.json}`
->
-> The 14 dimension evaluators can still run — they will fall back to founder-asserted and assumed evidence only. What would you like to do?
+```
+Research did not complete: {reason from research.json}
 
-Use `ask-user` with these three options:
+The 14 dimension evaluators can still run. They will fall back to founder-asserted and assumed evidence only. What would you like to do?
+```
+
+Use the header `Research` and these three options:
 
 - **"Retry research"** — Re-spawn `ti-researcher` once with the same prompt shape used at Stage 1 Lane A:
   - **model tier:** `fast`

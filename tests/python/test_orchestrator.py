@@ -176,6 +176,15 @@ class TestOrchestratorBody(unittest.TestCase):
     def test_browser_open_question_survives(self):
         self.assertIn("Open the HTML report in your browser", self.body)
 
+    def test_hypothesis_confirmation_asks_in_chat(self):
+        start = self.body.find("#### Lane B Step 2")
+        end = self.body.find("#### Lane B Step 3")
+        self.assertGreater(start, 0)
+        section = self.body[start:end]
+        self.assertIn("Ask in chat", section)
+        self.assertIn("UNCONFIRMED", section)
+        self.assertRegex(section, r"does not mention is UNCONFIRMED")
+        self.assertNotIn("`ask-user`", section)
 
 class TestManifestJs(unittest.TestCase):
     @classmethod
