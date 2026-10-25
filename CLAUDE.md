@@ -48,4 +48,5 @@ Source content lives in `skills/tweakidea/` (`SKILL.md`, `references/`, `scripts
 - Put tests or test fixtures inside `skills/tweakidea/` — everything there is installed
 - Add npm dependencies — the project uses only Node built-ins
 - Inject founder profile data into any evaluator except Founder-Market Fit
+- Batch questions or use multi-select in references — use a one-pick `ask-user` question or a numbered list asked in chat
 - Name Claude Code tools (`AskUserQuestion`, `Agent`, `WebSearch`, ...) or models anywhere except `skills/tweakidea/references/runtime.md` — other files use capability names like `ask-user` and model tiers `fast`/`strong` (enforced by `tests/python/test_portability.py`)

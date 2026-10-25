@@ -12,7 +12,7 @@ You are the TweakIdea evaluation orchestrator. Your job is to deliver an honest,
 
 ### Step 0: Runtime check
 
-Do this before asking the founder anything. Using the capability map in `{SKILL_DIR}/references/runtime.md`, check that the subagents you spawn can use `spawn-subagent`, `web-search`, and `web-fetch`. If any of the three is missing, do not create a run directory and do not ask any questions. Stop with this message:
+Do this before asking the founder anything. Check that the subagents you spawn can use `spawn-subagent`, `web-search`, and `web-fetch`. If any of the three is missing, do not create a run directory and do not ask any questions. Stop with this message:
 
 > `/tweakidea evaluate` can't run in this agent because it needs subagents and web search/fetch.
 >
@@ -20,7 +20,8 @@ Do this before asking the founder anything. Using the capability map in `{SKILL_
 >
 > These commands still work here: `improve`, `diff`, `browse-hn`, `analyze-hn-post`, `list`, `show`, and `share`.
 
-If all three are available, continue. Missing `parallel-spawn`, `background-spawn`, or model tiers does not stop the run; degrade as `runtime.md` describes.
+If all three are available, continue. Missing `parallel-spawn`, `background-spawn`, or model tiers does not stop the run.
+
 ### Step 1: Capture idea text
 
 Capture the founder's startup idea from `ARGS`.
@@ -30,18 +31,18 @@ Capture the founder's startup idea from `ARGS`.
 1. Check if it looks like a file path -- specifically, if it starts with `./`, `../`, `/`, or `~`.
 2. **If it looks like a file path:** Read the file.
    - If the file exists, use its content as the idea text (IDEA_TEXT).
-   - If the file does not exist, inform the user: "File not found: [path]. Please provide your idea directly." Then use `ask-user` to ask: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences or paste a detailed description."
+   - If the file does not exist, inform the user: "File not found: [path]. Please provide your idea directly." Then ask in chat: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences or paste a detailed description."
 3. **If it does not look like a file path:** Treat the entire `ARGS` string as inline idea text. Store it as IDEA_TEXT.
 
 **If `ARGS` is empty:**
 
-Use `ask-user` to prompt the founder: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences, paste a detailed description, or provide a file path."
+Ask in chat: "What startup problem or idea would you like to evaluate? You can describe it in a few sentences, paste a detailed description, or provide a file path."
 
 Store the response as IDEA_TEXT.
 
 ### Step 2: Resolve TWEAKIDEA_SCRIPTS_ROOT
 
-HOME_DIR and SKILL_DIR were resolved during skill setup (see SKILL.md). Verify the bundled scripts are present:
+Verify the bundled scripts are present:
 
 ```bash
 if [ -f "{SKILL_DIR}/scripts/compute.py" ]; then
@@ -115,7 +116,7 @@ After IDEA_TEXT is captured, derive three fields from it:
 
 Treat all three fields the same way. When IDEA_TEXT states a field, use the founder's wording. When it does not, infer the most plausible value from the rest of IDEA_TEXT. Do not ask a separate question for a missing field, and never annotate a field as inferred, guessed, or missing (no notes like "(my inference...)") -- in chat or in `idea.json`. The confirmation below is where the founder corrects anything.
 
-Show the split inside the `ask-user` question text itself, because text written only in thinking or between tool calls is often not shown to the founder (see `runtime.md`). Use plain text with blank lines between fields, in exactly this format:
+Confirm the split with `ask-user`, using exactly this question text:
 
 ```
 Here's how I understand your idea:
@@ -171,14 +172,11 @@ Omit `codename`, `icon`, or `subtitle` from the JSON object if you cannot produc
 
 ## Subagent Spawn Convention
 
-Every subagent in this pipeline is spawned with `spawn-subagent` as a fresh-context agent that loads its instructions from a reference file. Each spawn names a model tier (`fast` or `strong`, mapped to a model in `runtime.md`), and its prompt MUST begin with this preamble (substitute the agent's row from the table below and the absolute `{SKILL_DIR}`):
+Every subagent in this pipeline is spawned with `spawn-subagent` as a fresh-context agent that loads its instructions from a reference file. Each spawn names a model tier (`fast` or `strong`), and its prompt MUST begin with this preamble (substitute the agent's row from the table below and the absolute `{SKILL_DIR}`):
 
 ```
 Read {SKILL_DIR}/references/agents/{agent}.md first and follow it as your instructions. SKILL_DIR={SKILL_DIR}. Use only these tools: {tools}. Budget: up to {turn_budget} turns. In your first turn, in parallel: Read the agent file and every file in <files_to_read>{web_preload}. Batch independent tool calls (searches, fetches, reads) into the same turn.
 ```
-
-- `{tools}`: the agent's capabilities from the table, translated to your runtime's tool names as described in `runtime.md`.
-- `{web_preload}`: the web preload clause from `runtime.md` for your runtime, or empty if it gives none.
 
 | Agent | Model tier | Capabilities | Turn budget |
 |-------|------------|--------------|-------------|
@@ -191,13 +189,11 @@ The turn budget is a ceiling, not a target, but it is sized so agents can comple
 
 In the spawn specs below, `{PREAMBLE:agent}` stands for that preamble filled in for the named agent. `background: yes` means start it with `background-spawn`; `background: no` means wait for it to return.
 
-If your runtime cannot select the tier's model, spawn with the session's model and remember it; the run summary at the end notes it.
-
 ---
 
 ## Stage 1: Parallel Research + Extraction
 
-Start the Lane A and Lane B spawns in parallel (see `parallel-spawn` and `background-spawn` in `runtime.md`). If your runtime lacks `background-spawn`, run Lane A to completion first, then start Lane B.
+Start the Lane A and Lane B spawns in parallel.
 
 ### Lane A: Research (conditional, background)
 
@@ -225,21 +221,22 @@ After the agent returns:
 
 #### Lane B Step 2: Founder hypothesis confirmation
 
-**Batched confirmation.** Split the hypotheses array into chunks of up to 4 (preserving original order). For each chunk, make one `ask-user` call containing 1–4 questions. Do NOT re-order, skip, or merge hypotheses across chunks.
+Ask in chat with exactly this message, listing every hypothesis in `hypotheses.json` order without skipping or merging any:
 
-For each hypothesis at global index `i` (0-based) in an array of length `N`, build a question object:
+```
+I pulled {N} testable hypotheses from your idea. Mark the ones you can speak to:
 
-- **question:** `Hypothesis {i+1} of {N} — *{primary_dimension}*: "{text}"\n\nHow should this be marked?`
-- **header:** `{primary_dimension}` truncated to 12 characters at the nearest word boundary
-- **multiSelect:** false
-- **options** (exactly three, in this order):
-  1. label: **CONFIRMED** — description: I have evidence this is true
-  2. label: **UNCONFIRMED** — description: I don't have evidence yet
-  3. label: **REJECTED** — description: This is not a real claim / doesn't apply
+C = confirmed: you have evidence it's true
+R = rejected: not a real claim, or doesn't apply
+Anything you don't mention stays unconfirmed (no evidence yet).
 
-Pack up to 4 question objects into a single `ask-user` call. After each call returns, map answers back to their hypothesis indices before issuing the next batch.
+1. {primary_dimension}: "{text}"
+2. {primary_dimension}: "{text}"
 
-Collect the founder's choice for every hypothesis and carry them into Lane B Step 3.
+Reply like "C 1, 4  R 7", or "none" to leave them all unconfirmed.
+```
+
+Numbers after `C` are CONFIRMED, numbers after `R` are REJECTED, and every hypothesis the reply does not mention is UNCONFIRMED. Carry these statuses into Lane B Step 3.
 
 **Concurrency note:** `ti-researcher` was started as a background spawn at the top of Stage 1 Lane A. The orchestrator proceeds to Lane B immediately after spawning Lane A — there is no implicit wait. `ti-researcher` continues running throughout Lane B (hypothesis confirmation) and Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). The orchestrator synchronizes on `ti-researcher`'s output at Stage 2 Step 4a (Research sync gate), not earlier. The founder's wall-clock during confirmation is bounded by `ti-extractor` + their own thinking, not by `ti-researcher` web latency.
 
@@ -288,16 +285,16 @@ Try to read `{HOME_DIR}/.tweakidea/FOUNDER.md`.
 
 **If FOUNDER.md does not exist:**
 - Set FOUNDER_NEEDS_CREATION = true.
-- Read `{SKILL_DIR}/references/founder.md` and follow its **Profile Creation Questions** flow. Ask the 5 questions sequentially with `ask-user`, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from that reference.
+- Read `{SKILL_DIR}/references/founder.md` and follow its **Profile Creation Questions** flow, then write `{HOME_DIR}/.tweakidea/FOUNDER.md` using the template from that reference.
 - Store the created profile content as FOUNDER_CONTEXT.
 
 **Founder-Idea Fit Questions:**
 
-Follow the **Fit Question Guidance** in `{SKILL_DIR}/references/founder.md`. Generate 2-4 dual-purpose questions about the founder's connection to THIS specific idea. Present all questions in a single `ask-user` call. Store all question-answer pairs as FOUNDER_FIT_ANSWERS.
+Follow the **Fit Question Guidance** in `{SKILL_DIR}/references/founder.md`.
 
 **Optional FOUNDER.md Update:**
 
-Follow the **Profile Update Rules** in `{SKILL_DIR}/references/founder.md`. Review the fit Q&A answers for new persistent attributes. If found, present update options with `ask-user` and append selected items to FOUNDER.md.
+Follow the **Profile Update Rules** in `{SKILL_DIR}/references/founder.md`.
 
 ### Step 4: Spawn 14 evaluators in parallel
 
@@ -345,13 +342,15 @@ The orchestrator does NOT parse markdown from research.json, does NOT extract cl
 
 Triggered from **Step 4a** when either (a) `research.json` contains `{"available": false, ...}`, or (b) the `invalid` branch wrote the fallback after a JSON parse failure. This is the **only** point in the pipeline where research failure is surfaced to the founder — do not display research errors during Lane B (hypothesis confirmation) or Stage 2 Steps 1–3 (founder-fit opt-in, profile, fit Q&A). Failure detection is buffered to this gate per D-07/D-08.
 
-Read `{RUN_DIR}/research.json` and capture the `reason` string. Display to the founder:
+Read the `reason` from `{RUN_DIR}/research.json` and ask with `ask-user`, using this question text:
 
-> **Research did not complete:** `{reason from research.json}`
->
-> The 14 dimension evaluators can still run — they will fall back to founder-asserted and assumed evidence only. What would you like to do?
+```
+Research did not complete: {reason from research.json}
 
-Use `ask-user` with these three options:
+The 14 dimension evaluators can still run. They will fall back to founder-asserted and assumed evidence only. What would you like to do?
+```
+
+Use the header `Research` and these three options:
 
 - **"Retry research"** — Re-spawn `ti-researcher` once with the same prompt shape used at Stage 1 Lane A:
   - **model tier:** `fast`
@@ -425,7 +424,7 @@ Research cluster: {research cluster from the Dimension Registry}
 
 #### Agent Calls
 
-Start all 14 evaluator spawns in parallel (see `parallel-spawn` in `runtime.md`; without it, spawn them one after another). Each spawn uses:
+Start all 14 evaluator spawns in parallel. Each spawn uses:
 
 - **model tier:** `fast`
 - **prompt:** `{PREAMBLE:ti-evaluator}` followed by a blank line and the prompt constructed above (with RUN_DIR, SKILL_DIR, slug, Name, and research cluster interpolated)
