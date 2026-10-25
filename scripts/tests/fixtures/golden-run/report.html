@@ -292,7 +292,8 @@
   }
   .idea {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
     gap: 40px;
   }
   .idea-field { min-width: 0; }
@@ -1252,6 +1253,10 @@
     <div class="idea-field">
       <div class="idea-field-label">Solution</div>
       <p class="idea-field-body">A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions.</p>
+    </div>
+    <div class="idea-field">
+      <div class="idea-field-label">Target User</div>
+      <p class="idea-field-body">Two- to ten-person B2B SaaS companies without a dedicated finance hire, where a founder or ops lead does the monthly close across Stripe, PayPal, and a business bank account.</p>
     </div>
   </div>
 

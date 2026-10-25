@@ -249,14 +249,27 @@ function mergeSettings(targetDir) {
   }
 
   // Add required permissions (deduplicated)
-  const requiredAllow = ['WebSearch', 'WebFetch'];
+  // Path rules must use Read/Edit: Claude Code only checks those for file
+  // access, and Edit covers Write. Subagents in dontAsk mode deny anything
+  // not explicitly allowed, even inside additionalDirectories.
+  const requiredAllow = [
+    'WebSearch',
+    'WebFetch',
+    'Read(~/.tweakidea/**)',
+    'Edit(~/.tweakidea/**)',
+  ];
   for (const perm of requiredAllow) {
     if (!settings.permissions.allow.includes(perm)) {
       settings.permissions.allow.push(perm);
     }
   }
 
-  const requiredDirs = ['~/.tweakidea/*'];
+  // Older installs wrote a glob, which additionalDirectories does not accept.
+  const legacyDirs = ['~/.tweakidea/*'];
+  settings.permissions.additionalDirectories =
+    settings.permissions.additionalDirectories.filter((d) => !legacyDirs.includes(d));
+
+  const requiredDirs = ['~/.tweakidea'];
   for (const dir of requiredDirs) {
     if (!settings.permissions.additionalDirectories.includes(dir)) {
       settings.permissions.additionalDirectories.push(dir);

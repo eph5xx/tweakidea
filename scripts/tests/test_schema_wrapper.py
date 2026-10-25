@@ -56,6 +56,7 @@ class TestValidateFail(unittest.TestCase):
         ("numbers-bad-bucket.json", "numbers"),
         ("sw-wrong-count.json", "strengths-weaknesses"),
         ("idea-missing-text.json", "idea"),
+        ("idea-empty-target-user.json", "idea"),
         ("hypotheses-bad-status.json", "hypotheses"),
         ("research-missing-available.json", "research"),
         ("assumptions-bad-status.json", "assumptions"),

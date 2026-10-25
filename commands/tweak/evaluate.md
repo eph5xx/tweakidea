@@ -120,34 +120,33 @@ Use the Write tool to create `{RUN_DIR}/version.json` with this exact content (s
 }
 ```
 
-### Step 5: Problem/Solution Split and Write idea.json
+### Step 5: Problem/Solution/Target User Split and Write idea.json
 
-After IDEA_TEXT is captured, parse it into two components:
+After IDEA_TEXT is captured, derive three fields from it:
 
 1. **PROBLEM**: The pain, need, or opportunity the founder describes
 2. **SOLUTION**: The proposed product, service, or approach to address the problem
+3. **TARGET_USER**: The specific person or organization who has the problem and who the product is for
 
-Display the split to the founder for confirmation:
+Treat all three fields the same way. When IDEA_TEXT states a field, use the founder's wording. When it does not, infer the most plausible value from the rest of IDEA_TEXT. Do not ask a separate question for a missing field, and never annotate a field as inferred, guessed, or missing (no notes like "(my inference...)") -- in chat or in `idea.json`. The confirmation below is where the founder corrects anything.
 
-> **Here's how I understand your idea:**
->
-> **Problem:** [extracted problem statement]
-> **Solution:** [extracted solution approach]
->
-> Does this capture your idea correctly?
+Show the split inside the AskUserQuestion `question` field itself, because text written only in thinking or between tool calls is often not shown to the founder. Use plain text with blank lines between fields (the question box renders markdown poorly), in exactly this format:
 
-Use AskUserQuestion with options:
-- "Yes, that's right" -- proceed with PROBLEM and SOLUTION as parsed
-- "Let me clarify" -- allow the founder to provide corrections, then re-split
+```
+Here's how I understand your idea:
 
-**If IDEA_TEXT describes only a problem with no clear solution:**
+Problem: [problem statement]
 
-Inform the founder:
-> I can see the problem you're describing, but I need to understand your proposed solution to evaluate it fully.
+Solution: [solution statement]
 
-Use AskUserQuestion: "What solution or approach are you considering for this problem?"
+Target User: [target user statement]
 
-Store the response as SOLUTION. Keep the original IDEA_TEXT description as PROBLEM.
+Does this capture your idea correctly?
+```
+
+Use the header `Idea split` and these options:
+- "Yes, that's right" -- proceed with PROBLEM, SOLUTION, and TARGET_USER as shown
+- "Let me clarify" -- take the founder's corrections, re-derive all three fields, and ask again with the updated split in the same format
 
 After confirmation, recombine into structured IDEA_TEXT for all downstream stages:
 
@@ -155,6 +154,8 @@ After confirmation, recombine into structured IDEA_TEXT for all downstream stage
 Problem: [PROBLEM]
 
 Solution: [SOLUTION]
+
+Target User: [TARGET_USER]
 ```
 
 Before writing `idea.json`, also derive three optional display fields used by the report's doc header:
@@ -172,6 +173,7 @@ Use the Write tool to create `{RUN_DIR}/idea.json` with the parsed IDEA_TEXT:
   "text": "{full recombined text}",
   "problem": "{problem statement}",
   "solution": "{solution statement}",
+  "target_user": "{target user statement}",
   "codename": "{optional short codename}",
   "icon": "{optional single emoji}",
   "subtitle": "{optional one-sentence framing}"

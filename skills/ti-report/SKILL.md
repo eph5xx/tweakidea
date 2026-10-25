@@ -81,6 +81,7 @@ Template variables assembled by `render_report.py` from the run artifact family:
 
 Key lookups used in templates:
 
+- `idea.problem`, `idea.solution` — required. `idea.target_user` — optional; absent in runs created before v3.0.0. Both templates render the Target User field only when it is present.
 - `idea.codename`, `idea.icon`, `idea.subtitle` — all optional; template renders sensible fallbacks when absent (codename → "Evaluation", icon → 📋, subtitle → `idea.problem`).
 - `numbers.rankings[i]` — each entry now carries `weight` (0–1 fraction of registry weight), used to render `{weight*100}%` in the dim-grid and the per-dimension collapsibles.
 - `numbers.rankings[i].slug` → key into `dimensions` dict for `dimensions[r.slug].key_finding` and `dimensions[r.slug].score_explanation`.

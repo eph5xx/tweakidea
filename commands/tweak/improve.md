@@ -13,7 +13,7 @@ skills:
 
 ## Purpose
 
-Read a completed `/tweak:evaluate` run and generate three concrete idea rewrites at escalating scales of change — small reframe, medium reshape, big reimagine. Each tweak is a rewritten problem + solution statement the founder can paste directly into `/tweak:evaluate`.
+Read a completed `/tweak:evaluate` run and generate three concrete idea rewrites at escalating scales of change — small reframe, medium reshape, big reimagine. Each tweak is a rewritten problem + solution + target user statement the founder can paste directly into `/tweak:evaluate`.
 
 Read-only. Never write files under `~/.tweakidea/`. Never spawn agents.
 
@@ -23,7 +23,7 @@ $ARGUMENTS
 
 Everything lives under `$HOME/.tweakidea/runs/<YYYYMMDD-HHMMSS>/`. Files needed:
 
-- `idea.json` — `problem`, `solution`, `codename`, `icon`, `subtitle`
+- `idea.json` — `problem`, `solution`, `target_user` (absent in runs before v3.0.0), `codename`, `icon`, `subtitle`
 - `numbers.json` — `weighted_total`, `potential_total`, `verdict_bucket`, `verdict_label`, `overall_grade`, `rankings[]` (per-dimension `dim`, `slug`, `weight`, `score`, `potential`, `evidence_strength.grade`), `assumption_impact_math[]`
 - `strengths-weaknesses.json` — 6 entries: `[{kind, dim, score, why}]`
 - `potential.json` — `{dimensions[], assumptions[], narrative}`
@@ -92,14 +92,14 @@ Using the priority ranking, rubric criteria, and dimension analyses, generate th
 2. **Three are independent branches**, not nested. Small is NOT a subset of Medium. Medium is NOT a subset of Big. A founder picks one path, not all three in sequence.
 3. **Never duplicate next-steps.** Next-steps are validation tasks ("interview 10 customers"). Tweaks are idea changes ("reposition as a compliance tool"). Check `next-steps.json` and avoid generating validation tasks dressed up as tweaks.
 4. **Trade-offs are mandatory.** Every tweak must acknowledge what it might weaken. Narrowing the target helps Clarity but may hurt Market Size. Introducing compliance features helps Mandatory Nature but may increase Behavior Change.
-5. **Pasteable output.** The Problem/Solution text must be complete, self-contained, and written in the same style as the original `idea.json` — ready to paste into `/tweak:evaluate`.
+5. **Pasteable output.** The Problem/Solution/Target User text must be complete, self-contained, and written in the same style as the original `idea.json` — ready to paste into `/tweak:evaluate`.
 
 ## Tweak scales
 
 ### Small — "Reframe"
 
 - **Constraint:** Same core product, same target market segment.
-- **Allowed changes:** Positioning, pricing model, target customer specificity, urgency framing, go-to-market narrative.
+- **Allowed changes:** Positioning, pricing model, target customer specificity (expressed through the rewritten **Target User:** field), urgency framing, go-to-market narrative.
 - **Targets:** 1–2 dimensions movable through framing alone. Typical candidates: Clarity of Target Customer, Urgency, Willingness to Pay, Pain Intensity, Mandatory Nature.
 - **Example:** Narrowing "small SaaS teams" to "seed-stage SaaS teams doing their first SOC 2 audit" could lift Urgency and Mandatory Nature by introducing a compliance forcing function.
 
@@ -134,9 +134,12 @@ Then the original idea summary:
 **Original idea** ({date}, weighted {weighted_total}/5.0, {verdict_bucket}):
 **Problem:** {problem}
 **Solution:** {solution}
+**Target User:** {target_user}
 
 **Weakest dimensions:** {bottom 5 with scores, e.g. "Urgency (2), Defensibility (2), Mandatory Nature (2), WTP (3), Founder-Market Fit (3)"}
 ```
+
+Omit the **Target User:** line if `idea.json` has no `target_user` (runs before v3.0.0).
 
 If any dimension in `rankings[]` has `score == 1`, add: `**Dealbreakers:** {list of those dimension names}`
 
@@ -155,6 +158,8 @@ For each of the three tweaks, render:
 
 **Solution:** {rewritten solution statement}
 
+**Target User:** {rewritten target user}
+
 **Why this helps:**
 
 | Dimension | Now | Direction | Rationale |
@@ -170,6 +175,8 @@ Direction values:
 - `steady` — no expected change
 - `risk: down` — the tweak may weaken this dimension
 
+Always output **Target User:** for every tweak. For runs without `target_user` in `idea.json`, infer the original target user from the problem and solution and rewrite from there. Write the target user as plain text, the same as Problem and Solution, with no note that it was inferred.
+
 Only include dimensions where the direction is NOT steady. Focus the table on what moves.
 
 Separate tweaks with `---`.
@@ -181,7 +188,7 @@ Separate tweaks with `---`.
 
 Pick any tweak (or combine elements) and run:
 
-> `/tweak:evaluate {paste the rewritten problem + solution}`
+> `/tweak:evaluate {paste the rewritten problem + solution + target user}`
 
 Then compare with `/tweak:diff latest` to see what moved.
 ```

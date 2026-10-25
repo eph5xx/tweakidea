@@ -89,6 +89,47 @@ class TestGoldenRender(unittest.TestCase):
         self.assertNotIn("&gt;", md)
         self.assertNotIn("&amp;", md)
 
+    def test_md_has_target_user(self):
+        run_render(self.run)
+        md = (self.run / "report.md").read_text()
+        self.assertIn("**Target User:**", md)
+
+    def test_html_has_target_user(self):
+        run_render(self.run)
+        html = (self.run / "report.html").read_text()
+        self.assertIn('<div class="idea-field-label">Target User</div>', html)
+
+
+class TestIdeaWithoutTargetUser(unittest.TestCase):
+    """Runs created before v3.0.0 have no target_user and must still render."""
+
+    def setUp(self):
+        self.tmpdir = pathlib.Path(tempfile.mkdtemp())
+        self.run = self.tmpdir / "run"
+        shutil.copytree(GOLDEN, self.run)
+        idea = json.loads((self.run / "idea.json").read_text())
+        idea.pop("target_user", None)
+        (self.run / "idea.json").write_text(json.dumps(idea))
+        for n in ("report.md", "report.html"):
+            p = self.run / n
+            if p.exists():
+                p.unlink()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_renders_without_target_user_label(self):
+        result = run_render(self.run)
+        self.assertEqual(
+            result.returncode,
+            0,
+            f"render exited {result.returncode}; stderr: {result.stderr}",
+        )
+        md = (self.run / "report.md").read_text()
+        html = (self.run / "report.html").read_text()
+        self.assertNotIn("Target User", md)
+        self.assertNotIn("Target User", html)
+
 
 class TestHtmlAutoescape(unittest.TestCase):
     """Verify XSS mitigation via auto-escape."""
@@ -114,6 +155,29 @@ class TestHtmlAutoescape(unittest.TestCase):
         html = (self.run / "report.html").read_text()
         self.assertIn("&lt;script&gt;", html)
         self.assertNotIn("<script>alert(1)", html)
+
+
+class TestHtmlAutoescapeTargetUser(unittest.TestCase):
+    def setUp(self):
+        self.tmpdir = pathlib.Path(tempfile.mkdtemp())
+        self.run = self.tmpdir / "run"
+        shutil.copytree(GOLDEN, self.run)
+        idea = json.loads((self.run / "idea.json").read_text())
+        idea["target_user"] = "<script>alert(2)</script> " + idea["target_user"]
+        (self.run / "idea.json").write_text(json.dumps(idea))
+        for n in ("report.md", "report.html"):
+            p = self.run / n
+            if p.exists():
+                p.unlink()
+
+    def tearDown(self):
+        shutil.rmtree(self.tmpdir, ignore_errors=True)
+
+    def test_script_tag_escaped_in_target_user(self):
+        run_render(self.run)
+        html = (self.run / "report.html").read_text()
+        self.assertIn("&lt;script&gt;alert(2)", html)
+        self.assertNotIn("<script>alert(2)", html)
 
 
 class TestMissingRunDir(unittest.TestCase):

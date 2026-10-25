@@ -94,6 +94,13 @@ class TestOrchestratorBody(unittest.TestCase):
         stage_0_body = self.body[stage_0_start:stage_1_start]
         self.assertIn("TWEAKIDEA_SCRIPTS_ROOT", stage_0_body)
 
+    def test_target_user_in_stage_0(self):
+        stage_0_start = self.body.find("## Stage 0")
+        stage_1_start = self.body.find("## Stage 1")
+        stage_0_body = self.body[stage_0_start:stage_1_start]
+        self.assertIn("target_user", stage_0_body)
+        self.assertIn("Target User:", stage_0_body)
+
     def test_zero_text_processing_statement(self):
         self.assertIn("ZERO text processing", self.body)
 

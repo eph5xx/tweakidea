@@ -133,7 +133,12 @@ function assertInstallShape(claudeDir, pkgVersion) {
     settings.permissions && Array.isArray(settings.permissions.allow),
     'settings.permissions.allow must be an array'
   );
-  for (const perm of ['WebSearch', 'WebFetch']) {
+  for (const perm of [
+    'WebSearch',
+    'WebFetch',
+    'Read(~/.tweakidea/**)',
+    'Edit(~/.tweakidea/**)',
+  ]) {
     assert.ok(
       settings.permissions.allow.includes(perm),
       `settings.permissions.allow must include ${perm}`
@@ -145,8 +150,12 @@ function assertInstallShape(claudeDir, pkgVersion) {
     'settings.permissions.additionalDirectories must be an array'
   );
   assert.ok(
-    settings.permissions.additionalDirectories.includes('~/.tweakidea/*'),
-    "settings.permissions.additionalDirectories must include '~/.tweakidea/*'"
+    settings.permissions.additionalDirectories.includes('~/.tweakidea'),
+    "settings.permissions.additionalDirectories must include '~/.tweakidea'"
+  );
+  assert.ok(
+    !settings.permissions.additionalDirectories.includes('~/.tweakidea/*'),
+    "settings.permissions.additionalDirectories must not include legacy '~/.tweakidea/*'"
   );
 }
 

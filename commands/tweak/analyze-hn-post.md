@@ -227,9 +227,11 @@ Source: https://news.ycombinator.com/item?id={item_id}
 
 ## 1. [Idea Title]
 
-**Problem:** [Problem statement grounded in evidence from the article and comments. Cite specific commenters, data points, and quotes. Explain the pain point, who experiences it, and what the current alternatives are. Soft limit: 6-10 sentences.]
+**Problem:** [Problem statement grounded in evidence from the article and comments. Cite specific commenters, data points, and quotes. Explain the pain point and what the current alternatives are. Soft limit: 6-10 sentences.]
 
-**Solution:** [Solution: what the product is, who it serves, how it works, pricing model, go-to-market angle, and why the timing is right. Include competitive positioning and evidence from the discussion. Soft limit: 6-10 sentences.]
+**Solution:** [Solution: what the product is, how it works, pricing model, go-to-market angle, and why the timing is right. Include competitive positioning and evidence from the discussion. Soft limit: 6-10 sentences.]
+
+**Target User:** [Who the product is for: segment, role, firmographics or demographics, and where they gather. Ground it in evidence from the thread (which commenters fit this profile and what they said). Soft limit: 2-4 sentences.]
 
 ---
 ```
@@ -246,4 +248,4 @@ Tell the user, using clickable markdown links:
 
 Then suggest:
 
-> To evaluate any of these ideas, run `/tweak:evaluate` and paste the Problem + Solution text from ideas.md.
+> To evaluate any of these ideas, run `/tweak:evaluate` and paste the Problem + Solution + Target User text from ideas.md.

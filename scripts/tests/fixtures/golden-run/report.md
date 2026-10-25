@@ -8,6 +8,8 @@
 
 **Solution:** A reconciliation dashboard that ingests Stripe, PayPal, and bank CSV exports and auto-matches transactions.
 
+**Target User:** Two- to ten-person B2B SaaS companies without a dedicated finance hire, where a founder or ops lead does the monthly close across Stripe, PayPal, and a business bank account.
+
 ## Summary
 
 - **Weighted score:** 3.2/5.0
