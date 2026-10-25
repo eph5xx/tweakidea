@@ -5,7 +5,7 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 AGENT_FILE = ROOT / "skills" / "tweakidea" / "references" / "agents" / "ti-narrative.md"
 
-from tests.python._fm import parse_spawn_contract  # noqa: E402
+from tests.python._fm import claude_model_for_tier, parse_spawn_contract  # noqa: E402
 
 
 class TestNarrativeAgentContract(unittest.TestCase):
@@ -22,7 +22,8 @@ class TestNarrativeAgentContract(unittest.TestCase):
         self.assertFalse(self.text.startswith("---"))
 
     def test_model_is_opus(self):
-        self.assertEqual(self.fm.get("model"), "opus")
+        self.assertEqual(self.fm.get("tier"), "strong")
+        self.assertEqual(claude_model_for_tier("strong"), "opus")
 
     def test_max_turns(self):
         # Read phase + 3 writes + reasoning headroom
@@ -30,8 +31,8 @@ class TestNarrativeAgentContract(unittest.TestCase):
 
     def test_has_read_and_write_tools(self):
         tools = self.fm.get("tools", [])
-        self.assertIn("Read", tools)
-        self.assertIn("Write", tools)
+        self.assertIn("read-file", tools)
+        self.assertIn("write-file", tools)
 
     def test_references_evaluation_md(self):
         self.assertIn("references/scoring/EVALUATION.md", self.body)

@@ -1,7 +1,7 @@
 """Tests for ti-extractor agent spawn contract + body contracts.
 
 Validates that references/agents/ti-extractor.md:
-- Has Write in its tools list (EXTR-01)
+- Has write-file in its tools list (EXTR-01)
 - References the hypotheses.json schema
 - Contains the correct write path {RUN_DIR}/hypotheses.json
 - Does NOT contain legacy ## EXTRACTION COMPLETE marker
@@ -12,7 +12,7 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 AGENT_FILE = ROOT / "skills" / "tweakidea" / "references" / "agents" / "ti-extractor.md"
 
-from tests.python._fm import parse_spawn_contract  # noqa: E402
+from tests.python._fm import claude_model_for_tier, parse_spawn_contract  # noqa: E402
 
 
 class TestExtractorAgent(unittest.TestCase):
@@ -23,12 +23,12 @@ class TestExtractorAgent(unittest.TestCase):
         cls.body = cls.text
 
     def test_write_in_tools(self):
-        """EXTR-01: ti-extractor must have Write tool to write hypotheses.json."""
+        """EXTR-01: ti-extractor must have write-file to write hypotheses.json."""
         tools = self.fm.get("tools", [])
         # tools may be None (parsed as None for empty `tools:`) or a list
         if tools is None:
             tools = []
-        self.assertIn("Write", tools)
+        self.assertIn("write-file", tools)
 
     def test_schema_reference(self):
         """Body must reference schemas/hypotheses.json so schema + prompt stay in sync."""
@@ -43,8 +43,9 @@ class TestExtractorAgent(unittest.TestCase):
         self.assertNotIn("## EXTRACTION COMPLETE", self.body)
 
     def test_model_still_sonnet(self):
-        """Extractor model must remain sonnet per project key decisions."""
-        self.assertEqual(self.fm.get("model"), "sonnet")
+        """Extractor runs on the fast tier, which maps to sonnet per project key decisions."""
+        self.assertEqual(self.fm.get("tier"), "fast")
+        self.assertEqual(claude_model_for_tier("fast"), "sonnet")
 
     def test_status_pending_in_schema_example(self):
         """Extractor must emit status: PENDING for all extracted hypotheses."""

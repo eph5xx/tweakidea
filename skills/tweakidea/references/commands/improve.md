@@ -21,9 +21,9 @@ Parse `ARGS` for a run identifier. Accept any of:
 
 - **Timestamp or prefix** → resolve via `ls $HOME/.tweakidea/runs/` and prefix-match
 - **`latest`** → the most recent run
-- **Empty** → use `AskUserQuestion` to ask which run
+- **Empty** → use `ask-user` to ask which run
 
-If a prefix matches multiple runs, use `AskUserQuestion` to disambiguate.
+If a prefix matches multiple runs, use `ask-user` to disambiguate.
 
 ## Steps
 

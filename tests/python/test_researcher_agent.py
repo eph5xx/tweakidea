@@ -1,8 +1,8 @@
 """Tests for ti-researcher agent spawn contract + body contracts.
 
 Validates that references/agents/ti-researcher.md:
-- Has Write in its tools list (RSRC-01)
-- Still retains WebSearch, WebFetch, Read tools (nothing removed)
+- Has write-file in its tools list (RSRC-01)
+- Still retains web-search, web-fetch, read-file (nothing removed)
 - References the research.json schema
 - Contains the correct write path {RUN_DIR}/research.json
 - Does NOT contain legacy ## RESEARCH COMPLETE marker
@@ -13,7 +13,7 @@ import unittest
 ROOT = pathlib.Path(__file__).resolve().parent.parent.parent
 AGENT_FILE = ROOT / "skills" / "tweakidea" / "references" / "agents" / "ti-researcher.md"
 
-from tests.python._fm import parse_spawn_contract  # noqa: E402
+from tests.python._fm import claude_model_for_tier, parse_spawn_contract  # noqa: E402
 
 
 class TestResearcherAgent(unittest.TestCase):
@@ -24,16 +24,16 @@ class TestResearcherAgent(unittest.TestCase):
         cls.body = cls.text
 
     def test_write_in_tools(self):
-        """RSRC-01: ti-researcher must have Write tool to write research.json."""
-        self.assertIn("Write", self.fm.get("tools", []))
+        """RSRC-01: ti-researcher must have write-file to write research.json."""
+        self.assertIn("write-file", self.fm.get("tools", []))
 
     def test_preserves_existing_tools(self):
-        """WebSearch, WebFetch, Read must all remain — no tools removed."""
-        for t in ("WebSearch", "WebFetch", "Read"):
+        """web-search, web-fetch, read-file must all remain — no capabilities removed."""
+        for t in ("web-search", "web-fetch", "read-file"):
             self.assertIn(t, self.fm.get("tools", []), f"Tool {t!r} was removed from the spawn contract")
 
     def test_four_tools_total(self):
-        """Researcher should have exactly 4 tools: WebSearch, WebFetch, Read, Write."""
+        """Researcher should have exactly 4 capabilities: web-search, web-fetch, read-file, write-file."""
         tools = self.fm.get("tools", [])
         self.assertEqual(len(tools), 4, f"Expected 4 tools, got {len(tools)}: {tools}")
 
@@ -51,11 +51,12 @@ class TestResearcherAgent(unittest.TestCase):
 
     def test_per_cluster_research_minimum(self):
         self.assertIn("at least 3 targeted search queries per cluster", self.body)
-        self.assertIn("WebFetch at least 3", self.body)
+        self.assertIn("Fetch at least 3", self.body)
 
     def test_model_still_sonnet(self):
-        """Researcher model must remain sonnet per project key decisions."""
-        self.assertEqual(self.fm.get("model"), "sonnet")
+        """Researcher runs on the fast tier, which maps to sonnet per project key decisions."""
+        self.assertEqual(self.fm.get("tier"), "fast")
+        self.assertEqual(claude_model_for_tier("fast"), "sonnet")
 
     def test_available_false_case_documented(self):
         """available: false case must be documented for when research is disabled."""

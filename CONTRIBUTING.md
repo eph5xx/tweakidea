@@ -1,6 +1,6 @@
 # Contributing to TweakIdea
 
-TweakIdea is a single Claude Code skill, `/tweakidea`, in the agent-skills format. It lives in `skills/tweakidea/`: a router `SKILL.md`, markdown references for every command and subagent, JSON schemas and report templates as assets, and small Python helpers in `scripts/`. There's no compiled code; editing it means editing markdown and the occasional Python script.
+TweakIdea is a single skill, `/tweakidea`, in the Agent Skills format. It runs in any Agent Skills-compatible agent and is tested on Claude Code. It lives in `skills/tweakidea/`: a router `SKILL.md`, markdown references for every command and subagent, JSON schemas and report templates as assets, and small Python helpers in `scripts/`. There's no compiled code; editing it means editing markdown and the occasional Python script.
 
 ## Quick start
 
@@ -31,11 +31,12 @@ tweakidea/
     SKILL.md                # Frontmatter, setup, routing, command + reference tables
     references/
       commands/             # 8 command playbooks (evaluate, improve, diff, browse-hn, ...)
-      agents/               # 4 subagent instructions, spawned as general-purpose agents
-        ti-evaluator.md     # Spawned 14× on Sonnet (one per dimension)
-        ti-extractor.md     # Hypothesis extractor (Sonnet)
-        ti-narrative.md     # Cross-dimensional narrative author (Opus)
-        ti-researcher.md    # Web research (Sonnet)
+      runtime.md            # Capability map: the only file that names Claude Code tools and models
+      agents/               # 4 subagent instructions, spawned as fresh-context subagents
+        ti-evaluator.md     # Spawned 14× on the fast tier (Sonnet), one per dimension
+        ti-extractor.md     # Hypothesis extractor (fast tier)
+        ti-narrative.md     # Cross-dimensional narrative author (strong tier, Opus)
+        ti-researcher.md    # Web research (fast tier)
       scoring/
         EVALUATION.md       # Scoring algorithm, weights, evidence tiers
         dimensions/         # 14 dimension definition files
@@ -73,7 +74,8 @@ All paths below are relative to `skills/tweakidea/`.
 | Dimension weights | `references/scoring/EVALUATION.md` |
 | Scoring algorithm | `references/scoring/EVALUATION.md` |
 | Evaluate pipeline behavior | `references/commands/evaluate.md` |
-| Subagent model, tools, or turn budget | Spawn table in `references/commands/evaluate.md` and the "Tools and budget" line in the agent reference |
+| Subagent model tier, capabilities, or turn budget | Spawn table in `references/commands/evaluate.md` and the "Tools and budget" line in the agent reference |
+| Tool names, model mapping, or fallbacks for a runtime | `references/runtime.md` (the only file that may name Claude Code tools) |
 | Scorecard computation | `scripts/compute.py` |
 | Cross-dimensional narrative | `references/agents/ti-narrative.md` |
 | Research strategy | `references/agents/ti-researcher.md` |

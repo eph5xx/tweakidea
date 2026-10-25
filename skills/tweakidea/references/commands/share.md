@@ -8,7 +8,7 @@ Resolve `ARGS` to a single run under `~/.tweakidea/runs/`. Accept: empty or `lat
 
 Runs only. If the query looks like an HN id (`hn-<id>`, `hn <id>`, or a bare numeric id) or `founder`/`me`, print one line — `/tweakidea share is for evaluation runs only — HN and founder artifacts have no report.html.` — and stop.
 
-If a keyword or prefix matches 2–5 runs, use `AskUserQuestion` to pick; if more than 5, render the 5 newest matches and stop without uploading.
+If a keyword or prefix matches 2–5 runs, use `ask-user` to pick; if more than 5, render the 5 newest matches and stop without uploading.
 
 ## Preflight
 

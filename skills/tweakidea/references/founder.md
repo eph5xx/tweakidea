@@ -47,7 +47,7 @@ Reference data for all founder profile operations. The orchestrator (`evaluate.m
 
 ## Profile Creation Questions
 
-Ask these 5 questions one at a time using AskUserQuestion, waiting for each answer before proceeding to the next:
+Ask these 5 questions one at a time with `ask-user`, waiting for each answer before proceeding to the next:
 
 | # | Question | Maps to Section |
 |---|----------|-----------------|
@@ -96,9 +96,9 @@ Adapt to the specific idea -- do not use these verbatim if they don't fit:
 
 ### Presentation
 
-Present all 2-4 fit questions in a **single AskUserQuestion call** so the founder sees and answers all questions together in one interaction. Do NOT preview questions first, do NOT ask them one at a time. One call, all questions.
+Present all 2-4 fit questions in a **single `ask-user` call** so the founder sees and answers all questions together in one interaction. Do NOT preview questions first, do NOT ask them one at a time. One call, all questions.
 
-For each question, provide 2-4 answer options relevant to the question type (e.g., depth-of-experience options, yes/no with elaboration, etc.). AskUserQuestion auto-adds "Other" -- do NOT include "Other" as an explicit option.
+For each question, provide 2-4 answer options relevant to the question type (e.g., depth-of-experience options, yes/no with elaboration, etc.). Do NOT include "Other" as an explicit option; free-text answers are always accepted (see `references/runtime.md`).
 
 ### Storage
 
@@ -123,9 +123,9 @@ After fit Q&A, review answers for NEW persistent attributes about the founder --
 
 ### Update mechanics
 
-1. Present relevant answers to the founder using AskUserQuestion with multiSelect
+1. Present relevant answers to the founder with `ask-user`, using `multiSelect`
 2. Each option shows a summary and which FOUNDER.md section it would update
-3. Follow AskUserQuestion 2-4 option limit; chunk if more than 4 qualify
+3. Use 2-4 options per question; chunk if more than 4 qualify
 4. If founder selects answers to persist: read current FOUNDER.md, **append** to relevant section (never replace), write updated file
 5. Update the "Last updated" date in the footer
 6. If founder selects nothing or no answers qualify, skip entirely
@@ -150,7 +150,7 @@ If headers are unrecognized, try keyword proximity matching. If completely unpar
 
 For standalone profile editing (outside of an evaluation run), use a two-call section picker:
 
-### First AskUserQuestion call (multiSelect: true)
+### First `ask-user` call (multiSelect: true)
 
 Question: "Which sections of your founder profile would you like to update?"
 
@@ -162,7 +162,7 @@ Options (4 items):
 
 If "No changes needed" is selected: exit without editing.
 
-### Second AskUserQuestion call (multiSelect: true)
+### Second `ask-user` call (multiSelect: true)
 
 Question: "Any other sections to update?"
 

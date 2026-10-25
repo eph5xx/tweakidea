@@ -17,9 +17,9 @@ Parse `ARGS` for two run identifiers. Accept any of:
 - **Two timestamps or prefixes** → resolve both
 - **One timestamp + `latest`** → resolve the timestamp + the most recent run
 - **Just `latest`** → the two most recent runs (latest = Run B, second-latest = Run A)
-- **Empty** → use `AskUserQuestion` to ask which runs to compare
+- **Empty** → use `ask-user` to ask which runs to compare
 
-If a prefix matches multiple runs, use `AskUserQuestion` to disambiguate. Resolve run directories via `ls $HOME/.tweakidea/runs/` and prefix-match.
+If a prefix matches multiple runs, use `ask-user` to disambiguate. Resolve run directories via `ls $HOME/.tweakidea/runs/` and prefix-match.
 
 **Convention:** the earlier run is always **Run A**, the later is **Run B** — swap if the user passed them in reverse chronological order.
 

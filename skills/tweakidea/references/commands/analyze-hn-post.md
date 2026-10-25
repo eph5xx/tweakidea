@@ -11,7 +11,7 @@ You analyze Hacker News discussions to identify technology shifts and product op
 1. Extract the numeric item ID from `ARGS`:
    - If it contains `id=`, extract the number after it
    - If it is purely numeric, use it directly
-   - If `ARGS` is empty, use AskUserQuestion to ask: "Paste a Hacker News URL or item ID to analyze."
+   - If `ARGS` is empty, use `ask-user` to ask: "Paste a Hacker News URL or item ID to analyze."
 
 2. Resolve the home directory:
    ```bash
@@ -49,7 +49,7 @@ Then stop. Do not continue.
 
 ### Locate the script
 
-The `hnparse.py` script ships in the skill's `scripts/` folder at `{SKILL_DIR}/scripts/hnparse.py` (usage notes in `{SKILL_DIR}/references/hn.md`). Use Bash `ls` to check it exists and store it as SCRIPT_PATH. If it does not exist, tell the user: "Cannot find hnparse.py. Please ensure TweakIdea is installed: `npx tweakidea`" and stop.
+The `hnparse.py` script ships in the skill's `scripts/` folder at `{SKILL_DIR}/scripts/hnparse.py` (usage notes in `{SKILL_DIR}/references/hn.md`). Run `ls` to check it exists and store it as SCRIPT_PATH. If it does not exist, tell the user: "Cannot find hnparse.py. Please reinstall the tweakidea skill." and stop.
 
 ### Run the script
 
@@ -65,9 +65,9 @@ If the script fails, inform the user and stop.
 
 ## Phase 3: Read All Content
 
-1. Read CONTENT_PATH using the Read tool, starting at line 1 with the default 2000-line limit.
+1. Read CONTENT_PATH in full, starting at line 1.
 
-2. If the file has more content, continue reading with offset 2000, then 4000, then 6000, etc. until reaching the end of the file. A read is complete when the tool returns fewer lines than the limit.
+2. If your file reader returns the file in chunks, keep reading the next chunk until you reach the end of the file. Do not stop after the first chunk.
 
 3. You MUST read ALL content before starting analysis. Do not begin writing the report after only the first chunk. Late comments often contain the strongest practitioner signals -- people building things, reporting real-world experience, citing costs, or describing pain points.
 
@@ -178,7 +178,7 @@ This gives the user the context they need before answering the Phase 6 confirmat
 
 ## Phase 6: Confirm Opportunities
 
-Use AskUserQuestion to present product opportunities for user confirmation. Create one question per shift (and one for the topical section, if present) with `multiSelect: true`, where each product opportunity is an option.
+Use `ask-user` to present product opportunities for user confirmation. Create one question per shift (and one for the topical section, if present) with `multiSelect: true`, where each product opportunity is an option.
 
 For each question:
 - `question`: "Which opportunities from '[Shift Title]' do you want to develop into full ideas?" — for the topical section: "Which topical opportunities do you want to develop into full ideas?"
@@ -188,7 +188,7 @@ For each question:
 
 If `Nothing here` is selected, ignore all other selections for that question.
 
-Batch shifts + optional topical into a single AskUserQuestion call. Collect confirmed opportunities; if nothing was confirmed, skip to Phase 7.
+Batch shifts + optional topical into `ask-user` calls of up to 4 questions each. Collect confirmed opportunities; if nothing was confirmed, skip to Phase 7.
 
 ---
 

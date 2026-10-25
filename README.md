@@ -166,10 +166,11 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 ## Prerequisites
 
 > [!IMPORTANT]
-> Requires access to both **Claude Sonnet** (14 evaluators + researcher + extractor) and **Claude Opus** (narrative synthesis). Without both, the pipeline won't complete.
+> TweakIdea is tuned and tested on [Claude Code](https://claude.ai/download) with **Claude Sonnet** (14 evaluators + researcher + extractor) and **Claude Opus** (narrative synthesis). Other agents run every subagent on the session's model, and the summary says so.
 
-- [Claude Code](https://claude.ai/download) installed
-- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweakidea browse-hn` and `/tweakidea analyze-hn-post` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
+- An [Agent Skills](https://agentskills.io)-compatible agent. Claude Code is the tested path. `/tweakidea evaluate` needs an agent that can spawn subagents and search and fetch the web; without them it stops with a message, and the other commands still work.
+- [`uv`](https://docs.astral.sh/uv/) — runs the bundled Python scripts. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
+- Network access, and the [GitHub CLI](https://cli.github.com) for `/tweakidea share`
 
 ## Installation
 
@@ -178,6 +179,8 @@ npx tweakidea
 ```
 
 The installer prompts for global (`~/.claude`) or local (`./.claude`) placement and installs one skill, `tweakidea`. After install, open Claude Code and type `/tweakidea` followed by a command: `evaluate`, `improve`, `diff`, `browse-hn`, `analyze-hn-post`, `list`, `show`, or `share`. Run `/tweakidea` on its own to see the command menu.
+
+For another Agent Skills-compatible agent, copy `skills/tweakidea/` from this repo (or from the npm package) into that agent's skills folder, for example `~/.agents/skills/tweakidea/`.
 
 > [!NOTE]
 > First `/tweakidea evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
