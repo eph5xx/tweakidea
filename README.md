@@ -37,7 +37,7 @@ Longer background: [TweakIdea — the origin story](https://ephx.dev/a/tweak-ide
 ## See it work
 
 ```
-You:    /tweak:evaluate "A mobile app that lets restaurants sell unsold
+You:    /tweakidea evaluate "A mobile app that lets restaurants sell unsold
         food at a discount 30 minutes before closing"
 
 Claude: [researcher kicks off in background — web search on market,
@@ -66,11 +66,11 @@ Claude: [launches 14 parallel evaluators, one per dimension]
         | Potential 4.0/5.0 | Evidence C+
         [14-dim scorecard; report.html opens in browser]
 
-You:    /tweak:improve latest
+You:    /tweakidea improve latest
 
 Claude: [three rewrites — small reframe, medium reshape, big reimagine]
         [each targets the weakest dimensions with rubric-grounded rationale]
-        [paste any rewrite into /tweak:evaluate to re-score]
+        [paste any rewrite into /tweakidea evaluate to re-score]
 ```
 
 ## The 14 Dimensions
@@ -94,73 +94,74 @@ Claude: [three rewrites — small reframe, medium reshape, big reimagine]
 
 ## Commands
 
-### `/tweak:evaluate`
+### `/tweakidea evaluate`
 
 Runs 14 independent Sonnet evaluators in parallel — one per dimension — then merges them into a weighted scorecard with assumption tracking and letter-graded evidence. Produces a markdown scorecard and an HTML report.
 
-- `/tweak:evaluate "A mobile app that lets restaurants sell unsold food at a discount"` — inline
-- `/tweak:evaluate path/to/idea.md` — from a file
-- `/tweak:evaluate` — fully interactive
+- `/tweakidea evaluate "A mobile app that lets restaurants sell unsold food at a discount"` — inline
+- `/tweakidea evaluate path/to/idea.md` — from a file
+- `/tweakidea evaluate` — fully interactive
+- `/tweakidea "A mobile app that..."` — shortcut: any text that isn't a command name is evaluated as an idea
 
-### `/tweak:browse-hn`
+### `/tweakidea browse-hn`
 
-Searches Hacker News via Algolia and prints a ranked table of threads worth feeding into `/tweak:analyze-hn-post`. Each hit is scored 1–5 on how likely it is to yield a real startup-idea seed. Read-only.
+Searches Hacker News via Algolia and prints a ranked table of threads worth feeding into `/tweakidea analyze-hn-post`. Each hit is scored 1–5 on how likely it is to yield a real startup-idea seed. Read-only.
 
-- `/tweak:browse-hn llm agents week` — topic `llm agents`, last 7 days
-- `/tweak:browse-hn robotics` — topic only; prompts for a time window
-- `/tweak:browse-hn today` — window only; browses everything recent
-- `/tweak:browse-hn` — fully interactive
+- `/tweakidea browse-hn llm agents week` — topic `llm agents`, last 7 days
+- `/tweakidea browse-hn robotics` — topic only; prompts for a time window
+- `/tweakidea browse-hn today` — window only; browses everything recent
+- `/tweakidea browse-hn` — fully interactive
 
-### `/tweak:analyze-hn-post`
+### `/tweakidea analyze-hn-post`
 
-Fetches a Hacker News post (article + full comment tree), identifies 3-6 technology shifts, and surfaces 1-3 product opportunities per shift. Confirmed opportunities are written up and can be fed into `/tweak:evaluate`.
+Fetches a Hacker News post (article + full comment tree), identifies 3-6 technology shifts, and surfaces 1-3 product opportunities per shift. Confirmed opportunities are written up and can be fed into `/tweakidea evaluate`.
 
-- `/tweak:analyze-hn-post 43374458` — by HN id
-- `/tweak:analyze-hn-post https://news.ycombinator.com/item?id=43374458` — by URL
-- `/tweak:analyze-hn-post` — prompts for an id
+- `/tweakidea analyze-hn-post 43374458` — by HN id
+- `/tweakidea analyze-hn-post https://news.ycombinator.com/item?id=43374458` — by URL
+- `/tweakidea analyze-hn-post` — prompts for an id
 
-### `/tweak:improve`
+### `/tweakidea improve`
 
 Reads a completed evaluation run and generates three rewrites at escalating scales — Small reframe, Medium reshape, Big reimagine — each targeting the weakest dimensions with rubric-grounded rationale and mandatory trade-off acknowledgments. Read-only.
 
-- `/tweak:improve latest` — improve the most recent run
-- `/tweak:improve 20260416` — improve a run by timestamp prefix
+- `/tweakidea improve latest` — improve the most recent run
+- `/tweakidea improve 20260416` — improve a run by timestamp prefix
 
-### `/tweak:diff`
+### `/tweakidea diff`
 
 Compares two evaluation runs side-by-side — score changes, potential shifts, verdict movement, and a per-dimension breakdown of what moved. Read-only.
 
-- `/tweak:diff latest` — compare the two most recent runs
-- `/tweak:diff 20260413 20260416` — compare two runs by timestamp prefix
-- `/tweak:diff 20260413 latest` — compare a specific run against the latest
+- `/tweakidea diff latest` — compare the two most recent runs
+- `/tweakidea diff 20260413 20260416` — compare two runs by timestamp prefix
+- `/tweakidea diff 20260413 latest` — compare a specific run against the latest
 
-### `/tweak:list`
+### `/tweakidea list`
 
 Lists artifacts under `~/.tweakidea/` — evaluation runs, HN analyses, and founder profiles. Arguments are free-form. Read-only.
 
-- `/tweak:list` — all categories, 5 most recent per section
-- `/tweak:list runs 20` — the 20 most recent evaluation runs
-- `/tweak:list best ideas` — runs ranked by weighted score
-- `/tweak:list hn` — just HN analyses
+- `/tweakidea list` — all categories, 5 most recent per section
+- `/tweakidea list runs 20` — the 20 most recent evaluation runs
+- `/tweakidea list best ideas` — runs ranked by weighted score
+- `/tweakidea list hn` — just HN analyses
 
-### `/tweak:show`
+### `/tweakidea show`
 
 Opens any artifact under `~/.tweakidea/` by timestamp, keyword, HN id, founder name, or natural query. Run reports open in the browser; HN and founder artifacts are inlined.
 
-- `/tweak:show latest` — most recent evaluation run
-- `/tweak:show 20260412-143022` — a specific run by timestamp
-- `/tweak:show restaurant food waste` — keyword match on idea text
-- `/tweak:show hn 43374458` — an HN analysis by id
-- `/tweak:show best ideas` — ranked query over saved runs
+- `/tweakidea show latest` — most recent evaluation run
+- `/tweakidea show 20260412-143022` — a specific run by timestamp
+- `/tweakidea show restaurant food waste` — keyword match on idea text
+- `/tweakidea show hn 43374458` — an HN analysis by id
+- `/tweakidea show best ideas` — ranked query over saved runs
 
-### `/tweak:share`
+### `/tweakidea share`
 
 Uploads a run's `report.html` to a secret GitHub gist and prints two links — the gist itself and an `htmlpreview.github.io` rendered URL you can paste into Slack or email. Requires the [GitHub CLI](https://cli.github.com) (`gh auth login`).
 
-- `/tweak:share` — share the most recent run
-- `/tweak:share latest` — same, explicit
-- `/tweak:share 20260412-143022` — a specific run by timestamp
-- `/tweak:share restaurant food waste` — keyword match on idea text
+- `/tweakidea share` — share the most recent run
+- `/tweakidea share latest` — same, explicit
+- `/tweakidea share 20260412-143022` — a specific run by timestamp
+- `/tweakidea share restaurant food waste` — keyword match on idea text
 
 ## Prerequisites
 
@@ -168,7 +169,7 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 > Requires access to both **Claude Sonnet** (14 evaluators + researcher + extractor) and **Claude Opus** (narrative synthesis). Without both, the pipeline won't complete.
 
 - [Claude Code](https://claude.ai/download) installed
-- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweak:browse-hn` and `/tweak:analyze-hn-post` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
+- [`uv`](https://docs.astral.sh/uv/) — needed by `/tweakidea browse-hn` and `/tweakidea analyze-hn-post` for Python script execution. Install: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `brew install uv`
 
 ## Installation
 
@@ -176,10 +177,10 @@ Uploads a run's `report.html` to a secret GitHub gist and prints two links — t
 npx tweakidea
 ```
 
-The installer prompts for global (`~/.claude`) or local (`./.claude`) placement. After install, open Claude Code and type `/tweak:` — you should see `browse-hn`, `diff`, `evaluate`, `improve`, `list`, `share`, `show`, and `analyze-hn-post` in the autocomplete.
+The installer prompts for global (`~/.claude`) or local (`./.claude`) placement and installs one skill, `tweakidea`. After install, open Claude Code and type `/tweakidea` followed by a command: `evaluate`, `improve`, `diff`, `browse-hn`, `analyze-hn-post`, `list`, `show`, or `share`. Run `/tweakidea` on its own to see the command menu.
 
 > [!NOTE]
-> First `/tweak:evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
+> First `/tweakidea evaluate` run takes 10-20 minutes — it creates your founder profile, runs the researcher, and dispatches 14 parallel Sonnet evaluators plus one Opus synthesis pass. Subsequent runs reuse the founder profile and finish faster.
 
 <details>
 <summary>Uninstall</summary>

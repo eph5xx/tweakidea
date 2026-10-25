@@ -1,37 +1,29 @@
 'use strict';
 
-const AGENT_FILES = [
-  'ti-evaluator.md',
-  'ti-extractor.md',
-  'ti-narrative.md',
-  'ti-researcher.md',
+const SKILL_NAME = 'tweakidea';
+const SKILL_SOURCE = 'skills/tweakidea';
+
+const COMMANDS = [
+  'analyze-hn-post',
+  'browse-hn',
+  'diff',
+  'evaluate',
+  'improve',
+  'list',
+  'share',
+  'show',
 ];
 
-const SKILL_DIRS = [
-  'ti-scoring',
-  'ti-founder',
-  'ti-report',
-  'ti-hnparse',
+const AGENTS = [
+  'ti-evaluator',
+  'ti-extractor',
+  'ti-narrative',
+  'ti-researcher',
 ];
-
-const COMMAND_FILES = [
-  'commands/tweak/browse-hn.md',
-  'commands/tweak/diff.md',
-  'commands/tweak/evaluate.md',
-  'commands/tweak/improve.md',
-  'commands/tweak/list.md',
-  'commands/tweak/share.md',
-  'commands/tweak/show.md',
-  'commands/tweak/analyze-hn-post.md',
-];
-
-function cmdSrcToSkillName(cmdSrc) {
-  return cmdSrc.replace('commands/', '').replace('.md', '').split('/').join('-');
-}
 
 module.exports = {
-  AGENT_FILES,
-  SKILL_DIRS,
-  COMMAND_FILES,
-  cmdSrcToSkillName,
+  SKILL_NAME,
+  SKILL_SOURCE,
+  COMMANDS,
+  AGENTS,
 };

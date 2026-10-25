@@ -6,15 +6,12 @@
     "tweakidea": "bin/install.js"
   },
   "scripts": {
-    "test": "node scripts/run-tests.cjs"
+    "test": "node tests/run-tests.cjs"
   },
   "files": [
     "bin",
-    "agents",
-    "commands",
     "skills",
-    "schemas",
-    "scripts"
+    "!**/__pycache__"
   ],
   "keywords": [
     "claude",
