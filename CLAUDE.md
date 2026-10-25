@@ -2,17 +2,17 @@
 
 **TweakIdea**
 
-A Claude Code skillset (slash commands + subagent definitions) that helps founders evaluate startup problems and discover product opportunities. Eight commands: `/tweak:browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweak:analyze-hn-post`; `/tweak:analyze-hn-post` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweak:evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweak:improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweak:diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweak:list` and `/tweak:show` browse and open artifacts accumulated under `~/.tweakidea/`; `/tweak:share` uploads a run's HTML report to a secret GitHub gist and returns a shareable rendered preview URL.
+A single Claude Code skill, `/tweakidea`, in the agent-skills format, that helps founders evaluate startup problems and discover product opportunities. Eight commands, invoked as `/tweakidea <command>`: `/tweakidea browse-hn` searches HN via Algolia and ranks candidate threads to feed into `/tweakidea analyze-hn-post`; `/tweakidea analyze-hn-post` analyzes a single Hacker News discussion to identify technology shifts and surface product ideas; `/tweakidea evaluate` runs 14 independent subagents to produce a weighted scorecard with assumption tracking; `/tweakidea improve` reads a completed run and generates three concrete idea tweaks (small reframe, medium reshape, big reimagine) grounded in scoring rubrics; `/tweakidea diff` compares two evaluation runs side-by-side showing score deltas, potential shifts, and per-dimension movers; `/tweakidea list` and `/tweakidea show` browse and open artifacts accumulated under `~/.tweakidea/`; `/tweakidea share` uploads a run's HTML report to a secret GitHub gist and returns a shareable rendered preview URL.
 
 **Core Value:** Help founders make better decisions — evaluate whether a problem is worth solving, or discover what problems are emerging from technology shifts.
 
 ### Constraints
 
-- **Platform**: Claude Code CLI — slash commands + agent definitions only. Exceptions: `analyze-hn-post` and `browse-hn` both shell out to `uv` + Python (`hnparse.py` and `hnsearch.py`) for HN fetching
+- **Platform**: Claude Code CLI — one skill (`skills/tweakidea/`). Subagents are spawned as `general-purpose` agents that read their instructions from `references/agents/`. Python helpers in `scripts/` run through `uv`
 - **Evaluation model**: All 14 dimensions from EVALUATION.md must be covered, no skipping
 - **Independence**: Each subagent evaluates its dimension without seeing other dimensions' results
 - **Clean context**: Each evaluation run should be independent — no cross-contamination between runs
-- **JSON contracts**: All pipeline artifacts are typed JSON validated against schemas in `schemas/`. The orchestrator does zero text processing on agent output — all aggregation is in `scripts/compute.py`
+- **JSON contracts**: All pipeline artifacts are typed JSON validated against schemas in `skills/tweakidea/assets/schemas/`. The orchestrator does zero text processing on agent output — all aggregation is in `skills/tweakidea/scripts/compute.py`
 
 ## Key Decisions
 
@@ -26,9 +26,9 @@ A Claude Code skillset (slash commands + subagent definitions) that helps founde
 
 ## Development
 
-Source content lives in root-level directories (`agents/`, `commands/`, `skills/`), not inside `.claude/`. The installer (`bin/install.js`) copies these into `.claude/` for Claude Code discovery.
+Source content lives in `skills/tweakidea/` (`SKILL.md`, `references/`, `scripts/`, `assets/`), not inside `.claude/`. The installer (`bin/install.js`) copies it to `.claude/skills/tweakidea/` for Claude Code discovery. Tests live in `tests/node/` and `tests/python/` and are never installed.
 
-- **Local dev setup:** `node bin/install.js --local` populates `.claude/` from source dirs
+- **Local dev setup:** `node bin/install.js --local` populates `.claude/skills/tweakidea/` from `skills/tweakidea/`
 - **Test npx flow:** `npx .` from repo root
 - **After editing source files:** Re-run `node bin/install.js --local` to refresh `.claude/`
 
@@ -36,14 +36,15 @@ Source content lives in root-level directories (`agents/`, `commands/`, `skills/
 
 **Do:**
 
-- Re-run `node bin/install.js --local` after editing any file in `agents/`, `commands/`, or `skills/`
-- Run `npm test` and `uv run scripts/tests/run_tests.py` before committing — Node and Python suites run independently
-- Validate JSON changes against the matching schema in `schemas/` when modifying agent output formats
+- Re-run `node bin/install.js --local` after editing any file in `skills/tweakidea/`
+- Run `npm test` and `uv run tests/python/run_tests.py` before committing — Node and Python suites run independently
+- Validate JSON changes against the matching schema in `skills/tweakidea/assets/schemas/` when modifying agent output formats
 - Keep all 14 dimensions — never skip, merge, or remove a dimension
 
 **Don't:**
 
 - Edit files inside `.claude/` — they are generated by the installer and will be overwritten
-- Parse evaluator output in the orchestrator — `scripts/compute.py` handles all parsing
+- Parse evaluator output in the orchestrator — `skills/tweakidea/scripts/compute.py` handles all parsing
+- Put tests or test fixtures inside `skills/tweakidea/` — everything there is installed
 - Add npm dependencies — the project uses only Node built-ins
 - Inject founder profile data into any evaluator except Founder-Market Fit

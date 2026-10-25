@@ -1,16 +1,16 @@
 # Contributing to TweakIdea
 
-TweakIdea is a Claude Code skillset — markdown files in `agents/`, `commands/`, and `skills/`, plus small Python helpers in `scripts/` and `skills/ti-hnparse/`. There's no compiled code; editing it means editing markdown and the occasional Python script.
+TweakIdea is a single Claude Code skill, `/tweakidea`, in the agent-skills format. It lives in `skills/tweakidea/`: a router `SKILL.md`, markdown references for every command and subagent, JSON schemas and report templates as assets, and small Python helpers in `scripts/`. There's no compiled code; editing it means editing markdown and the occasional Python script.
 
 ## Quick start
 
 ```bash
 git clone https://github.com/eph5xx/tweakidea.git
 cd tweakidea
-node bin/install.js --local      # populates ./.claude/ from source dirs
-# edit a file in agents/, commands/, or skills/
+node bin/install.js --local      # copies skills/tweakidea/ into ./.claude/skills/tweakidea/
+# edit a file in skills/tweakidea/
 node bin/install.js --local      # refresh ./.claude/
-npm test                          # smoke tests
+npm test                          # Node smoke tests
 ```
 
 The installer is the only build step. Always re-run it after changing source files — Claude Code reads from `.claude/`, not from the root-level source directories.
@@ -25,100 +25,102 @@ tweakidea/
   LICENSE                   # MIT
   package.json              # npm metadata; no runtime deps
   bin/
-    install.js              # Installer (also handles --uninstall)
-    manifest.js             # Registry of agents/commands/skills the installer copies
-  commands/tweak/           # 8 slash commands
-    analyze-hn-post.md
-    browse-hn.md
-    diff.md
-    evaluate.md
-    improve.md
-    list.md
-    share.md
-    show.md
-  agents/                   # Subagents spawned by /tweak:evaluate
-    ti-evaluator.md         # Spawned 14× on Sonnet (one per dimension)
-    ti-extractor.md         # Hypothesis extractor (Sonnet)
-    ti-narrative.md         # Cross-dimensional narrative author (Opus)
-    ti-researcher.md        # Web research (Sonnet)
-  skills/
-    ti-scoring/
-      SKILL.md
-      EVALUATION.md         # Scoring algorithm, weights, evidence tiers
-      dimensions/           # 14 dimension definition files
-    ti-founder/             # Founder profile template + fit question guidance
-    ti-report/              # Jinja2 report templates + CSS
-    ti-hnparse/             # HN fetch + Algolia search Python scripts
-  schemas/                  # 10 JSON schemas validating pipeline artifacts
-  scripts/
-    compute.py              # Deterministic scorecard computation
-    render_report.py        # Jinja2 report renderer (markdown + HTML)
+    install.js              # Installer (also handles --uninstall and legacy cleanup)
+    manifest.js             # Skill name, command list, agent list
+  skills/tweakidea/         # The skill (everything here is installed)
+    SKILL.md                # Frontmatter, setup, routing, command + reference tables
+    references/
+      commands/             # 8 command playbooks (evaluate, improve, diff, browse-hn, ...)
+      agents/               # 4 subagent instructions, spawned as general-purpose agents
+        ti-evaluator.md     # Spawned 14× on Sonnet (one per dimension)
+        ti-extractor.md     # Hypothesis extractor (Sonnet)
+        ti-narrative.md     # Cross-dimensional narrative author (Opus)
+        ti-researcher.md    # Web research (Sonnet)
+      scoring/
+        EVALUATION.md       # Scoring algorithm, weights, evidence tiers
+        dimensions/         # 14 dimension definition files
+      founder.md            # Founder profile template + fit question guidance
+      report.md             # Report template data + rendering contract
+      hn.md                 # Usage of the HN fetch/search scripts
+    scripts/
+      compute.py            # Deterministic scorecard computation
+      render_report.py      # Jinja2 report renderer (markdown + HTML)
+      hnparse.py            # HN post fetcher
+      hnsearch.py           # HN Algolia search
+      lib/                  # Shared modules: registry, schema, errors
+    assets/
+      schemas/              # 10 JSON schemas validating pipeline artifacts
+      report/               # Jinja2 report templates + CSS
+  tests/
     run-tests.cjs           # Node test runner (entry point for `npm test`)
-    lib/                    # Shared modules: registry, schema, errors
-    tests/                  # Python test suite (run via uv)
-  tests/                    # Node smoke tests (frontmatter, install, pack)
+    node/                   # Node smoke tests (skill layout, install, pack)
+    python/                 # Python test suite (run via uv)
   assets/
-    report.png              # README screenshot
+    report.png              # README screenshot (not shipped)
   .github/workflows/        # CI: test on PRs, publish on release
 ```
 
-**Edit the root-level files, not the `.claude/` copies** — `.claude/` is generated by the installer and overwritten on every run.
+**Edit `skills/tweakidea/`, not the `.claude/` copy** — `.claude/` is generated by the installer and overwritten on every run.
 
 ## Where to make X kind of change
 
+All paths below are relative to `skills/tweakidea/`.
+
 | Change | Files to edit |
 |--------|--------------|
-| Scoring criteria for a dimension | `skills/ti-scoring/dimensions/{name}.md` |
-| Dimension weights | `skills/ti-scoring/EVALUATION.md` |
-| Scoring algorithm | `skills/ti-scoring/EVALUATION.md` |
-| Evaluate pipeline behavior | `commands/tweak/evaluate.md` |
+| Command routing, setup, command list | `SKILL.md` |
+| Scoring criteria for a dimension | `references/scoring/dimensions/{name}.md` |
+| Dimension weights | `references/scoring/EVALUATION.md` |
+| Scoring algorithm | `references/scoring/EVALUATION.md` |
+| Evaluate pipeline behavior | `references/commands/evaluate.md` |
+| Subagent model, tools, or turn budget | Spawn table in `references/commands/evaluate.md` and the "Tools and budget" line in the agent reference |
 | Scorecard computation | `scripts/compute.py` |
-| Cross-dimensional narrative | `agents/ti-narrative.md` |
-| Research strategy | `agents/ti-researcher.md` |
-| Evaluator behavior | `agents/ti-evaluator.md` |
-| Hypothesis extraction | `agents/ti-extractor.md` |
-| Founder profile template | `skills/ti-founder/SKILL.md` |
-| Report templates | `skills/ti-report/` |
-| Analyze-HN pipeline behavior | `commands/tweak/analyze-hn-post.md` |
-| Browse-HN pipeline behavior | `commands/tweak/browse-hn.md` |
-| HN fetch / parse logic | `skills/ti-hnparse/hnparse.py` |
-| HN search logic | `skills/ti-hnparse/hnsearch.py` |
-| Diff comparison behavior | `commands/tweak/diff.md` |
-| Improve tweak generation | `commands/tweak/improve.md` |
-| List / Show browser behavior | `commands/tweak/list.md`, `commands/tweak/show.md` |
-| Share / upload behavior | `commands/tweak/share.md` |
-| Installer behavior | `bin/install.js`, `bin/manifest.js` |
+| Cross-dimensional narrative | `references/agents/ti-narrative.md` |
+| Research strategy | `references/agents/ti-researcher.md` |
+| Evaluator behavior | `references/agents/ti-evaluator.md` |
+| Hypothesis extraction | `references/agents/ti-extractor.md` |
+| Founder profile template | `references/founder.md` |
+| Report templates | `assets/report/` |
+| Analyze-HN pipeline behavior | `references/commands/analyze-hn-post.md` |
+| Browse-HN pipeline behavior | `references/commands/browse-hn.md` |
+| HN fetch / parse logic | `scripts/hnparse.py` |
+| HN search logic | `scripts/hnsearch.py` |
+| Diff comparison behavior | `references/commands/diff.md` |
+| Improve tweak generation | `references/commands/improve.md` |
+| List / Show browser behavior | `references/commands/list.md`, `references/commands/show.md` |
+| Share / upload behavior | `references/commands/share.md` |
+| Installer behavior | `bin/install.js`, `bin/manifest.js` (repo root) |
 
 ## Testing
 
 Two test suites. CI runs both on every PR via `.github/workflows/test.yml`.
 
-**Node suite** — smoke tests for packaging, frontmatter, install:
+**Node suite** — skill layout, install, upgrade, and pack smoke tests:
 
 ```bash
 npm test
 ```
 
-Runs `node scripts/run-tests.cjs`, which executes `tests/*.test.cjs` (`frontmatter.test.cjs`, `install-smoke.test.cjs`, `pack-smoke.test.cjs`) via Node's built-in `--test` runner.
+Runs `node tests/run-tests.cjs`, which executes `tests/node/*.test.cjs` via Node's built-in `--test` runner.
 
 **Python suite** — compute pipeline, schemas, agent contracts, render fixtures:
 
 ```bash
-uv run scripts/tests/run_tests.py        # all tests
-uv run scripts/tests/run_tests.py -v     # verbose
+uv run tests/python/run_tests.py        # all tests
+uv run tests/python/run_tests.py -v     # verbose
 ```
 
 Uses `unittest` (not `pytest`). To run a single file:
 
 ```bash
-uv run --with jsonschema python -m unittest scripts.tests.test_compute -v
+uv run --with jsonschema python -m unittest tests.python.test_compute -v
 ```
 
-Run from the repo root — tests import from the `scripts.tests` package.
+Run from the repo root — tests import from the `tests.python` package.
 
 ## PR conventions
 
 1. **One concern per PR** — don't mix dimension changes with pipeline changes.
 2. **Describe the "why"** — explain what behavior you're changing and why the current behavior is wrong or insufficient.
-3. **Test with a real idea** — run `/tweak:evaluate` end-to-end and confirm the output makes sense.
+3. **Test with a real idea** — run `/tweakidea evaluate` end-to-end and confirm the output makes sense.
 4. **Keep dimension files consistent** — if you change the structure of one dimension file, update all 14 to match.

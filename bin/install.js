@@ -42,12 +42,7 @@ function verifyUvOrExit() {
 
 // ── File manifest ───────────────────────────────────────────────────────────────
 
-const {
-  AGENT_FILES,
-  SKILL_DIRS,
-  COMMAND_FILES,
-  cmdSrcToSkillName,
-} = require('./manifest');
+const { SKILL_NAME, SKILL_SOURCE, COMMANDS, AGENTS } = require('./manifest');
 
 // ── CLI argument parsing ────────────────────────────────────────────────────────
 
@@ -81,21 +76,23 @@ function getSourceDir() {
   return path.join(__dirname, '..');
 }
 
+function skillTargetDir(targetDir) {
+  return path.join(targetDir, 'skills', SKILL_NAME);
+}
+
 // ── File utilities ──────────────────────────────────────────────────────────────
+
+const COPY_SKIP = new Set(['__pycache__', '.DS_Store']);
 
 function mkdirp(dir) {
   fs.mkdirSync(dir, { recursive: true });
-}
-
-function copyFileSync(src, dest) {
-  mkdirp(path.dirname(dest));
-  fs.copyFileSync(src, dest);
 }
 
 function copyDirSync(src, dest) {
   mkdirp(dest);
   const entries = fs.readdirSync(src, { withFileTypes: true });
   for (const entry of entries) {
+    if (COPY_SKIP.has(entry.name)) continue;
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
     if (entry.isDirectory()) {
@@ -111,119 +108,73 @@ function rmrf(target) {
   fs.rmSync(target, { recursive: true, force: true });
 }
 
-// ── Cleanup ─────────────────────────────────────────────────────────────────────
+function removeIfExists(target) {
+  if (!fs.existsSync(target)) return 0;
+  rmrf(target);
+  return 1;
+}
 
-// ── Legacy cleanup (past-version upgrades) ──────────────────────────────────────
-
-// Items removed or renamed in past releases. Cleans them from existing .claude/
-// installs even though they're no longer in AGENT_FILES / SKILL_DIRS / COMMAND_FILES.
-const LEGACY_AGENTS = ['ti-merger.md'];
-const LEGACY_SKILL_DIRS = ['ti-html-report'];
-const LEGACY_COMMAND_FILES = ['commands/tweak/suggest-from-hn.md'];
-
-function legacyCleanup(targetDir) {
-  let removed = 0;
-  for (const file of LEGACY_AGENTS) {
-    const p = path.join(targetDir, 'agents', file);
-    if (fs.existsSync(p)) {
-      fs.unlinkSync(p);
-      removed++;
-    }
-  }
-  for (const dir of LEGACY_SKILL_DIRS) {
-    const p = path.join(targetDir, 'skills', dir);
-    if (fs.existsSync(p)) {
-      rmrf(p);
-      removed++;
-    }
-  }
-  for (const cmdSrc of LEGACY_COMMAND_FILES) {
-    const cmdPath = path.join(targetDir, cmdSrc);
-    if (fs.existsSync(cmdPath)) {
-      fs.unlinkSync(cmdPath);
-      removed++;
-    }
-    const skillPath = path.join(targetDir, 'skills', cmdSrcToSkillName(cmdSrc));
-    if (fs.existsSync(skillPath)) {
-      rmrf(skillPath);
-      removed++;
-    }
-  }
-  if (removed > 0) {
-    console.log(`${dim}Removed ${removed} legacy file(s) during upgrade.${reset}`);
+function pruneIfEmpty(dir) {
+  if (fs.existsSync(dir) && fs.readdirSync(dir).length === 0) {
+    fs.rmdirSync(dir);
   }
 }
 
-function cleanupPreviousInstall(targetDir) {
+// ── Legacy cleanup (past-version upgrades) ──────────────────────────────────────
+
+// Up to v3, TweakIdea installed separate agents, commands, ti-* skills, and
+// top-level scripts/ and schemas/ dirs. Only known TweakIdea files are removed
+// so user-owned files in shared dirs like .claude/scripts survive.
+const LEGACY_AGENT_FILES = [...AGENTS, 'ti-merger'].map((a) => `${a}.md`);
+const LEGACY_SKILL_DIRS = ['ti-scoring', 'ti-founder', 'ti-report', 'ti-hnparse', 'ti-html-report'];
+const LEGACY_COMMANDS = [...COMMANDS, 'suggest-from-hn'];
+const LEGACY_SCRIPT_ENTRIES = ['compute.py', 'render_report.py', 'run-tests.cjs', 'lib', 'tests', '__pycache__'];
+const LEGACY_SCHEMA_FILES = [
+  'assumptions.json',
+  'dimension-evaluation.json',
+  'hypotheses.json',
+  'idea.json',
+  'next-steps.json',
+  'numbers.json',
+  'potential.json',
+  'research.json',
+  'strengths-weaknesses.json',
+  'version.json',
+];
+const LEGACY_VERSION_DIR = 'tweakidea';
+
+function legacyCleanup(targetDir) {
   let removed = 0;
+  for (const file of LEGACY_AGENT_FILES) {
+    removed += removeIfExists(path.join(targetDir, 'agents', file));
+  }
+  for (const dir of LEGACY_SKILL_DIRS) {
+    removed += removeIfExists(path.join(targetDir, 'skills', dir));
+  }
+  for (const cmd of LEGACY_COMMANDS) {
+    // Local installs used commands/tweak/*.md; global installs used skills/tweak-*/.
+    removed += removeIfExists(path.join(targetDir, 'commands', 'tweak', `${cmd}.md`));
+    removed += removeIfExists(path.join(targetDir, 'skills', `tweak-${cmd}`));
+  }
+  for (const entry of LEGACY_SCRIPT_ENTRIES) {
+    removed += removeIfExists(path.join(targetDir, 'scripts', entry));
+  }
+  for (const file of LEGACY_SCHEMA_FILES) {
+    removed += removeIfExists(path.join(targetDir, 'schemas', file));
+  }
+  removed += removeIfExists(path.join(targetDir, LEGACY_VERSION_DIR));
 
-  // Remove agents
-  for (const file of AGENT_FILES) {
-    const p = path.join(targetDir, 'agents', file);
-    if (fs.existsSync(p)) {
-      fs.unlinkSync(p);
-      removed++;
-    }
-  }
-
-  // Remove skill directories
-  for (const dir of SKILL_DIRS) {
-    const p = path.join(targetDir, 'skills', dir);
-    if (fs.existsSync(p)) {
-      rmrf(p);
-      removed++;
-    }
-  }
-
-  // Remove commands (local install format)
-  for (const cmdSrc of COMMAND_FILES) {
-    const cmdPath = path.join(targetDir, cmdSrc);
-    if (fs.existsSync(cmdPath)) {
-      fs.unlinkSync(cmdPath);
-      removed++;
-    }
-  }
-  // Clean empty parent dirs
-  const tweakDir = path.join(targetDir, 'commands', 'tweak');
-  if (fs.existsSync(tweakDir) && fs.readdirSync(tweakDir).length === 0) {
-    fs.rmSync(tweakDir, { recursive: true, force: true });
-  }
-
-  // Remove command skills (global install format)
-  for (const cmdSrc of COMMAND_FILES) {
-    const skillName = cmdSrcToSkillName(cmdSrc);
-    const skillPath = path.join(targetDir, 'skills', skillName);
-    if (fs.existsSync(skillPath)) {
-      rmrf(skillPath);
-      removed++;
-    }
-  }
-
-  // Remove version tracking
-  const versionDir = path.join(targetDir, 'tweakidea');
-  if (fs.existsSync(versionDir)) {
-    rmrf(versionDir);
-    removed++;
-  }
-
-  // Remove Phase 1 directories (schemas, scripts)
-  const schemasTarget = path.join(targetDir, 'schemas');
-  if (fs.existsSync(schemasTarget)) {
-    rmrf(schemasTarget);
-    removed++;
-  }
-  const scriptsTarget = path.join(targetDir, 'scripts');
-  if (fs.existsSync(scriptsTarget)) {
-    rmrf(scriptsTarget);
-    removed++;
-  }
-
+  pruneIfEmpty(path.join(targetDir, 'commands', 'tweak'));
+  pruneIfEmpty(path.join(targetDir, 'commands'));
+  pruneIfEmpty(path.join(targetDir, 'agents'));
+  pruneIfEmpty(path.join(targetDir, 'scripts'));
+  pruneIfEmpty(path.join(targetDir, 'schemas'));
   return removed;
 }
 
 // ── Settings merger ─────────────────────────────────────────────────────────────
 
-function mergeSettings(targetDir) {
+function mergeSettings(targetDir, isGlobal) {
   const settingsPath = path.join(targetDir, 'settings.json');
   let settings = {};
 
@@ -250,14 +201,19 @@ function mergeSettings(targetDir) {
 
   // Add required permissions (deduplicated)
   // Path rules must use Read/Edit: Claude Code only checks those for file
-  // access, and Edit covers Write. Subagents in dontAsk mode deny anything
-  // not explicitly allowed, even inside additionalDirectories.
+  // access, and Edit covers Write. Subagents deny anything not explicitly
+  // allowed, even inside additionalDirectories.
   const requiredAllow = [
     'WebSearch',
     'WebFetch',
     'Read(~/.tweakidea/**)',
     'Edit(~/.tweakidea/**)',
   ];
+  // Subagents read references and schemas from the skill dir. A local install
+  // lives inside the project, which is readable already.
+  if (isGlobal) {
+    requiredAllow.push(`Read(~/.claude/skills/${SKILL_NAME}/**)`);
+  }
   for (const perm of requiredAllow) {
     if (!settings.permissions.allow.includes(perm)) {
       settings.permissions.allow.push(perm);
@@ -283,18 +239,28 @@ function mergeSettings(targetDir) {
 // ── Version tracking ────────────────────────────────────────────────────────────
 
 function writeVersion(targetDir, version) {
-  const versionDir = path.join(targetDir, 'tweakidea');
-  mkdirp(versionDir);
-  fs.writeFileSync(path.join(versionDir, 'VERSION'), version + '\n');
+  fs.writeFileSync(path.join(skillTargetDir(targetDir), 'VERSION'), version + '\n');
 }
 
 function readInstalledVersion(targetDir) {
-  const versionFile = path.join(targetDir, 'tweakidea', 'VERSION');
-  if (!fs.existsSync(versionFile)) return null;
-  return fs.readFileSync(versionFile, 'utf8').trim();
+  const candidates = [
+    path.join(skillTargetDir(targetDir), 'VERSION'),
+    path.join(targetDir, LEGACY_VERSION_DIR, 'VERSION'),
+  ];
+  for (const file of candidates) {
+    if (fs.existsSync(file)) return fs.readFileSync(file, 'utf8').trim();
+  }
+  return null;
 }
 
 // ── Install ─────────────────────────────────────────────────────────────────────
+
+function countFiles(dir, predicate) {
+  if (!fs.existsSync(dir)) return 0;
+  return fs
+    .readdirSync(dir, { recursive: true })
+    .filter((f) => typeof f === 'string' && predicate(f)).length;
+}
 
 function install(isGlobal) {
   const targetDir = resolveTargetDir(isGlobal);
@@ -304,10 +270,8 @@ function install(isGlobal) {
     ? '~/.claude'
     : path.relative(process.cwd(), targetDir) || '.claude';
 
-  // Phase 1: hard-fail if uv is missing
   verifyUvOrExit();
 
-  // Check existing version
   const existingVersion = readInstalledVersion(targetDir);
   if (existingVersion) {
     if (existingVersion === pkg.version) {
@@ -321,116 +285,47 @@ function install(isGlobal) {
     }
   }
 
-  // Clean previous install
-  const removed = cleanupPreviousInstall(targetDir);
+  const skillDir = skillTargetDir(targetDir);
+  rmrf(skillDir);
+
+  const removed = legacyCleanup(targetDir);
   if (removed > 0) {
-    console.log(`${dim}Cleaned ${removed} previous TweakIdea file(s).${reset}`);
+    console.log(`${dim}Removed ${removed} legacy file(s) from older TweakIdea layouts.${reset}`);
   }
 
-  // Phase 1: remove v1.0 orphans
-  legacyCleanup(targetDir);
+  copyDirSync(path.join(sourceDir, SKILL_SOURCE), skillDir);
 
-  // Copy agents
-  mkdirp(path.join(targetDir, 'agents'));
-  for (const file of AGENT_FILES) {
-    copyFileSync(
-      path.join(sourceDir, 'agents', file),
-      path.join(targetDir, 'agents', file)
-    );
-  }
-
-  // Copy skills
-  for (const dir of SKILL_DIRS) {
-    copyDirSync(
-      path.join(sourceDir, 'skills', dir),
-      path.join(targetDir, 'skills', dir)
-    );
-  }
-
-  // Copy schemas (Phase 1)
-  const schemasSource = path.join(sourceDir, 'schemas');
-  if (fs.existsSync(schemasSource)) {
-    copyDirSync(schemasSource, path.join(targetDir, 'schemas'));
-  }
-
-  // Copy scripts (Phase 1)
-  const scriptsSource = path.join(sourceDir, 'scripts');
-  if (fs.existsSync(scriptsSource)) {
-    copyDirSync(scriptsSource, path.join(targetDir, 'scripts'));
-  }
-
-  // Copy commands
-  if (isGlobal) {
-    // Global: install as skills (Claude Code discovers skills/*/SKILL.md)
-    for (const cmdSrc of COMMAND_FILES) {
-      const skillName = cmdSrcToSkillName(cmdSrc);
-      const skillDir = path.join(targetDir, 'skills', skillName);
-      mkdirp(skillDir);
-      copyFileSync(
-        path.join(sourceDir, cmdSrc),
-        path.join(skillDir, 'SKILL.md')
-      );
-    }
-  } else {
-    // Local: install as commands (Claude Code discovers commands/**/*.md)
-    for (const cmdSrc of COMMAND_FILES) {
-      copyFileSync(
-        path.join(sourceDir, cmdSrc),
-        path.join(targetDir, cmdSrc)
-      );
-    }
-  }
-
-  // Merge settings
-  mergeSettings(targetDir);
-
-  // Write version
+  mergeSettings(targetDir, isGlobal);
   writeVersion(targetDir, pkg.version);
 
-  // Verify
-  const agentCount = AGENT_FILES.filter((f) =>
-    fs.existsSync(path.join(targetDir, 'agents', f))
+  const commandCount = COMMANDS.filter((c) =>
+    fs.existsSync(path.join(skillDir, 'references', 'commands', `${c}.md`))
   ).length;
-  const skillCount = SKILL_DIRS.filter((d) =>
-    fs.existsSync(path.join(targetDir, 'skills', d))
+  const agentCount = AGENTS.filter((a) =>
+    fs.existsSync(path.join(skillDir, 'references', 'agents', `${a}.md`))
   ).length;
-  const commandCount = COMMAND_FILES.filter((cmdSrc) => {
-    if (isGlobal) {
-      const skillName = cmdSrcToSkillName(cmdSrc);
-      return fs.existsSync(path.join(targetDir, 'skills', skillName, 'SKILL.md'));
-    } else {
-      return fs.existsSync(path.join(targetDir, cmdSrc));
-    }
-  }).length;
-  const schemaCount = fs.existsSync(path.join(targetDir, 'schemas'))
-    ? fs.readdirSync(path.join(targetDir, 'schemas')).filter((f) => f.endsWith('.json')).length
-    : 0;
-  const scriptCount = fs.existsSync(path.join(targetDir, 'scripts'))
-    ? fs.readdirSync(path.join(targetDir, 'scripts'), { recursive: true }).filter(
-        (f) => typeof f === 'string' && f.endsWith('.py')
-      ).length
-    : 0;
+  const schemaCount = countFiles(path.join(skillDir, 'assets', 'schemas'), (f) => f.endsWith('.json'));
+  const scriptCount = countFiles(path.join(skillDir, 'scripts'), (f) => f.endsWith('.py'));
 
   console.log('');
   console.log(`${green}${bold}TweakIdea v${pkg.version} installed successfully!${reset}`);
   console.log('');
-  console.log(`  ${dim}Location:${reset}  ${displayPath} (${location})`);
-  console.log(`  ${dim}Agents:${reset}    ${agentCount} installed`);
-  console.log(`  ${dim}Skills:${reset}    ${skillCount} installed`);
-  console.log(`  ${dim}Commands:${reset}  ${commandCount} installed`);
+  console.log(`  ${dim}Location:${reset}  ${displayPath}/skills/${SKILL_NAME} (${location})`);
+  console.log(`  ${dim}Commands:${reset}  ${commandCount} available via /${SKILL_NAME}`);
+  console.log(`  ${dim}Agents:${reset}    ${agentCount} references`);
   console.log(`  ${dim}Schemas:${reset}   ${schemaCount} installed`);
   console.log(`  ${dim}Scripts:${reset}   ${scriptCount} installed`);
   console.log('');
 
   console.log(`${cyan}Get started:${reset}`);
-  console.log(`  ${bold}/tweak:browse-hn${reset} ${dim}[topic] [today|week|month|all]${reset}`);
-  console.log(`  ${bold}/tweak:diff${reset} ${dim}<run1> <run2> or latest${reset}`);
-  console.log(`  ${bold}/tweak:analyze-hn-post${reset} ${dim}<hn-url-or-id>${reset}`);
-  console.log(`  ${bold}/tweak:evaluate${reset} ${dim}"Your startup idea description"${reset}`);
-  console.log(`  ${bold}/tweak:improve${reset} ${dim}latest${reset}`);
-  console.log(`  ${bold}/tweak:list${reset} ${dim}runs 20${reset}`);
-  console.log(`  ${bold}/tweak:share${reset} ${dim}latest${reset}`);
-  console.log(`  ${bold}/tweak:show${reset} ${dim}latest${reset}`);
+  console.log(`  ${bold}/tweakidea browse-hn${reset} ${dim}[topic] [today|week|month|all]${reset}`);
+  console.log(`  ${bold}/tweakidea diff${reset} ${dim}<run1> <run2> or latest${reset}`);
+  console.log(`  ${bold}/tweakidea analyze-hn-post${reset} ${dim}<hn-url-or-id>${reset}`);
+  console.log(`  ${bold}/tweakidea evaluate${reset} ${dim}"Your startup idea description"${reset}`);
+  console.log(`  ${bold}/tweakidea improve${reset} ${dim}latest${reset}`);
+  console.log(`  ${bold}/tweakidea list${reset} ${dim}runs 20${reset}`);
+  console.log(`  ${bold}/tweakidea share${reset} ${dim}latest${reset}`);
+  console.log(`  ${bold}/tweakidea show${reset} ${dim}latest${reset}`);
   console.log('');
 }
 
@@ -446,7 +341,8 @@ function uninstall(isGlobal) {
     return;
   }
 
-  cleanupPreviousInstall(targetDir);
+  rmrf(skillTargetDir(targetDir));
+  legacyCleanup(targetDir);
 
   console.log('');
   console.log(
@@ -455,7 +351,6 @@ function uninstall(isGlobal) {
   console.log(`${dim}Your evaluation data in ~/.tweakidea/ was not removed.${reset}`);
   console.log('');
 }
-
 // ── Interactive prompts ─────────────────────────────────────────────────────────
 
 function prompt(question) {
