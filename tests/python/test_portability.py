@@ -63,6 +63,8 @@ class TestPortability(unittest.TestCase):
         text = RUNTIME_MD.read_text()
         for capability, tool in (
             ("ask-user", "AskUserQuestion"),
+            ("ask-user-many", "AskUserQuestion"),
+            ("persistent-home", "Available"),
             ("spawn-subagent", "Agent"),
             ("parallel-spawn", "Agent"),
             ("background-spawn", "run_in_background"),

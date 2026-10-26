@@ -57,7 +57,7 @@ Ask in chat: the preamble, then these 5 questions as a numbered list.
 | 4 | "What can you or your team build? (Technical strengths, capabilities)" | Build Capabilities |
 | 5 | "What drives you to work on hard problems? (Personal motivation, what keeps you going)" | Drive & Commitment |
 
-Preamble: "I don't have a founder profile yet. I'll ask a few quick questions to understand your background -- this helps evaluate founder-market fit and only needs to happen once."
+Preamble: "I don't have a founder profile yet. I'll ask a few quick questions to understand your background -- this helps evaluate founder-market fit. I'll save your answers to ~/.tweakidea/FOUNDER.md so you only answer once."
 
 If during the questioning flow the user volunteers additional relevant information beyond what was asked, capture it in the appropriate section. Do not add new sections.
 
@@ -74,6 +74,8 @@ Each question must simultaneously:
 2. Assess **idea-specific fit** by anchoring that attribute to the current idea domain
 
 Do NOT write questions that are purely idea-specific ("How big is this market?") or purely background ("What's your experience?"). The profile creation questions already captured generic background. Fit questions contextualize those attributes to this idea.
+
+When there is no saved profile (the runtime lacks `persistent-home`), no background was asked, so let the fit questions also draw out the background relevant to this idea.
 
 ### Focus
 
@@ -135,7 +137,7 @@ After fit Q&A, review answers for NEW persistent attributes about the founder --
 If no answers qualify, skip this. Otherwise ask in chat:
 
 ```
-Some of your answers could be saved to your founder profile for future runs:
+Some of your answers could be saved to your founder profile (~/.tweakidea/FOUNDER.md) for future runs:
 
 1. [summary] -> [Section name]
 2. [summary] -> [Section name]

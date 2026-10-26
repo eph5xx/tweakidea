@@ -181,10 +181,21 @@ class TestOrchestratorBody(unittest.TestCase):
         end = self.body.find("#### Lane B Step 3")
         self.assertGreater(start, 0)
         section = self.body[start:end]
+        self.assertIn("`ask-user-many`", section)
         self.assertIn("Ask in chat", section)
         self.assertIn("UNCONFIRMED", section)
         self.assertRegex(section, r"does not mention is UNCONFIRMED")
         self.assertNotIn("`ask-user`", section)
+        for dropped in ("C = confirmed", "R = rejected", "REJECTED"):
+            self.assertNotIn(dropped, section)
+
+    def test_founder_profile_needs_persistent_home(self):
+        start = self.body.find("### Step 3: Founder profile")
+        end = self.body.find("### Step 4:", start)
+        self.assertGreater(start, 0)
+        section = self.body[start:end]
+        self.assertIn("lacks `persistent-home`", section)
+        self.assertRegex(section, r"do not read or write `FOUNDER\.md`")
 
 class TestManifestJs(unittest.TestCase):
     @classmethod

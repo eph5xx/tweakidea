@@ -21,7 +21,7 @@
       "status": {
         "type": "string",
         "const": "PENDING",
-        "description": "Always PENDING at extraction time. Statuses move to CONFIRMED/UNCONFIRMED/REJECTED in assumptions.json after founder review."
+        "description": "Always PENDING at extraction time. Statuses move to CONFIRMED/UNCONFIRMED in assumptions.json after founder review."
       }
     },
     "additionalProperties": false
