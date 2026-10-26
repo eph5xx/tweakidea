@@ -2,7 +2,7 @@
   "name": "tweakidea",
   "displayName": "TweakIdea",
   "description": "14-dimension startup idea evaluator: weighted scorecards with assumption tracking, idea tweaks, run diffs, and Hacker News opportunity discovery.",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "skills": [
     "./skills/"
   ],
