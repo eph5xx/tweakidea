@@ -1,6 +1,6 @@
 {
   "name": "tweakidea",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "14-dimension startup idea evaluator for AI coding agents (Agent Skills)",
   "bin": {
     "tweakidea": "bin/install.js"
