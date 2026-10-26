@@ -21,7 +21,7 @@
       "status": {
         "type": "string",
         "enum": ["CONFIRMED", "UNCONFIRMED", "REJECTED"],
-        "description": "Post-confirmation status — PENDING is not valid here."
+        "description": "Post-confirmation status — PENDING is not valid here. REJECTED is legacy: no longer produced, kept so older runs still validate."
       }
     },
     "additionalProperties": false

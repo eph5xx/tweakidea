@@ -15,7 +15,7 @@ Your prompt includes a `<files_to_read>` block pointing to:
 - `{SKILL_DIR}/references/scoring/dimensions/{slug}.md` — your dimension's signal table and rubric
 - `{SKILL_DIR}/assets/schemas/dimension-evaluation.json` — the schema your output MUST validate against
 - `{RUN_DIR}/idea.json` — the idea: `problem`, `solution`, `target_user` (and `text`, the combined form)
-- `{RUN_DIR}/assumptions.json` — the founder's hypotheses with their statuses: `CONFIRMED`, `UNCONFIRMED`, or `REJECTED` (ignore REJECTED entries)
+- `{RUN_DIR}/assumptions.json` — the founder's hypotheses with their statuses: `CONFIRMED` or `UNCONFIRMED` (ignore any legacy `REJECTED` entries)
 - `{RUN_DIR}/research.json` — shared web research. If `available` is `true`, use the `clusters` entry matching your research cluster (`USER_CLUSTER` → `user`, `COMPETITIVE_CLUSTER` → `competitive`, `MARKET_CLUSTER` → `market`) plus `competitive_landscape`. If `available` is `false` or your cluster is `—`, there is no shared research for your dimension.
 
 `{SKILL_DIR}/references/scoring/EVALUATION.md` provides framework reference material; read it if you need it. The scoring algorithm and evidence tier classification are detailed in the Rubric Assessment section below.
