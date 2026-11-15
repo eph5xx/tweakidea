@@ -13,7 +13,7 @@ TweakIdea helps founders make better decisions: evaluate whether a problem is wo
 1. **SKILL_DIR** is the directory that contains this SKILL.md (the runtime reports it as the skill's base directory). If no base directory is reported, use the first of `$(pwd)/.claude/skills/tweakidea`, `$HOME/.claude/skills/tweakidea`, `$(pwd)/.agents/skills/tweakidea`, or `$HOME/.agents/skills/tweakidea` that contains `SKILL.md`. Every `{SKILL_DIR}` path in this skill and its references resolves against it.
 2. **Runtime:** read [references/runtime.md](references/runtime.md) and map each capability it lists (`ask-user`, `spawn-subagent`, `web-search`, `read-file`, and the rest) and each model tier to what your runtime provides. The references name capabilities, not tools.
 3. **HOME_DIR** is the output of `echo "$HOME"`. All user data lives under `{HOME_DIR}/.tweakidea/`.
-4. Python helpers in `{SKILL_DIR}/scripts/` run through `uv run`. If a command needs them and `uv` is missing, tell the user to install it (`brew install uv` or `curl -LsSf https://astral.sh/uv/install.sh | sh`) and stop.
+4. Python helpers in `{SKILL_DIR}/scripts/` run through `uv run`. If a command needs them and `uv` is missing, tell the user to install it (`brew install uv`, or follow https://docs.astral.sh/uv/getting-started/installation/) and stop.
 
 ## Routing
 
