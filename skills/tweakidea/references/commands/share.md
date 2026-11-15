@@ -14,9 +14,18 @@ If a keyword or prefix matches 2–5 runs, use `ask-user` to pick; if more than 
 
 Require `gh`: `command -v gh >/dev/null && gh auth status >/dev/null 2>&1`. On failure, print exactly one line — `gh CLI not available or not logged in — install at https://cli.github.com and run \`gh auth login\`, then retry.` — and stop before any network call.
 
+## Confirm
+
+Read `idea.json` from the resolved run, if present. Before uploading, ask once with `ask-user`:
+
+- question: `"Share: upload the report for \"{name}\" to a secret GitHub gist?\n\nThe report holds the full idea, scores, research notes, and (if founder fit ran) notes about your background. A secret gist is unlisted, but anyone with the link can open it. The preview link is served through htmlpreview.github.io."` where `{name}` is the codename, else the first ~60 chars of `problem`, else the run timestamp.
+- options: `Upload`, `Cancel`.
+
+On anything but `Upload`, print `Not shared.` and stop before any network call.
+
 ## Upload
 
-Read `idea.json` from the resolved run to build the gist description:
+Build the gist description from `idea.json`:
 
 - Present and populated: `TweakIdea: <codename> — <subtitle>` (if `codename`/`subtitle` are empty, use the first ~80 chars of `problem`).
 - Missing (legacy runs without `idea.json`): `TweakIdea evaluation (<timestamp>)`.
